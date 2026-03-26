@@ -4,8 +4,9 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Universidad",
-  description: "Sitio web institucional renovado",
+  title: "Universidad IUA",
+  description:
+    "Universidad IUA: oferta educativa por nivel, carreras, posgrados, comunidad y admisiones.",
 };
 
 export default function RootLayout({
@@ -15,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className="min-h-screen bg-white text-slate-900 antialiased">
+      <body className="min-h-screen bg-white antialiased">
         <div className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">{children}</main>
