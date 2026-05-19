@@ -1,0 +1,4 @@
+Contact: mailto:admisiones@iua.edu.mx
+Preferred-Languages: es
+Canonical: https://iua.edu.mx/.well-known/security.txt
+Policy: https://iua.edu.mx/aviso-de-privacidad

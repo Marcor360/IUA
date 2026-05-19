@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IUA Home Landing React — versión segura
 
-## Getting Started
+Proyecto React + Vite + Tailwind CSS v4 para una home landing enfocada en inscripciones de Universidad IUA.
 
-First, run the development server:
+## Cambios de seguridad aplicados
+
+- Se quitó `latest` del `package.json`.
+- Se fijaron versiones exactas.
+- Se agregó `.npmrc` con `ignore-scripts=true`.
+- Se redujeron dependencias: Tailwind corre con `@tailwindcss/vite`, sin `postcss` ni `autoprefixer`.
+- No se incluye `node_modules`.
+- No se incluye ningún `.env`.
+
+## Instalar de forma más segura
 
 ```bash
+npm install --ignore-scripts
+npm audit
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run preview
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Rutas incluidas
 
-## Learn More
+- `/` Home landing
+- `/oferta`
+- `/campus`
+- `/becas`
+- `/contacto`
 
-To learn more about Next.js, take a look at the following resources:
+## Pendientes para producción
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Cambiar el WhatsApp demo `525512345678` por el número real.
+- Cambiar correos y teléfonos.
+- Sustituir imágenes externas de Unsplash por assets propios de IUA.
+- Cuando el sitio esté listo para indexar, quitar `noindex, nofollow` de `index.html`.
+- Generar `package-lock.json` localmente después del primer `npm install --ignore-scripts`.
