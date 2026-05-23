@@ -263,7 +263,7 @@ export default function Navbar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-[100] flex w-[50vw] flex-col bg-white shadow-2xl transition-transform duration-300 md:hidden ${
+        className={`fixed inset-y-0 left-0 z-[100] flex w-[75vw] max-w-sm flex-col bg-white shadow-2xl transition-transform duration-300 md:hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
