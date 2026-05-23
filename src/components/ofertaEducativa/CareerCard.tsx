@@ -6,7 +6,17 @@ export default function CareerCard({ program }: { program: ProgramaOferta }) {
   const Icon = program.icon;
 
   return (
-    <article className="oferta-card">
+    <article className="oferta-card group overflow-hidden">
+      {program.recuadro && (
+        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-neutral-100 mb-4">
+          <img
+            src={program.recuadro}
+            alt={program.title}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        </div>
+      )}
       <div className="oferta-card__icon">
         <Icon size={30} />
       </div>

@@ -1,13 +1,16 @@
-import { type ComponentType } from "react";
+import { type ComponentType, useState, useEffect } from "react";
 import {
   IconArrowRight as ArrowRight,
   IconBuildingCommunity as BuildingCommunity,
   IconCalendarEvent as Calendar,
+  IconChevronLeft as ChevronLeft,
+  IconChevronRight as ChevronRight,
   IconDeviceLaptop as Laptop,
   IconExternalLink as ExternalLink,
   IconMapPin as MapPin,
   IconSchool as School,
-  IconWorld as World
+  IconWorld as World,
+  IconX as X
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
 
@@ -38,6 +41,7 @@ type CampusDetail = {
   mapUrl?: string;
   mapEmbed?: string;
   reverse?: boolean;
+  gallery?: string[];
 };
 
 const leadFormUrl = "https://apps.clientify.net/formbuilderembed/simpleembed/#/success/twostepformpopup/171625/45670";
@@ -57,13 +61,13 @@ const summaries: CampusSummary[] = [
   },
   {
     id: "campus-texcoco",
-    title: "Centro de Enlace Texcoco",
+    title: "Plantel Texcoco",
     text: "Sede de Conecta IUA y punto de atención para programas en línea.",
     icon: Laptop
   },
   {
     id: "campus-en-linea",
-    title: "Campus en línea",
+    title: "Conecta IUA - Plantel virtual",
     text: "Estudia desde cualquier lugar con acompañamiento académico y acceso a programas flexibles.",
     icon: World
   }
@@ -83,7 +87,8 @@ const campusDetails: CampusDetail[] = [
     imageAlt: "IUA Campus Chalco",
     visitUrl: "https://reuniones.clientify.com/#/iua/chalco",
     mapUrl: "https://www.google.com/maps/search/?api=1&query=IUA%20Campus%20Chalco%20Carretera%20Chalco-Mixquic%20San%20Mateo%20Huitzilzingo%20Chalco%20Estado%20de%20Mexico",
-    mapEmbed: "https://www.google.com/maps?q=IUA%20Campus%20Chalco%20Carretera%20Chalco-Mixquic%20San%20Mateo%20Huitzilzingo%20Chalco%20Estado%20de%20Mexico&output=embed"
+    mapEmbed: "https://www.google.com/maps?q=IUA%20Campus%20Chalco%20Carretera%20Chalco-Mixquic%20San%20Mateo%20Huitzilzingo%20Chalco%20Estado%20de%20Mexico&output=embed",
+    gallery: Array.from({ length: 6 }, (_, i) => `/recuadros/iua-chalco-recuadro-${String(i + 1).padStart(2, "0")}.webp`)
   },
   {
     id: "campus-reyes",
@@ -99,34 +104,34 @@ const campusDetails: CampusDetail[] = [
     visitUrl: "https://reuniones.clientify.com/#/iua/reyes",
     mapUrl: "https://www.google.com/maps/search/?api=1&query=IUA%20Campus%20Reyes%20Avenida%20Texcoco%2051%20Los%20Reyes%20La%20Paz%20Estado%20de%20Mexico%2056400",
     mapEmbed: "https://www.google.com/maps?q=IUA%20Campus%20Reyes%20Avenida%20Texcoco%2051%20Los%20Reyes%20La%20Paz%20Estado%20de%20Mexico%2056400&output=embed",
-    reverse: true
+    reverse: true,
+    gallery: Array.from({ length: 36 }, (_, i) => `/recuadros/iua-reyes-recuadro-${String(i + 1).padStart(2, "0")}.webp`)
   },
   {
     id: "campus-texcoco",
-    eyebrow: "Centro de enlace",
+    eyebrow: "Plantel",
     title: "IUA Texcoco",
-    subtitle: "Centro de Enlace Texcoco",
+    subtitle: "Plantel Texcoco",
     text: [
-      "IUA Texcoco funciona como un centro de enlace académico enfocado en brindar atención, orientación y acceso a programas de nivel superior y posgrado. Es un punto clave para estudiantes que buscan opciones flexibles, acompañamiento institucional y continuidad académica.",
-      "Además, este centro es sede de Conecta IUA, nuestra modalidad de educación en línea, lo que permite acercar la formación profesional a estudiantes que desean avanzar en sus estudios con mayor flexibilidad."
+      "IUA Texcoco funciona como un plantel académico enfocado en brindar atención, orientación y acceso a programas de nivel superior y posgrado. Es un punto clave para estudiantes que buscan opciones flexibles, acompañamiento institucional y continuidad académica.",
+      "Además, este centro es sede de Conecta IUA - Plantel virtual, lo que permite acercar la formación profesional a estudiantes que desean avanzar en sus estudios con mayor flexibilidad."
     ],
     highlight: {
       title: "También es sede de Conecta IUA",
       text: "Desde Texcoco se fortalece la atención para estudiantes de programas en línea, brindando acompañamiento académico y orientación institucional."
     },
     image: "/banners/biblioteca-banner-recorte-1920x700.webp",
-    imageAlt: "IUA Texcoco Centro de Enlace",
+    imageAlt: "IUA Texcoco Plantel",
     visitUrl: "https://reuniones.clientify.com/#/iua/texcoco",
-    mapUrl: "https://www.google.com/maps/search/?api=1&query=IUA%20Texcoco%20Centro%20de%20Enlace%20Texcoco",
-    mapEmbed: "https://www.google.com/maps?q=IUA%20Texcoco%20Centro%20de%20Enlace%20Texcoco&output=embed"
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=IUA%20Texcoco%20Plantel%20Texcoco",
+    mapEmbed: "https://www.google.com/maps?q=IUA%20Texcoco%20Plantel%20Texcoco&output=embed"
   },
   {
     id: "campus-en-linea",
     eyebrow: "Modalidad flexible",
-    title: "IUA Campus en línea",
-    subtitle: "Educación en línea IUA",
+    title: "Conecta IUA - Plantel virtual",
     text: [
-      "El Campus en línea de IUA permite continuar tus estudios desde cualquier lugar, con una experiencia flexible pensada para estudiantes que necesitan combinar su formación académica con trabajo, familia u otras actividades.",
+      "Conecta IUA - Plantel virtual permite continuar tus estudios desde cualquier lugar, con una experiencia flexible pensada para estudiantes que necesitan combinar su formación académica con trabajo, familia u otras actividades.",
       "Esta modalidad ofrece acompañamiento académico, orientación institucional y acceso a programas diseñados para avanzar con mayor libertad, manteniendo el compromiso formativo de Universidad IUA."
     ],
     highlight: {
@@ -134,7 +139,7 @@ const campusDetails: CampusDetail[] = [
       text: "Recibe asesoría para conocer programas disponibles, requisitos, becas y el proceso de inscripción en línea."
     },
     image: "/banners-edu/educacion en linea.webp",
-    imageAlt: "Educación en línea IUA",
+    imageAlt: "Conecta IUA - Plantel virtual",
     visitUrl: leadFormUrl,
     visitLabel: "Solicitar información",
     reverse: true
@@ -142,10 +147,42 @@ const campusDetails: CampusDetail[] = [
 ];
 
 function CampusDetailSection({ campus }: { campus: CampusDetail }) {
+  const [showAll, setShowAll] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  // Close lightbox on escape key and support arrow keys for navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setLightboxIndex(null);
+      } else if (e.key === "ArrowRight" && lightboxIndex !== null && campus.gallery) {
+        setLightboxIndex((prev) => (prev! + 1) % campus.gallery!.length);
+      } else if (e.key === "ArrowLeft" && lightboxIndex !== null && campus.gallery) {
+        setLightboxIndex((prev) => (prev! - 1 + campus.gallery!.length) % campus.gallery!.length);
+      }
+    };
+    if (lightboxIndex !== null) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxIndex, campus.gallery]);
+
+  // Disable page scroll when lightbox is open
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [lightboxIndex]);
+
   const copy = (
     <div>
       <p className="text-xs font-black uppercase tracking-[0.22em] text-iua-gold">{campus.eyebrow}</p>
-      <h2 className="mt-3 text-3xl font-black tracking-tight text-neutral-950 md:text-5xl">{campus.title}</h2>
+      <h2 className={`mt-3 font-black tracking-tight text-neutral-950 ${campus.id === "campus-en-linea" ? "text-3xl md:text-4xl lg:text-5xl" : "text-3xl md:text-5xl"}`}>{campus.title}</h2>
       {campus.subtitle ? <h3 className="mt-2 text-2xl font-black text-iua-burgundy">{campus.subtitle}</h3> : null}
       <div className="mt-5 space-y-4">
         {campus.text.map((paragraph) => (
@@ -190,6 +227,106 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
     </div>
   );
 
+  const hasGallery = campus.gallery && campus.gallery.length > 0;
+  const visibleImages = hasGallery
+    ? showAll
+      ? campus.gallery!
+      : campus.gallery!.slice(0, 8)
+    : [];
+
+  const gallerySection = hasGallery ? (
+    <div className="mt-16 border-t border-black/5 pt-12">
+      <div className="max-w-2xl mb-8">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-iua-gold">Recorrido Visual</p>
+        <h3 className="mt-2 text-2xl font-black text-neutral-950 md:text-3xl">Conoce las instalaciones</h3>
+        <p className="mt-2 text-sm text-neutral-600">Imágenes reales de nuestro {campus.title}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+        {visibleImages.map((img, idx) => (
+          <button
+            key={idx}
+            onClick={() => setLightboxIndex(idx)}
+            className="group relative aspect-square overflow-hidden rounded-2xl border border-black/5 bg-neutral-100 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-iua-gold/20"
+          >
+            <img
+              src={img}
+              alt={`Instalaciones ${campus.title}`}
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/25 flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <span className="rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-iua-burgundy shadow-md backdrop-blur-xs">Ampliar</span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {campus.gallery!.length > 8 && (
+        <div className="mt-8 text-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-iua-burgundy bg-white px-6 py-3 text-sm font-black text-iua-burgundy transition hover:bg-iua-cream"
+          >
+            {showAll ? "Mostrar menos" : `Mostrar más fotos (+${campus.gallery!.length - 8})`}
+          </button>
+        </div>
+      )}
+    </div>
+  ) : null;
+
+  const lightboxModal = lightboxIndex !== null && campus.gallery ? (
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-md animate-fade-in"
+      onClick={() => setLightboxIndex(null)}
+    >
+      <button
+        onClick={() => setLightboxIndex(null)}
+        className="absolute right-5 top-5 z-55 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 hover:scale-105"
+        aria-label="Cerrar galería"
+      >
+        <X size={24} />
+      </button>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setLightboxIndex((prev) => (prev! - 1 + campus.gallery!.length) % campus.gallery!.length);
+        }}
+        className="absolute left-5 z-55 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 hover:scale-105"
+        aria-label="Imagen anterior"
+      >
+        <ChevronLeft size={24} />
+      </button>
+
+      <div
+        className="relative max-h-[85vh] max-w-[90vw] overflow-hidden rounded-2xl shadow-2xl border border-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={campus.gallery[lightboxIndex].replace("/recuadros/", "/banners/").replace("-recuadro-", "-banner-")}
+          alt={`Instalaciones ${campus.title}`}
+          className="max-h-[85vh] max-w-[90vw] object-contain animate-rise"
+        />
+      </div>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setLightboxIndex((prev) => (prev! + 1) % campus.gallery!.length);
+        }}
+        className="absolute right-5 z-55 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 hover:scale-105"
+        aria-label="Imagen siguiente"
+      >
+        <ChevronRight size={24} />
+      </button>
+
+      <div className="absolute bottom-5 text-sm font-bold text-white/80">
+        {lightboxIndex + 1} de {campus.gallery.length}
+      </div>
+    </div>
+  ) : null;
+
   return (
     <section id={campus.id} className={`px-5 py-16 md:px-6 ${campus.reverse ? "bg-white" : "bg-iua-cream"}`}>
       <div className="mx-auto max-w-7xl">
@@ -197,6 +334,9 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
           {campus.reverse ? media : copy}
           {campus.reverse ? copy : media}
         </div>
+
+        {gallerySection}
+
         {campus.mapEmbed ? (
           <div className="mt-10 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl shadow-neutral-900/10">
             <iframe
@@ -213,6 +353,7 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
           </div>
         ) : null}
       </div>
+      {lightboxModal}
     </section>
   );
 }

@@ -39,5 +39,4 @@ npm run preview
 - Cambiar el WhatsApp demo `525512345678` por el número real.
 - Cambiar correos y teléfonos.
 - Sustituir imágenes externas de Unsplash por assets propios de IUA.
-- Cuando el sitio esté listo para indexar, quitar `noindex, nofollow` de `index.html`.
 - Generar `package-lock.json` localmente después del primer `npm install --ignore-scripts`.

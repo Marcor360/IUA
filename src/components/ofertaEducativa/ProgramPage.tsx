@@ -16,14 +16,60 @@ import InfoSection from "./InfoSection";
 import ProgramHero from "./ProgramHero";
 import "../../styles/ofertaEducativa.css";
 
+const generalProgramKeywords = [
+  "Universidad IUA",
+  "oferta educativa IUA",
+  "carreras IUA",
+  "licenciaturas IUA",
+  "posgrados IUA",
+  "becas IUA",
+  "RVOE SEP",
+  "estudiar en IUA",
+  "campus Chalco",
+  "campus Los Reyes",
+  "campus Texcoco",
+  "Conecta IUA",
+  "Plantel virtual"
+];
+
+type Program = (typeof ofertaEducativa)[number];
+
+function uniqueKeywords(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function buildProgramSeo(program: Program) {
+  const online = program.modalities.includes("En línea");
+  const titleSuffix = online ? "en línea | Universidad IUA" : "en IUA | Universidad IUA";
+  const title = `${program.title} ${titleSuffix}`;
+  const modalityText = program.modalities.join(", ");
+  const campusText = program.campus.join(", ");
+  const description = `${program.title} en Universidad IUA. Estudia en modalidad ${modalityText}, con RVOE, becas disponibles, duración de ${program.duration} y atención en ${campusText}.`;
+  const keywords = uniqueKeywords([
+    program.title,
+    `${program.title} IUA`,
+    `${program.title} con RVOE`,
+    `${program.title} becas`,
+    `${program.level} IUA`,
+    ...program.modalities.map((modality) => `${program.title} ${modality.toLowerCase()}`),
+    ...program.campus.map((campus) => `${program.title} ${campus}`),
+    ...program.planEstudios,
+    ...program.campoLaboral,
+    ...(program.seoKeywords ?? []),
+    ...generalProgramKeywords
+  ]);
+
+  return { title, description, keywords };
+}
+
 export default function ProgramPage({ slug }: { slug: string }) {
   const program = ofertaEducativa.find((item) => item.slug === slug);
+  const seo = program ? buildProgramSeo(program) : null;
 
   usePageSeo({
-    title: program ? `${program.title} | Oferta Educativa IUA` : "Programa no encontrado | Universidad IUA",
-    description: program
-      ? `${program.title}: ${program.shortDescription} Consulta modalidades, campus, duración, plan de estudios y becas disponibles en IUA.`
-      : "El programa solicitado no está disponible en la oferta educativa de Universidad IUA.",
+    title: seo?.title ?? "Programa no encontrado | Universidad IUA",
+    description: seo?.description ?? "El programa solicitado no está disponible en la oferta educativa de Universidad IUA.",
+    keywords: seo?.keywords ?? generalProgramKeywords,
     path: program ? `/oferta/${program.slug}` : "/oferta",
     image: "/banners/educacion-2-banner-recorte-1920x700.webp",
     type: "article"
@@ -41,17 +87,26 @@ export default function ProgramPage({ slug }: { slug: string }) {
       "@context": "https://schema.org",
       "@type": "Course",
       name: program.title,
-      description: program.shortDescription,
+      description: seo?.description ?? program.shortDescription,
       url: `${SITE_URL}/oferta/${program.slug}`,
+      inLanguage: "es-MX",
+      keywords: seo?.keywords.join(", "),
       provider: {
         "@type": "CollegeOrUniversity",
         name: "Universidad IUA",
         url: SITE_URL
       },
-      educationalCredentialAwarded: program.level,
+      educationalLevel: program.level,
+      educationalCredentialAwarded: program.title,
       timeRequired: program.duration,
       courseMode: program.modalities,
-      areaServed: program.campus
+      areaServed: program.campus,
+      hasCourseInstance: program.modalities.map((modality) => ({
+        "@type": "CourseInstance",
+        courseMode: modality,
+        courseWorkload: program.duration,
+        location: program.campus.join(", ")
+      }))
     });
     document.head.appendChild(script);
 

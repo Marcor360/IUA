@@ -149,7 +149,7 @@ export default function AvisoDePrivacidad() {
 
       <section className="px-5 py-12 md:px-6 md:py-16">
         <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.72fr_1.28fr]">
-          <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
+          <aside className="min-w-0 space-y-4 lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
               <BuildingBank size={34} className="text-iua-gold" />
               <h2 className="mt-3 text-xl font-black text-neutral-950">Responsable</h2>
@@ -186,7 +186,7 @@ export default function AvisoDePrivacidad() {
             </div>
           </aside>
 
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
             <Section eyebrow="Finalidades" title="Para que fines utilizaremos sus datos personales">
               <p>
                 Los datos personales que recabamos de usted se utilizan para las finalidades necesarias
@@ -219,8 +219,8 @@ export default function AvisoDePrivacidad() {
             </Section>
 
             <Section eyebrow="Transferencias" title="Con quien compartimos su informacion personal">
-              <div className="overflow-hidden rounded-2xl border border-black/10">
-                <table className="w-full text-left text-sm">
+              <div className="overflow-x-auto rounded-2xl border border-black/10">
+                <table className="w-full min-w-[500px] text-left text-sm">
                   <thead className="bg-iua-burgundy text-white">
                     <tr>
                       <th className="px-4 py-3 font-black">Destinatario</th>

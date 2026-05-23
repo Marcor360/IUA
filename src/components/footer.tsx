@@ -17,7 +17,7 @@ const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
 const admissionsEmail = "admisiones@iua.edu.mx";
 
 const socialLinks = [
-  { label: "Facebook", icon: BrandFacebook, href: "https://www.facebook.com/IUA.Mexico" },
+  { label: "Facebook", icon: BrandFacebook, href: "https://www.facebook.com/IUA.Official" },
   { label: "Instagram", icon: BrandInstagram, href: "https://www.instagram.com/iua.oficial/" },
   { label: "YouTube", icon: BrandYoutube, href: "https://www.youtube.com/channel/UCVHsmdbrL5AQ__LVhwJrwqQ" },
   { label: "TikTok", icon: BrandTiktok, href: "https://tiktok.com/@iua_oficial" },
@@ -47,13 +47,13 @@ export default function Footer() {
 
   return (
     <footer className="iua-footer relative z-50 bg-iua-dark px-5 pb-28 pt-16 text-white md:px-6 md:pb-16 md:pt-20">
-      <div className="iua-footer__grid mx-auto max-w-7xl pt-6 md:pt-8">
-        <div className="space-y-6">
-          <Logo inverse />
+      <div className="iua-footer__grid mx-auto max-w-7xl pt-6 md:pt-8 text-center md:text-left">
+        <div className="flex flex-col items-center md:items-start space-y-6">
+          <Logo inverse footer />
           <p className="max-w-xs text-sm leading-6 text-white/70">
             Formamos lideres que transforman con programas escolarizados y en linea para cada etapa academica.
           </p>
-          <div className="flex gap-3">
+          <div className="flex gap-3 justify-center md:justify-start w-full">
             {socialLinks.map(({ label, icon: Icon, href }) => (
               <a
                 key={label}
@@ -86,18 +86,18 @@ export default function Footer() {
           <h4 className="mb-5 text-sm font-black uppercase tracking-[0.16em] text-iua-gold">Contacto</h4>
           <ul className="space-y-3.5 text-sm text-white/75">
             <li>
-              <a href={`mailto:${admissionsEmail}`} className="flex items-center gap-2 transition hover:text-iua-gold">
+              <a href={`mailto:${admissionsEmail}`} className="flex items-center justify-center md:justify-start gap-2 transition hover:text-iua-gold">
                 <Mail size={17} className="shrink-0" /> {admissionsEmail}
               </a>
             </li>
             <li>
-              <a href={whatsappUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 transition hover:text-iua-gold">
+              <a href={whatsappUrl} target="_blank" rel="noreferrer" className="flex items-center justify-center md:justify-start gap-2 transition hover:text-iua-gold">
                 <BrandWhatsapp size={17} className="shrink-0" /> WhatsApp admisiones
               </a>
             </li>
             {campusContacts.map((item) => (
               <li key={`${item.campus}-${item.phone}`}>
-                <a href={item.href} className="flex items-center gap-2 transition hover:text-iua-gold">
+                <a href={item.href} className="flex items-center justify-center md:justify-start gap-2 transition hover:text-iua-gold">
                   <Phone size={17} className="shrink-0" />
                   <span>{item.campus}: {item.phone}</span>
                 </a>
@@ -107,29 +107,29 @@ export default function Footer() {
         </div>
 
         <div className="iua-footer__rvoe rounded-2xl border border-white/10 bg-white/5 p-6 md:p-7">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row items-center gap-3">
             <ShieldCheck size={34} className="shrink-0 text-iua-gold" />
             <div>
-              <h4 className="font-black">RVOE oficial</h4>
+              <h4 className="font-black mt-2 md:mt-0">RVOE oficial</h4>
               <p className="mt-1 text-sm leading-6 text-white/70">Programas con reconocimiento oficial.</p>
             </div>
           </div>
           <div className="mt-6 space-y-4 border-t border-white/10 pt-5 text-sm text-white/75">
-            <p className="flex gap-2">
+            <p className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-2">
               <MapPin size={17} className="mt-0.5 shrink-0 text-iua-gold" />
-              Campus Chalco, Los Reyes y Texcoco.
+              <span>Campus Chalco, Los Reyes y Texcoco.</span>
             </p>
-            <p className="flex gap-2">
+            <p className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-2">
               <Calendar size={17} className="mt-0.5 shrink-0 text-iua-gold" />
-              Atencion: Lun. a Vie. 09:00 a 16:00, Sab. 09:00 a 13:00.
+              <span>Atencion: Lun. a Vie. 09:00 a 16:00, Sab. 09:00 a 13:00.</span>
             </p>
           </div>
         </div>
       </div>
 
-      <div className="iua-footer__bottom mx-auto mt-12 max-w-7xl border-t border-white/10 pt-6 text-xs text-white/55">
+      <div className="iua-footer__bottom mx-auto mt-12 max-w-7xl border-t border-white/10 pt-6 text-xs text-white/55 flex flex-col items-center text-center md:flex-row md:text-left md:justify-between">
         <p>(c) 2026 Universidad IUA. Todos los derechos reservados.</p>
-        <div className="iua-footer__legal-links">
+        <div className="iua-footer__legal-links justify-center md:justify-end mt-4 md:mt-0">
           <Link to="/aviso-de-privacidad" className="transition hover:text-iua-gold">
             Aviso de privacidad
           </Link>

@@ -8,7 +8,16 @@ export default function ProgramHero({ program }: { program: ProgramaOferta }) {
   const Icon = program.icon;
 
   return (
-    <section className="program-hero">
+    <section
+      className="program-hero"
+      style={
+        program.banner
+          ? {
+              backgroundImage: `linear-gradient(135deg, rgb(78 7 16 / 0.94), rgb(122 14 26 / 0.84)), url("${program.banner}")`
+            }
+          : undefined
+      }
+    >
       <div className="program-hero__inner">
         <div>
           <p className="program-hero__eyebrow">{program.level}</p>

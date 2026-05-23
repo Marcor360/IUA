@@ -52,7 +52,7 @@ const campuses = [
 ];
 
 const socialLinks = [
-  { label: "Facebook", href: "https://www.facebook.com/IUA.Mexico", icon: IconBrandFacebook },
+  { label: "Facebook", href: "https://www.facebook.com/IUA.Official", icon: IconBrandFacebook },
   { label: "Instagram", href: "https://www.instagram.com/iua.oficial/", icon: IconBrandInstagram },
   { label: "YouTube", href: "https://www.youtube.com/@iuaoficial", icon: IconBrandYoutube },
   { label: "TikTok", href: "https://www.tiktok.com/@iua_oficial", icon: IconBrandTiktok }

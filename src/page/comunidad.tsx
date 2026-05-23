@@ -1,6 +1,5 @@
 import { type ComponentType } from "react";
 import {
-  IconAlertTriangle as AlertTriangle,
   IconArrowRight as ArrowRight,
   IconBook as Book,
   IconBrandWhatsapp as BrandWhatsapp,
@@ -33,11 +32,6 @@ type Platform = {
   points?: string[];
   text?: string;
   label: string;
-};
-
-type Step = {
-  title: string;
-  text: string;
 };
 
 const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
@@ -126,15 +120,6 @@ const regulations: LinkCard[] = [
   }
 ];
 
-const titleSteps: Step[] = [
-  { title: "Acude a Servicios Escolares", text: "Solicita información sobre las opciones de titulación y los requisitos específicos de cada modalidad." },
-  { title: "Elige tu modalidad", text: "Selecciona la opción de titulación que corresponda a tu perfil académico y reúne los requisitos." },
-  { title: "Solicita el Formato Único de Titulación", text: "Una vez validada tu modalidad, Servicios Escolares te entregará el formato correspondiente." },
-  { title: "Entrega documentación completa", text: "Presenta CURP, dictamen probatorio, fotografías y demás documentos solicitados." },
-  { title: "Recibe fecha de examen o toma de protesta", text: "Servicios Escolares notificará la fecha y hora para continuar formalmente con el proceso." },
-  { title: "Concluye el trámite", text: "Después de aprobar o tomar protesta, se iniciará el trámite de título, diploma o grado." }
-];
-
 const procedures: LinkCard[] = [
   {
     title: "Inscripción en línea",
@@ -214,8 +199,8 @@ function ExternalCard({ item }: { item: LinkCard }) {
 
 export default function Comunidad() {
   usePageSeo({
-    title: "Comunidad IUA | Plataformas, Reglamentos y Titulación",
-    description: "Accede a plataformas académicas, reglamentos, titulación, servicio social, pagos, becas y trámites para la comunidad IUA.",
+    title: "Comunidad IUA | Plataformas y Reglamentos",
+    description: "Accede a plataformas académicas, reglamentos, servicio social, pagos, becas y trámites para la comunidad IUA.",
     path: "/comunidad",
     image: "/banners/biblioteca-banner-recorte-1920x700.webp"
   });
@@ -242,9 +227,6 @@ export default function Comunidad() {
               Consulta tus plataformas académicas, reglamentos escolares, información de titulación, servicio social, pagos, becas y trámites institucionales en un solo lugar.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a href="#titulacion" className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
-                Ver proceso de titulación <ArrowRight size={18} />
-              </a>
               <a href="#reglamentos" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
                 Consultar reglamentos <FileText size={18} />
               </a>
@@ -296,53 +278,7 @@ export default function Comunidad() {
               <ExternalCard key={item.title} item={item} />
             ))}
           </div>
-          <div className="mt-6 rounded-2xl border border-iua-gold/30 bg-iua-cream p-5 text-sm leading-7 text-neutral-700">
-            <p className="font-bold text-iua-burgundy">Nota de revisión interna:</p>
-            <p>Bachillerato y licenciaturas apuntan al mismo PDF. Maestría apunta al reglamento de titulación de licenciatura y maestría; conviene validarlo antes de publicar cambios definitivos.</p>
-          </div>
-        </div>
-      </section>
 
-      <section id="titulacion" className="bg-neutral-50 px-5 py-16 scroll-mt-28 md:px-6">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading
-            eyebrow="Egreso y trámite profesional"
-            title="Titulación IUA"
-            text="Inicia tu proceso de titulación cuando hayas cubierto el 100% de créditos y el servicio social. Servicios Escolares te orientará sobre modalidades, requisitos y documentación."
-          />
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {titleSteps.map((step, index) => (
-              <article key={step.title} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-iua-burgundy text-sm font-black text-white">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-5 text-xl font-black leading-tight text-neutral-950">{step.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-neutral-600">{step.text}</p>
-              </article>
-            ))}
-          </div>
-          <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_1fr]">
-            <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-              <h3 className="text-xl font-black text-neutral-950">Documentación base para titulación</h3>
-              <ul className="mt-4 space-y-2">
-                {["Copia de CURP amplificada al 200%.", "Dictamen probatorio de modalidad de titulación autorizada.", "Fotografías adheribles según instructivo vigente.", "Formato Único de Titulación con sellos correspondientes."].map((item) => (
-                  <li key={item} className="flex gap-2 text-sm leading-6 text-neutral-600">
-                    <Checklist size={18} className="mt-0.5 shrink-0 text-iua-gold" /> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-2xl border-l-4 border-iua-gold bg-white p-6 shadow-sm ring-1 ring-black/5">
-              <AlertTriangle size={30} className="text-iua-gold" />
-              <h3 className="mt-3 text-xl font-black text-neutral-950">Importante</h3>
-              <p className="mt-2 text-sm leading-7 text-neutral-600">
-                La documentación debe entregarse completa. Si falta algún requisito, no se asignará fecha para examen o toma de protesta. Para recoger título, diploma o grado, deberás presentarte con identificación oficial.
-              </p>
-            </div>
-          </div>
-          <a href="https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoTitulacion.pdf" target="_blank" rel="noreferrer" className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
-            Consultar Reglamento de Titulación <ExternalLink size={17} />
-          </a>
         </div>
       </section>
 

@@ -12,10 +12,12 @@ import {
 type NavItem = {
   label: string;
   to: string;
+  external?: boolean;
 };
 
 type LogoProps = {
   inverse?: boolean;
+  footer?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -23,7 +25,8 @@ const navItems: NavItem[] = [
   { label: "Oferta", to: "/oferta" },
   { label: "Campus", to: "/campus" },
   { label: "Comunidad", to: "/comunidad" },
-  { label: "Contacto", to: "/contacto" }
+  { label: "Contacto", to: "/contacto" },
+  { label: "Blog", to: "https://blog.iua.edu.mx/", external: true }
 ];
 
 const communityLinks = [
@@ -37,21 +40,21 @@ const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
 const leadFormUrl = "https://apps.clientify.net/formbuilderembed/simpleembed/#/success/twostepformpopup/171625/45670";
 const admissionsEmail = "admisiones@iua.edu.mx";
 
-export function Logo({ inverse = false }: LogoProps) {
+export function Logo({ inverse = false, footer = false }: LogoProps) {
   return (
-    <Link to="/" className="flex min-w-0 items-center gap-3 md:gap-4" aria-label="Ir al inicio">
+    <Link to="/" className={`flex min-w-0 items-center gap-3 md:gap-4 ${footer ? "flex-col md:flex-row text-center md:text-left" : ""}`} aria-label="Ir al inicio">
       <img
         src="/Logo-iua.png"
         alt="Universidad IUA"
         className={`shrink-0 object-contain ${
-          inverse ? "h-14 w-14 md:h-16 md:w-16" : "h-16 w-16 md:h-20 md:w-20 lg:h-22 lg:w-22"
+          footer ? "h-28 w-28 md:h-16 md:w-16" : (inverse ? "h-14 w-14 md:h-16 md:w-16" : "h-16 w-16 md:h-20 md:w-20 lg:h-22 lg:w-22")
         }`}
       />
       <div className="min-w-0 leading-tight">
-        <p className={`text-lg font-black tracking-tight ${inverse ? "text-white md:text-xl" : "text-iua-burgundy md:text-xl"}`}>
+        <p className={`font-black tracking-tight ${footer ? "text-2xl md:text-xl" : "text-lg md:text-xl"} ${inverse ? "text-white" : "text-iua-burgundy"}`}>
           Universidad IUA
         </p>
-        <p className={`mt-1 max-w-[14rem] font-medium md:max-w-none ${inverse ? "text-xs text-white/60" : "text-sm text-neutral-500"}`}>
+        <p className={`mt-1 font-medium ${footer ? "text-sm max-w-xs" : "text-xs md:text-sm max-w-[14rem] md:max-w-none"} ${inverse ? "text-white/60" : "text-neutral-500"}`}>
           Formamos lideres que transforman
         </p>
       </div>
@@ -131,7 +134,8 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className={`site-header ${isHeaderVisible ? "site-header--visible" : "site-header--hidden"}`}>
+    <>
+      <header className={`site-header ${isHeaderVisible ? "site-header--visible" : "site-header--hidden"}`}>
       <div className="hidden bg-iua-burgundy text-white md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-xs font-semibold">
           <div className="flex items-center gap-5">
@@ -200,6 +204,16 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
+            ) : item.external ? (
+              <a
+                key={item.to}
+                href={item.to}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full px-3 py-2 text-sm font-bold text-neutral-700 transition hover:bg-neutral-100 hover:text-iua-burgundy"
+              >
+                {item.label}
+              </a>
             ) : (
               <NavLink
                 key={item.to}
@@ -236,12 +250,37 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+    </header>
 
-      <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"}`}>
-        <nav className="mx-5 mb-4 animate-rise rounded-2xl border border-black/5 bg-white p-2 shadow-xl shadow-neutral-900/10">
+      {/* Overlay */}
+      <div
+        className={`fixed inset-0 z-[90] bg-black/50 transition-opacity duration-300 md:hidden ${
+          isMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 left-0 z-[100] flex w-[50vw] flex-col bg-white shadow-2xl transition-transform duration-300 md:hidden ${
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-neutral-100 p-4">
+          <span className="text-sm font-black text-iua-burgundy">Menu</span>
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 hover:text-iua-burgundy"
+            aria-label="Cerrar menu"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <nav className="flex-1 overflow-y-auto p-3">
           {navItems.map((item) =>
             item.label === "Comunidad" ? (
-              <div key={item.to}>
+              <div key={item.to} className="mb-1">
                 <NavLink
                   to={item.to}
                   onClick={() => setIsMenuOpen(false)}
@@ -266,13 +305,24 @@ export default function Navbar() {
                   ))}
                 </div>
               </div>
+            ) : item.external ? (
+              <a
+                key={item.to}
+                href={item.to}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+                className="mb-1 block rounded-xl px-4 py-3 text-sm font-bold text-neutral-700 transition hover:bg-neutral-50"
+              >
+                {item.label}
+              </a>
             ) : (
               <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={() => setIsMenuOpen(false)}
                 className={({ isActive }) =>
-                  `block rounded-xl px-4 py-3 text-sm font-bold transition ${
+                  `mb-1 block rounded-xl px-4 py-3 text-sm font-bold transition ${
                     isActive ? "bg-iua-cream text-iua-burgundy" : "text-neutral-700 hover:bg-neutral-50"
                   }`
                 }
@@ -281,17 +331,19 @@ export default function Navbar() {
               </NavLink>
             )
           )}
-          <a
-            onClick={() => setIsMenuOpen(false)}
-            href={leadFormUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-4 py-3 text-sm font-black text-white"
-          >
-            Pedir informacion <ArrowRight size={16} />
-          </a>
+          <div className="mt-4 px-2">
+            <a
+              onClick={() => setIsMenuOpen(false)}
+              href={leadFormUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-4 py-3 text-sm font-black text-white transition hover:bg-iua-dark"
+            >
+              Pedir informacion <ArrowRight size={16} />
+            </a>
+          </div>
         </nav>
       </div>
-    </header>
+    </>
   );
 }

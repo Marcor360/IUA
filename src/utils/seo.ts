@@ -7,6 +7,7 @@ export const DEFAULT_OG_IMAGE = `${SITE_URL}/banners/alumnos-1-banner-recorte-19
 type SeoConfig = {
   title: string;
   description: string;
+  keywords?: string[];
   path?: string;
   image?: string;
   type?: "website" | "article";
@@ -54,13 +55,18 @@ function ensureCanonical(url: string) {
   element.setAttribute("href", url);
 }
 
-export function setPageSeo({ title, description, path = "/", image = DEFAULT_OG_IMAGE, type = "website" }: SeoConfig) {
+export function setPageSeo({ title, description, keywords = [], path = "/", image = DEFAULT_OG_IMAGE, type = "website" }: SeoConfig) {
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
 
   document.title = title;
   setMeta('meta[name="description"]', "content", description);
   setMeta('meta[name="robots"]', "content", "index, follow");
+  if (keywords.length > 0) {
+    ensureMetaByName("keywords", keywords.join(", "));
+  } else {
+    document.head.querySelector<HTMLMetaElement>('meta[name="keywords"]')?.remove();
+  }
   ensureCanonical(url);
 
   ensureMetaByProperty("og:locale", "es_MX");
@@ -79,7 +85,9 @@ export function setPageSeo({ title, description, path = "/", image = DEFAULT_OG_
 }
 
 export function usePageSeo(config: SeoConfig) {
+  const keywords = config.keywords?.join("|") ?? "";
+
   useEffect(() => {
     setPageSeo(config);
-  }, [config.title, config.description, config.path, config.image, config.type]);
+  }, [config.title, config.description, keywords, config.path, config.image, config.type]);
 }

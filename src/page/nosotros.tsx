@@ -64,9 +64,9 @@ const campuses: Campus[] = [
     img: "/recuadros/biblioteca-recuadro-recorte-900x900.webp"
   },
   {
-    name: "Educación en línea",
+    name: "Conecta IUA - Plantel virtual",
     text: "Una alternativa flexible para quienes buscan continuar sus estudios desde cualquier lugar.",
-    img: "/public/banners-edu/educacion en linea.webp"
+    img: "/banners-edu/educacion en linea.webp"
   }
 ];
 
