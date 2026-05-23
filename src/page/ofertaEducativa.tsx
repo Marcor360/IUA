@@ -19,8 +19,9 @@ export default function OfertaEducativa() {
   const [search, setSearch] = useState("");
 
   usePageSeo({
-    title: "Oferta educativa IUA | Programas académicos",
-    description: "Conoce la oferta educativa IUA: secundaria, bachillerato, licenciaturas, maestrías y doctorado en modalidad escolarizada, ejecutiva o en línea según disponibilidad.",
+    title: "Oferta Educativa IUA | Licenciaturas, Maestrías, Doctorado y Preparatoria",
+    description: "Conoce la amplia oferta educativa de Universidad IUA. Ofrecemos secundaria, preparatoria, licenciaturas, maestrías y doctorado en modalidades escolarizada, ejecutiva (sábados) y en línea.",
+    keywords: ["oferta educativa iua", "carreras universitarias", "licenciaturas iua", "estudiar maestria iua", "universidades en chalco y los reyes", "carreras en linea", "licenciaturas ejecutivas", "doctorado en derecho", "bachillerato general", "licenciaturas con rvoe"],
     path: "/oferta",
     image: "/banners/educacion-2-banner-recorte-1920x700.webp"
   });

@@ -381,8 +381,9 @@ function FinalCTA() {
 
 export default function HomePage() {
   usePageSeo({
-    title: "Universidad IUA | Inscripciones abiertas",
-    description: "Estudia en Universidad IUA. Secundaria, bachillerato, licenciaturas, maestrías y doctorado con becas disponibles, campus cercanos y modalidad en línea.",
+    title: "Universidad IUA | Preparatoria, Licenciaturas, Maestrías y Doctorados",
+    description: "Estudia en Universidad IUA. Secundaria, preparatoria, licenciaturas ejecutivas y en línea, maestrías y doctorado. Campus en Chalco y Los Reyes con becas disponibles.",
+    keywords: ["universidad en chalco", "universidad en los reyes", "universidad iua", "licenciaturas en linea", "preparatoria en chalco", "secundaria iua", "maestrias en linea", "universidad ejecutiva", "universidades privadas estado de mexico", "estudiar sabados", "becas universitarias"],
     path: "/",
     image: "/banners/alumnos-1-banner-recorte-1920x700.webp"
   });

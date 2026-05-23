@@ -199,8 +199,9 @@ function ExternalCard({ item }: { item: LinkCard }) {
 
 export default function Comunidad() {
   usePageSeo({
-    title: "Comunidad IUA | Plataformas y Reglamentos",
-    description: "Accede a plataformas académicas, reglamentos, servicio social, pagos, becas y trámites para la comunidad IUA.",
+    title: "Comunidad IUA | Plataformas, Reglamentos y Trámites",
+    description: "Acceso para alumnos y docentes de Universidad IUA. Ingresa a plataformas académicas, consulta reglamentos escolares, opciones de titulación, servicio social, biblioteca virtual y trámites en línea.",
+    keywords: ["comunidad iua", "plataforma alumnos iua", "biblioteca virtual iua", "reglamentos escolares iua", "titulacion iua", "servicio social iua", "correo institucional iua", "tramites universidad iua", "estudiantes iua"],
     path: "/comunidad",
     image: "/banners/biblioteca-banner-recorte-1920x700.webp"
   });

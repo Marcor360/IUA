@@ -360,8 +360,9 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
 
 export default function Campus() {
   usePageSeo({
-    title: "Campus IUA | Chalco, Reyes, Texcoco y en línea",
-    description: "Conoce los campus IUA en Chalco, Reyes, Texcoco y la modalidad en línea. Agenda una visita y recibe orientación sobre programas, becas e inscripción.",
+    title: "Campus IUA | Universidades en Chalco, Los Reyes, Texcoco",
+    description: "Conoce los campus de Universidad IUA ubicados en Chalco, Los Reyes y Texcoco. Descubre nuestras instalaciones, laboratorios, aulas y modalidad en línea. ¡Agenda tu visita hoy!",
+    keywords: ["universidad en chalco", "universidad en los reyes la paz", "universidad en texcoco", "campus iua", "instalaciones iua", "universidades estado de mexico", "estudiar en chalco", "estudiar en los reyes"],
     path: "/campus",
     image: "/banners/patio-1-banner-recorte-1920x700.webp"
   });
