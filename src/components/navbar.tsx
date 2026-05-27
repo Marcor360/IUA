@@ -8,6 +8,7 @@ import {
   IconMenu2 as Menu,
   IconX as X
 } from "@tabler/icons-react";
+import { useContactModal } from "../context/ContactModalContext";
 
 type NavItem = {
   label: string;
@@ -37,7 +38,6 @@ const communityLinks = [
 ];
 
 const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
-const leadFormUrl = "https://apps.clientify.net/formbuilderembed/simpleembed/#/success/twostepformpopup/171625/45670";
 const admissionsEmail = "admisiones@iua.edu.mx";
 
 export function Logo({ inverse = false, footer = false }: LogoProps) {
@@ -63,6 +63,7 @@ export function Logo({ inverse = false, footer = false }: LogoProps) {
 }
 
 export default function Navbar() {
+  const { openContactModal } = useContactModal();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
@@ -232,14 +233,12 @@ export default function Navbar() {
           )}
         </nav>
         <div className="flex items-center gap-3">
-          <a
-            href={leadFormUrl}
-            target="_blank"
-            rel="noreferrer"
+          <button
+            onClick={openContactModal}
             className="hidden rounded-xl bg-iua-burgundy px-5 py-3 text-sm font-bold text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark md:inline-flex md:items-center md:gap-2"
           >
             Pedir informacion <ArrowRight size={16} />
-          </a>
+          </button>
           <button
             className="rounded-xl border border-neutral-200 bg-white p-3 text-iua-burgundy transition hover:border-iua-gold/60 hover:bg-iua-cream md:hidden"
             aria-label={isMenuOpen ? "Cerrar menu" : "Abrir menu"}
@@ -332,15 +331,15 @@ export default function Navbar() {
             )
           )}
           <div className="mt-4 px-2">
-            <a
-              onClick={() => setIsMenuOpen(false)}
-              href={leadFormUrl}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                openContactModal();
+              }}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-4 py-3 text-sm font-black text-white transition hover:bg-iua-dark"
             >
               Pedir informacion <ArrowRight size={16} />
-            </a>
+            </button>
           </div>
         </nav>
       </div>

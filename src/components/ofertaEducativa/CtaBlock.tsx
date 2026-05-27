@@ -1,9 +1,10 @@
 import { IconBrandWhatsapp, IconFileText } from "@tabler/icons-react";
+import { useContactModal } from "../../context/ContactModalContext";
 
 const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
-const leadFormUrl = "https://apps.clientify.net/formbuilderembed/simpleembed/#/success/twostepformpopup/171625/45670";
 
 export default function CtaBlock() {
+  const { openContactModal } = useContactModal();
   return (
     <section className="program-cta">
       <div>
@@ -17,9 +18,9 @@ export default function CtaBlock() {
         <a href={whatsappUrl} target="_blank" rel="noreferrer" className="oferta-button oferta-button--light">
           Solicitar información por WhatsApp <IconBrandWhatsapp size={18} />
         </a>
-        <a href={leadFormUrl} target="_blank" rel="noreferrer" className="oferta-button oferta-button--outline-light">
+        <button onClick={openContactModal} className="oferta-button oferta-button--outline-light">
           Ver plan de estudios <IconFileText size={18} />
-        </a>
+        </button>
       </div>
     </section>
   );

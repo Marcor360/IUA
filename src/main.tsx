@@ -55,9 +55,12 @@ function LoadingSpinner() {
   );
 }
 
+import { ContactModalProvider } from "./context/ContactModalContext";
+
 function App() {
   return (
-    <BrowserRouter>
+    <ContactModalProvider>
+      <BrowserRouter>
       <ScrollToTop />
       <Navbar />
       <Suspense fallback={<LoadingSpinner />}>
@@ -90,6 +93,7 @@ function App() {
       <BotonWats />
       <CookieConsent />
     </BrowserRouter>
+    </ContactModalProvider>
   );
 }
 

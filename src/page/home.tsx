@@ -28,6 +28,7 @@ import {
   IconWallet as Wallet
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
+import { useContactModal } from "../context/ContactModalContext";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
@@ -108,6 +109,7 @@ const homeCampusCards: Campus[] = [
 ];
 
 function LeadForm() {
+  const { openContactModal } = useContactModal();
   return (
     <div id="formulario" className="animate-rise rounded-2xl bg-white p-5 shadow-2xl shadow-iua-dark/25 ring-1 ring-black/5 md:p-6">
       <div className="rounded-2xl bg-iua-cream p-4">
@@ -117,14 +119,12 @@ function LeadForm() {
         <h3 className="text-2xl font-black tracking-tight text-iua-burgundy">Recibe tu plan de inscripcion</h3>
         <p className="mt-1 text-sm leading-6 text-neutral-600">Un asesor te contacta para becas, campus y programa ideal.</p>
       </div>
-      <a
-        href={leadFormUrl}
-        target="_blank"
-        rel="noreferrer"
+      <button
+        onClick={openContactModal}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-5 py-4 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark focus:outline-none focus:ring-4 focus:ring-iua-gold/20"
       >
         Quiero que me contacten <ArrowRight size={18} />
-      </a>
+      </button>
     </div>
   );
 }
@@ -146,6 +146,7 @@ function HeroProofCards() {
 }
 
 function Hero() {
+  const { openContactModal } = useContactModal();
   return (
     <section className="relative overflow-hidden bg-iua-dark">
       <div className="absolute inset-0 bg-iua-dark">
@@ -170,9 +171,9 @@ function Hero() {
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <a href={leadFormUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
+            <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
               Solicitar información <ArrowRight size={18} />
-            </a>
+            </button>
             <a href={whatsappUrl} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
               <BrandWhatsapp size={18} /> Hablar por WhatsApp
             </a>
@@ -243,6 +244,7 @@ function BenefitsSection() {
 }
 
 function ModalitiesSection() {
+  const { openContactModal } = useContactModal();
   return (
     <section id="oferta" className="bg-iua-cream px-5 py-16 md:px-6">
       <div className="mx-auto max-w-7xl">
@@ -251,9 +253,9 @@ function ModalitiesSection() {
             <p className="text-xs font-black uppercase tracking-[0.22em] text-iua-gold">Oferta académica</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-neutral-950 md:text-4xl">Elige cómo quieres avanzar</h2>
           </div>
-          <a href={leadFormUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
+          <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
             Pedir plan de estudios <ArrowRight size={17} />
-          </a>
+          </button>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
@@ -284,6 +286,7 @@ function ModalitiesSection() {
 }
 
 function ScholarshipCTA() {
+  const { openContactModal } = useContactModal();
   return (
     <section className="bg-white px-5 py-14 md:px-6">
       <div className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl bg-iua-dark text-white shadow-2xl shadow-iua-burgundy/20">
@@ -308,7 +311,7 @@ function ScholarshipCTA() {
                 <p className="text-sm font-black leading-6">{item}</p>
               </div>
             ))}
-            <a href={leadFormUrl} target="_blank" rel="noreferrer" className="sm:col-span-3 mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
+            <a href="https://apps.clientify.net/formbuilderembed/simpleembed/#/forms/embedform/178777/45670" target="_blank" rel="noreferrer" className="sm:col-span-3 mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
               Solicitar mi beca <ArrowRight size={18} />
             </a>
           </div>
@@ -360,6 +363,7 @@ function CampusTeaser() {
 }
 
 function FinalCTA() {
+  const { openContactModal } = useContactModal();
   return (
     <section className="px-5 pb-24 pt-4 md:px-6 md:pb-28 md:pt-6">
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-2xl bg-iua-cream p-8 shadow-sm ring-1 ring-black/5 sm:p-10 md:flex-row md:items-center md:p-12">
@@ -371,7 +375,7 @@ function FinalCTA() {
           </div>
         </div>
         <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-          <a href={leadFormUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-7 py-4 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:bg-iua-dark">Pedir información <ArrowRight size={17} /></a>
+          <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-7 py-4 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:bg-iua-dark">Pedir información <ArrowRight size={17} /></button>
           <a href={whatsappUrl} className="inline-flex items-center justify-center gap-2 rounded-xl border border-iua-burgundy bg-white px-7 py-4 text-sm font-black text-iua-burgundy transition hover:bg-white/70"><BrandWhatsapp size={17} /> WhatsApp</a>
         </div>
       </div>

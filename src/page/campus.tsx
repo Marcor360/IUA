@@ -13,6 +13,7 @@ import {
   IconX as X
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
+import { useContactModal } from "../context/ContactModalContext";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
@@ -147,6 +148,7 @@ const campusDetails: CampusDetail[] = [
 ];
 
 function CampusDetailSection({ campus }: { campus: CampusDetail }) {
+  const { openContactModal } = useContactModal();
   const [showAll, setShowAll] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -209,9 +211,15 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
       ) : null}
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-        <a href={campus.visitUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
-          {campus.visitLabel ?? "Agendar visita"} <Calendar size={17} />
-        </a>
+        {campus.visitUrl === leadFormUrl ? (
+          <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
+            {campus.visitLabel ?? "Agendar visita"} <Calendar size={17} />
+          </button>
+        ) : (
+          <a href={campus.visitUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
+            {campus.visitLabel ?? "Agendar visita"} <Calendar size={17} />
+          </a>
+        )}
         {campus.mapUrl ? (
           <a href={campus.mapUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl border border-iua-burgundy bg-white px-6 py-3 text-sm font-black text-iua-burgundy transition hover:bg-iua-cream">
             Abrir en Google Maps <ExternalLink size={17} />
@@ -359,6 +367,7 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
 }
 
 export default function Campus() {
+  const { openContactModal } = useContactModal();
   usePageSeo({
     title: "Campus IUA | Universidades en Chalco, Los Reyes, Texcoco",
     description: "Conoce los campus de Universidad IUA ubicados en Chalco, Los Reyes y Texcoco. Descubre nuestras instalaciones, laboratorios, aulas y modalidad en línea. ¡Agenda tu visita hoy!",
@@ -431,10 +440,17 @@ export default function Campus() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             {campusDetails.map((campus) => (
-              <a key={campus.id} href={campus.visitUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
-                {campus.id === "campus-chalco" ? "Chalco" : campus.id === "campus-reyes" ? "Reyes" : campus.id === "campus-texcoco" ? "Texcoco" : "En línea"}
-                <ExternalLink size={17} />
-              </a>
+              campus.visitUrl === leadFormUrl ? (
+                <button key={campus.id} onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
+                  {campus.id === "campus-chalco" ? "Chalco" : campus.id === "campus-reyes" ? "Reyes" : campus.id === "campus-texcoco" ? "Texcoco" : "En línea"}
+                  <ExternalLink size={17} />
+                </button>
+              ) : (
+                <a key={campus.id} href={campus.visitUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
+                  {campus.id === "campus-chalco" ? "Chalco" : campus.id === "campus-reyes" ? "Reyes" : campus.id === "campus-texcoco" ? "Texcoco" : "En línea"}
+                  <ExternalLink size={17} />
+                </a>
+              )
             ))}
           </div>
         </div>

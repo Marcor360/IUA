@@ -1,10 +1,11 @@
 import { IconBrandWhatsapp, IconChecklist, IconClockHour4 } from "@tabler/icons-react";
 import type { ProgramaOferta } from "../../data/ofertaEducativa";
+import { useContactModal } from "../../context/ContactModalContext";
 
 const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
-const leadFormUrl = "https://apps.clientify.net/formbuilderembed/simpleembed/#/success/twostepformpopup/171625/45670";
 
 export default function ProgramHero({ program }: { program: ProgramaOferta }) {
+  const { openContactModal } = useContactModal();
   const Icon = program.icon;
 
   return (
@@ -32,9 +33,9 @@ export default function ProgramHero({ program }: { program: ProgramaOferta }) {
             <a href={whatsappUrl} target="_blank" rel="noreferrer" className="oferta-button oferta-button--light">
               Solicitar información por WhatsApp <IconBrandWhatsapp size={18} />
             </a>
-            <a href={leadFormUrl} target="_blank" rel="noreferrer" className="oferta-button oferta-button--outline-light">
+            <button onClick={openContactModal} className="oferta-button oferta-button--outline-light">
               Ver plan de estudios <IconChecklist size={18} />
-            </a>
+            </button>
           </div>
         </div>
 

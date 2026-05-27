@@ -3,6 +3,7 @@ import { IconArrowRight, IconBrandWhatsapp, IconSearch } from "@tabler/icons-rea
 import CareerCard from "../components/ofertaEducativa/CareerCard";
 import { ofertaEducativa } from "../data/ofertaEducativa";
 import { usePageSeo } from "../utils/seo";
+import { useContactModal } from "../context/ContactModalContext";
 import "../styles/ofertaEducativa.css";
 
 const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
@@ -14,6 +15,7 @@ function normalizeText(value: string) {
 }
 
 export default function OfertaEducativa() {
+  const { openContactModal } = useContactModal();
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [selectedCampus, setSelectedCampus] = useState("Todos");
   const [search, setSearch] = useState("");
@@ -67,9 +69,9 @@ export default function OfertaEducativa() {
               Elige el programa que mejor se adapte a tu futuro profesional y estudia en modalidad escolarizada, ejecutiva o en línea, según disponibilidad.
             </p>
             <div className="oferta-hero__actions">
-              <a href={whatsappUrl} target="_blank" rel="noreferrer" className="oferta-button">
-                Solicitar información <IconBrandWhatsapp size={18} />
-              </a>
+              <button onClick={openContactModal} className="oferta-button">
+                Solicitar información <IconArrowRight size={18} />
+              </button>
               <a href="#programas" className="oferta-button oferta-button--secondary">
                 Ver programas <IconArrowRight size={18} />
               </a>
