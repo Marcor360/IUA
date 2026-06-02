@@ -19,6 +19,8 @@ const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [step, setStep] = useState<"selection" | "form" | "success">("selection");
   const [selectedMethod, setSelectedMethod] = useState<"phone" | "email" | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // Form state
   const [nombre, setNombre] = useState("");
@@ -46,6 +48,8 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       setContacto("");
       setPrograma("");
       setPlantel("");
+      setIsSubmitting(false);
+      setSubmitError("");
     } else {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
@@ -64,11 +68,30 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí se enviaría la información a Clientify o al backend
-    console.log({ method: selectedMethod, nombre, contacto, programa, plantel });
-    setStep("success");
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const response = await fetch("/api/contact.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ method: selectedMethod, nombre, contacto, programa, plantel })
+      });
+
+      if (!response.ok) {
+        throw new Error("No se pudo enviar la informacion");
+      }
+
+      setStep("success");
+    } catch {
+      setSubmitError("No pudimos enviar tus datos. Intenta de nuevo o escríbenos por WhatsApp.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -170,6 +193,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <input
                   type="text"
                   required
+                  disabled={isSubmitting}
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
@@ -184,6 +208,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <input
                   type={selectedMethod === "phone" ? "tel" : "email"}
                   required
+                  disabled={isSubmitting}
                   value={contacto}
                   onChange={(e) => setContacto(e.target.value)}
                   className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
@@ -195,6 +220,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <span className="text-sm font-bold text-neutral-700">Programa de interés</span>
                 <select
                   required
+                  disabled={isSubmitting}
                   value={programa}
                   onChange={(e) => setPrograma(e.target.value)}
                   className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
@@ -210,6 +236,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <span className="text-sm font-bold text-neutral-700">Plantel</span>
                 <select
                   required
+                  disabled={isSubmitting}
                   value={plantel}
                   onChange={(e) => setPlantel(e.target.value)}
                   className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
@@ -224,10 +251,16 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
               <button
                 type="submit"
-                className="mt-2 w-full rounded-xl bg-iua-burgundy px-4 py-3 text-sm font-bold text-white transition hover:bg-iua-dark hover:-translate-y-0.5 shadow-lg shadow-iua-burgundy/20"
+                disabled={isSubmitting}
+                className="mt-2 w-full rounded-xl bg-iua-burgundy px-4 py-3 text-sm font-bold text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
               >
-                Enviar información
+                {isSubmitting ? "Enviando..." : "Enviar información"}
               </button>
+              {submitError ? (
+                <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                  {submitError}
+                </p>
+              ) : null}
             </form>
           </>
         )}

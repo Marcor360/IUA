@@ -12,23 +12,10 @@ const AvisoDePrivacidad = lazy(() => import("./page/avisoDePrivacidad"));
 const Campus = lazy(() => import("./page/campus"));
 const Comunidad = lazy(() => import("./page/comunidad"));
 const Nosotros = lazy(() => import("./page/nosotros"));
+const NotFound = lazy(() => import("./page/notFound"));
 const OfertaEducativa = lazy(() => import("./page/ofertaEducativa"));
-const AdministracionDeEmpresasPage = lazy(() => import("./page/ofertaEducativa/administracion-de-empresas"));
-const ArquitecturaPage = lazy(() => import("./page/ofertaEducativa/arquitectura"));
-const ArtesCulinariasPage = lazy(() => import("./page/ofertaEducativa/artes-culinarias"));
-const BachilleratoPage = lazy(() => import("./page/ofertaEducativa/bachillerato"));
-const ContaduriaPublicaPage = lazy(() => import("./page/ofertaEducativa/contaduria-publica"));
+const ProgramPage = lazy(() => import("./components/ofertaEducativa/ProgramPage"));
 const ContactoIua = lazy(() => import("./page/ofertaEducativa/contactoiua"));
-const DerechoPage = lazy(() => import("./page/ofertaEducativa/derecho"));
-const DisenoGraficoPage = lazy(() => import("./page/ofertaEducativa/diseno-grafico"));
-const DoctoradoDerechoPage = lazy(() => import("./page/ofertaEducativa/doctorado-derecho"));
-const IngenieriaEnSistemasComputacionalesPage = lazy(() => import("./page/ofertaEducativa/ingenieria-en-sistemas-computacionales"));
-const LenguasExtranjerasPage = lazy(() => import("./page/ofertaEducativa/lenguas-extranjeras"));
-const MaestriaDerechoPenalPage = lazy(() => import("./page/ofertaEducativa/maestria-derecho-penal"));
-const MaestriaEducacionPage = lazy(() => import("./page/ofertaEducativa/maestria-educacion"));
-const PedagogiaPage = lazy(() => import("./page/ofertaEducativa/pedagogia"));
-const PsicologiaPage = lazy(() => import("./page/ofertaEducativa/psicologia"));
-const SecundariaPage = lazy(() => import("./page/ofertaEducativa/secundaria"));
 
 function ScrollToTop() {
   const { hash, pathname } = useLocation();
@@ -68,25 +55,12 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/oferta" element={<OfertaEducativa />} />
-          <Route path="/oferta/secundaria" element={<SecundariaPage />} />
-          <Route path="/oferta/bachillerato" element={<BachilleratoPage />} />
-          <Route path="/oferta/derecho" element={<DerechoPage />} />
-          <Route path="/oferta/psicologia" element={<PsicologiaPage />} />
-          <Route path="/oferta/pedagogia" element={<PedagogiaPage />} />
-          <Route path="/oferta/arquitectura" element={<ArquitecturaPage />} />
-          <Route path="/oferta/artes-culinarias" element={<ArtesCulinariasPage />} />
-          <Route path="/oferta/contaduria-publica" element={<ContaduriaPublicaPage />} />
-          <Route path="/oferta/administracion-de-empresas" element={<AdministracionDeEmpresasPage />} />
-          <Route path="/oferta/diseno-grafico" element={<DisenoGraficoPage />} />
-          <Route path="/oferta/lenguas-extranjeras" element={<LenguasExtranjerasPage />} />
-          <Route path="/oferta/ingenieria-en-sistemas-computacionales" element={<IngenieriaEnSistemasComputacionalesPage />} />
-          <Route path="/oferta/maestria-derecho-penal" element={<MaestriaDerechoPenalPage />} />
-          <Route path="/oferta/maestria-educacion" element={<MaestriaEducacionPage />} />
-          <Route path="/oferta/doctorado-derecho" element={<DoctoradoDerechoPage />} />
+          <Route path="/oferta/:slug" element={<ProgramPage />} />
           <Route path="/campus" element={<Campus />} />
           <Route path="/comunidad" element={<Comunidad />} />
           <Route path="/contacto" element={<ContactoIua />} />
           <Route path="/aviso-de-privacidad" element={<AvisoDePrivacidad />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       <Footer />

@@ -14,6 +14,7 @@ import {
   IconSchool as School,
   IconUserCheck as UserCheck
 } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 import { usePageSeo } from "../utils/seo";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
@@ -358,9 +359,9 @@ export default function Comunidad() {
               <a href={whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
                 Hablar con un asesor <BrandWhatsapp size={18} />
               </a>
-              <a href="/oferta" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
+              <Link to="/oferta" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
                 Ver oferta educativa <ArrowRight size={18} />
-              </a>
+              </Link>
             </div>
           </div>
         </div>

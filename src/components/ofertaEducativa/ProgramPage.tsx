@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   IconArrowLeft,
   IconBuildingCommunity,
@@ -9,6 +9,7 @@ import {
   IconRosetteDiscountCheck
 } from "@tabler/icons-react";
 import { ofertaEducativa } from "../../data/ofertaEducativa";
+import NotFound from "../../page/notFound";
 import { SITE_URL, usePageSeo } from "../../utils/seo";
 import CtaBlock from "./CtaBlock";
 import FaqAccordion from "./FaqAccordion";
@@ -62,8 +63,10 @@ function buildProgramSeo(program: Program) {
   return { title, description, keywords };
 }
 
-export default function ProgramPage({ slug }: { slug: string }) {
-  const program = ofertaEducativa.find((item) => item.slug === slug);
+export default function ProgramPage({ slug }: { slug?: string }) {
+  const params = useParams();
+  const programSlug = slug ?? params.slug ?? "";
+  const program = ofertaEducativa.find((item) => item.slug === programSlug);
   const seo = program ? buildProgramSeo(program) : null;
 
   usePageSeo({
@@ -116,15 +119,7 @@ export default function ProgramPage({ slug }: { slug: string }) {
   }, [program]);
 
   if (!program) {
-    return (
-      <main className="oferta-page">
-        <section className="oferta-empty">
-          <h1>Programa no encontrado</h1>
-          <p>El programa que buscas no está disponible en la oferta educativa actual.</p>
-          <Link to="/oferta" className="oferta-button">Volver a oferta educativa</Link>
-        </section>
-      </main>
-    );
+    return <NotFound />;
   }
 
   return (

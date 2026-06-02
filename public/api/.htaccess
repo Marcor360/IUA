@@ -1,0 +1,5 @@
+Options -Indexes
+
+<Files "contact.config.php">
+  Require all denied
+</Files>

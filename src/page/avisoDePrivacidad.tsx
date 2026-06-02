@@ -301,12 +301,12 @@ export default function AvisoDePrivacidad() {
               <p>
                 Universidad IUA informara los cambios a traves de su sitio web:
                 <a
-                  href="https://iua.edu.mx/aviso-de-privacidad/"
+                  href="https://iua.edu.mx/aviso-de-privacidad"
                   target="_blank"
                   rel="noreferrer"
                   className="font-black text-iua-burgundy"
                 >
-                  {" "}https://iua.edu.mx/aviso-de-privacidad/
+                  {" "}https://iua.edu.mx/aviso-de-privacidad
                 </a>.
               </p>
             </Section>
