@@ -69,12 +69,6 @@ $resendApiKey = getenv('RESEND_API_KEY') ?: (string)($config['resend_api_key'] ?
 $toEmail = getenv('CONTACT_TO_EMAIL') ?: (string)($config['to_email'] ?? 'admisiones@iua.edu.mx');
 $fromEmail = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? 'Universidad IUA <onboarding@resend.dev>');
 
-if ($resendApiKey === '') {
-    http_response_code(500);
-    echo json_encode(['error' => 'Servicio de correo no configurado']);
-    exit;
-}
-
 $contactLabel = $payload['method'] === 'phone' ? 'Telefono' : 'Correo electronico';
 $methodLabel = $payload['method'] === 'phone' ? 'Llamada telefonica' : 'Correo electronico';
 
@@ -123,25 +117,63 @@ if ($payload['method'] === 'email' && filter_var($payload['contacto'], FILTER_VA
     $emailPayload['reply_to'] = $payload['contacto'];
 }
 
-$ch = curl_init('https://api.resend.com/emails');
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $resendApiKey,
-        'Content-Type: application/json',
-    ],
-    CURLOPT_POSTFIELDS => json_encode($emailPayload),
-    CURLOPT_TIMEOUT => 15,
+// --- Intento 1: Resend API ---
+if ($resendApiKey !== '') {
+    $ch = curl_init('https://api.resend.com/emails');
+
+    $caBundle = '';
+    foreach (['/etc/ssl/certs/ca-bundle.crt', '/etc/pki/tls/certs/ca-bundle.crt', '/etc/ssl/ca-bundle.pem'] as $path) {
+        if (file_exists($path)) {
+            $caBundle = $path;
+            break;
+        }
+    }
+
+    $curlOpts = [
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER     => [
+            'Authorization: Bearer ' . $resendApiKey,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS     => json_encode($emailPayload),
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+    ];
+
+    if ($caBundle !== '') {
+        $curlOpts[CURLOPT_CAINFO] = $caBundle;
+    }
+
+    curl_setopt_array($ch, $curlOpts);
+
+    $response  = curl_exec($ch);
+    $status    = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    if ($response !== false && $status >= 200 && $status < 300) {
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    error_log('Resend contact form error [' . $status . ']: ' . ($curlError ?: (string)$response));
+}
+
+// --- Intento 2: PHP mail() nativo (cPanel) ---
+$mailSubject = '=?UTF-8?B?' . base64_encode('Nueva solicitud IUA: ' . $payload['programa']) . '?=';
+$mailHeaders = implode("\r\n", [
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=UTF-8',
+    'From: Formulario IUA <noreply@iua.edu.mx>',
+    'X-Mailer: PHP/' . PHP_VERSION,
 ]);
 
-$response = curl_exec($ch);
-$status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
+$sent = @mail($toEmail, $mailSubject, $html, $mailHeaders);
 
-if ($response === false || $status < 200 || $status >= 300) {
-    error_log('Resend contact form error: ' . ($curlError ?: (string)$response));
+if (!$sent) {
+    error_log('PHP mail() also failed for contact form submission');
     http_response_code(502);
     echo json_encode(['error' => 'No se pudo enviar el correo']);
     exit;
