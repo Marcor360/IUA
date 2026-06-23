@@ -66,7 +66,7 @@ if (is_file($configPath)) {
 }
 
 $resendApiKey = getenv('RESEND_API_KEY') ?: (string)($config['resend_api_key'] ?? '');
-$toEmail = getenv('CONTACT_TO_EMAIL') ?: (string)($config['to_email'] ?? 'admisiones@iua.edu.mx');
+$toEmail = getenv('CONTACT_TO_EMAIL') ?: (string)($config['to_email'] ?? 'soy@iua.edu.mx');
 $fromEmail = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? 'Universidad IUA <onboarding@resend.dev>');
 
 $contactLabel = $payload['method'] === 'phone' ? 'Telefono' : 'Correo electronico';
