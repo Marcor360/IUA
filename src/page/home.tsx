@@ -62,7 +62,6 @@ type Campus = {
 };
 
 const whatsappUrl = institution.contact.whatsapp;
-const leadFormUrl = "https://apps.clientify.net/formbuilderembed/simpleembed/#/success/twostepformpopup/171625/45670";
 
 const imageAssets = {
   heroBanner: "/banners/alumnos-1-banner-recorte-1920x700.webp",
@@ -289,7 +288,6 @@ function ModalitiesSection() {
 }
 
 function ScholarshipCTA() {
-  const { openContactModal } = useContactModal();
   return (
     <section className="bg-white px-5 py-14 md:px-6">
       <div className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl bg-iua-dark text-white shadow-2xl shadow-iua-burgundy/20">

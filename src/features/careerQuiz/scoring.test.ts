@@ -3,6 +3,11 @@ import { careers, questions } from "./data";
 import { dominantDimensions, rankCareers, scoreAnswers } from "./scoring";
 
 describe("career quiz scoring", () => {
+  it("usa 20 preguntas en una experiencia paso a paso", () => {
+    expect(questions).toHaveLength(20);
+    expect(new Set(questions.map(({ id }) => id)).size).toBe(20);
+  });
+
   it("is deterministic for the same answers", () => {
     const answers = Object.fromEntries(questions.map((question) => [question.id, question.options[0].id]));
     expect(scoreAnswers(questions, answers)).toEqual(scoreAnswers(questions, answers));

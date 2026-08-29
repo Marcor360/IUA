@@ -34,7 +34,7 @@ export default function CareerQuizPage() {
   return (
     <main className="oferta-page quiz-page">
       <JsonLd id="quiz-breadcrumb-jsonld" data={breadcrumbSchema(breadcrumbs)} />
-      <section className="oferta-hero"><div className="oferta-hero__inner"><div><p className="oferta-hero__eyebrow">Orientación vocacional</p><h1>¿Qué carrera estudiar?</h1><p>Elegir una carrera implica relacionar tus intereses, habilidades, materias preferidas y estilo de trabajo. Este test usa un modelo RIASEC determinista para ayudarte a explorar opciones; no sustituye una orientación profesional.</p></div><div className="program-hero__panel"><IconBrain size={44} /><p className="program-hero__note">6 preguntas · resultados inmediatos · sin pedir datos personales</p></div></div></section>
+      <section className="oferta-hero"><div className="oferta-hero__inner"><div><p className="oferta-hero__eyebrow">Orientación vocacional</p><h1>¿Qué carrera estudiar?</h1><p>Elegir una carrera implica relacionar tus intereses, habilidades, materias preferidas y estilo de trabajo. Este test usa un modelo RIASEC determinista para ayudarte a explorar opciones; no sustituye una orientación profesional.</p></div><div className="program-hero__panel"><IconBrain size={44} /><p className="program-hero__note">{questions.length} preguntas · resultados inmediatos · sin pedir datos personales</p></div></div></section>
       <div className="program-layout">
         <Breadcrumbs items={breadcrumbs} />
         <section className="program-section quiz-intro">
@@ -45,7 +45,16 @@ export default function CareerQuizPage() {
 
         {!started && <section className="quiz-card"><h2>Descubre áreas compatibles con tus intereses</h2><p>No hay respuestas correctas. Elige la opción que más se parezca a ti hoy.</p><button className="oferta-button" onClick={begin}>Comenzar test <IconArrowRight size={18} /></button></section>}
         {started && !complete && current && <section className="quiz-card" aria-live="polite"><div className="quiz-progress"><span>Pregunta {Object.keys(answers).length + 1} de {questions.length}</span><progress value={Object.keys(answers).length} max={questions.length} /></div><h2>{current.prompt}</h2><div className="quiz-options">{current.options.map((option) => <button key={option.id} onClick={() => answer(option.id)}>{option.label}</button>)}</div></section>}
-        {complete && <section className="quiz-results" aria-live="polite"><p className="program-section__eyebrow">Tu perfil orientativo</p><h2>{dimensionNames[dominant[0]]} + {dimensionNames[dominant[1]]}</h2><p>Estas dimensiones reflejan tus respuestas actuales. Explora las opciones y contrástalas con planes de estudio, requisitos y experiencias reales.</p><div className="quiz-result-grid">{results.slice(0, 4).map((career, index) => <article key={career.id}><span>Opción {index + 1}</span><h3>{career.name}</h3><strong>{career.affinity}% de afinidad orientativa</strong><p>{career.explanation}</p>{career.iuaProgramSlug && <Link to={`/oferta/${career.iuaProgramSlug}`} onClick={() => trackEvent("career_iua_program_click", { program: career.iuaProgramSlug! })}>Ver opción relacionada en IUA <IconArrowRight size={16} /></Link>}</article>)}</div><button className="oferta-button" onClick={reset}>Repetir test <IconRefresh size={18} /></button></section>}
+        {complete && <section className="quiz-results" aria-live="polite">
+          <p className="program-section__eyebrow">Tu perfil orientativo</p>
+          <h2>{dimensionNames[dominant[0]]} + {dimensionNames[dominant[1]]}</h2>
+          <p>Estas dimensiones reflejan tus respuestas actuales. Explora las opciones y contrástalas con planes de estudio, requisitos y experiencias reales.</p>
+          <h3>Resultados vocacionales generales</h3>
+          <div className="quiz-result-grid">{results.slice(0, 4).map((career, index) => <article key={career.id}><span>Opción {index + 1}</span><h3>{career.name}</h3><strong>{career.affinity}% de afinidad orientativa</strong><p>{career.explanation}</p></article>)}</div>
+          <h3>Opciones relacionadas disponibles en Universidad IUA</h3>
+          <ul className="program-list">{results.slice(0, 4).filter((career) => career.iuaProgramSlug).map((career) => <li key={career.id}><Link to={`/oferta/${career.iuaProgramSlug}`} onClick={() => trackEvent("career_iua_program_click", { program: career.iuaProgramSlug! })}>{career.name} <IconArrowRight size={16} /></Link></li>)}</ul>
+          <button className="oferta-button" onClick={reset}>Repetir test <IconRefresh size={18} /></button>
+        </section>}
       </div>
     </main>
   );

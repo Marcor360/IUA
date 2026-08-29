@@ -4,6 +4,11 @@ export const SITE_URL = "https://iua.edu.mx";
 export const SITE_NAME = "Universidad IUA";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/banners/alumnos-1-banner-recorte-1920x700.webp`;
 
+export type RobotsConfig = {
+  index?: boolean;
+  follow?: boolean;
+};
+
 export type SeoConfig = {
   title: string;
   description: string;
@@ -11,7 +16,16 @@ export type SeoConfig = {
   canonical?: string;
   image?: string;
   type?: "website" | "article";
-  robots?: { index: boolean; follow: boolean };
+  robots?: RobotsConfig;
+};
+
+export type SeoMetadata = {
+  title: string;
+  description: string;
+  canonical: string;
+  robots: string;
+  openGraph: Record<string, string>;
+  twitter: Record<string, string>;
 };
 
 function absoluteUrl(path = "/") {
@@ -56,32 +70,54 @@ function ensureCanonical(url: string) {
   element.setAttribute("href", url);
 }
 
-export function setPageSeo({ title, description, path = "/", canonical, image = DEFAULT_OG_IMAGE, type = "website", robots = { index: true, follow: true } }: SeoConfig) {
+export function robotsContent(robots?: RobotsConfig) {
+  return [robots?.index === false ? "noindex" : "index", robots?.follow === false ? "nofollow" : "follow"].join(", ");
+}
+
+export function buildSeoMetadata({ title, description, path = "/", canonical, image = DEFAULT_OG_IMAGE, type = "website", robots }: SeoConfig): SeoMetadata {
   const url = absoluteUrl(canonical ?? path);
   const imageUrl = absoluteUrl(image);
+  return {
+    title,
+    description,
+    canonical: url,
+    robots: robotsContent(robots),
+    openGraph: {
+      "og:locale": "es_MX",
+      "og:type": type,
+      "og:site_name": SITE_NAME,
+      "og:title": title,
+      "og:description": description,
+      "og:url": url,
+      "og:image": imageUrl,
+      "og:image:alt": `${SITE_NAME} - ${title}`
+    },
+    twitter: {
+      "twitter:card": "summary_large_image",
+      "twitter:title": title,
+      "twitter:description": description,
+      "twitter:image": imageUrl
+    }
+  };
+}
 
-  document.title = title;
-  setMeta('meta[name="description"]', "content", description);
-  setMeta('meta[name="robots"]', "content", `${robots.index ? "index" : "noindex"}, ${robots.follow ? "follow" : "nofollow"}`);
-  ensureCanonical(url);
+export function setPageSeo(config: SeoConfig) {
+  const metadata = buildSeoMetadata(config);
 
-  ensureMetaByProperty("og:locale", "es_MX");
-  ensureMetaByProperty("og:type", type);
-  ensureMetaByProperty("og:site_name", SITE_NAME);
-  ensureMetaByProperty("og:title", title);
-  ensureMetaByProperty("og:description", description);
-  ensureMetaByProperty("og:url", url);
-  ensureMetaByProperty("og:image", imageUrl);
-  ensureMetaByProperty("og:image:alt", `${SITE_NAME} - ${title}`);
+  document.title = metadata.title;
+  setMeta('meta[name="description"]', "content", metadata.description);
+  setMeta('meta[name="robots"]', "content", metadata.robots);
+  ensureCanonical(metadata.canonical);
 
-  ensureMetaByName("twitter:card", "summary_large_image");
-  ensureMetaByName("twitter:title", title);
-  ensureMetaByName("twitter:description", description);
-  ensureMetaByName("twitter:image", imageUrl);
+  Object.entries(metadata.openGraph).forEach(([property, content]) => ensureMetaByProperty(property, content));
+  Object.entries(metadata.twitter).forEach(([name, content]) => ensureMetaByName(name, content));
 }
 
 export function usePageSeo(config: SeoConfig) {
+  const { title, description, path, canonical, image, type, robots } = config;
+  const robotsIndex = robots?.index;
+  const robotsFollow = robots?.follow;
   useEffect(() => {
-    setPageSeo(config);
-  }, [config.title, config.description, config.path, config.canonical, config.image, config.type, config.robots?.index, config.robots?.follow]);
+    setPageSeo({ title, description, path, canonical, image, type, robots: { index: robotsIndex, follow: robotsFollow } });
+  }, [title, description, path, canonical, image, type, robotsIndex, robotsFollow]);
 }

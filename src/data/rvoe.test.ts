@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ofertaEducativa } from "./ofertaEducativa";
-import { resolveRvoe, rvoeRecords, validateRvoeRecords } from "./rvoe";
+import { isValidRvoeNumber, resolveProgramPageRvoe, resolveRvoe, resolveRvoeFrom, rvoeRecords, validateRvoeRecords } from "./rvoe";
+import type { RvoeRecord } from "./rvoe";
 import { institution } from "../config/institution";
 
 describe("RVOE", () => {
@@ -21,5 +22,27 @@ describe("RVOE", () => {
     expect(resolveRvoe({ programId: "derecho", modality: "Escolarizada", campusId: "campus-reyes" })?.number).toBe("20220839");
     expect(resolveRvoe({ programId: "derecho", modality: "Escolarizada" })).toBeUndefined();
     expect(resolveRvoe({ programId: "derecho", modality: "Escolarizada", institutionId: "instituto-universitario-anahuac" })?.number).toBe("20100134");
+  });
+
+  it("resuelve un programa unico para la pagina publica", () => {
+    expect(resolveProgramPageRvoe("psicologia")?.number).toBe("20170768");
+  });
+
+  it("no elige automaticamente entre campus o modalidades", () => {
+    expect(resolveProgramPageRvoe("lenguas-extranjeras")).toBeUndefined();
+    expect(resolveProgramPageRvoe("derecho")).toBeUndefined();
+    expect(resolveProgramPageRvoe("arquitectura")).toBeUndefined();
+  });
+
+  it("oculta coincidencias inexistentes", () => {
+    expect(resolveProgramPageRvoe("programa-inexistente")).toBeUndefined();
+  });
+
+  it("rechaza numeros invalidos y coincidencias ambiguas", () => {
+    const base: RvoeRecord = { programId: "prueba", programName: "Prueba", modality: "Mixta", number: "12345678" };
+    expect(isValidRvoeNumber("12345678")).toBe(true);
+    expect(isValidRvoeNumber("1234-5678")).toBe(false);
+    expect(resolveRvoeFrom([{ ...base, number: "invalido" }], { programId: "prueba", modality: "Mixta" })).toBeUndefined();
+    expect(resolveRvoeFrom([base, { ...base, number: "87654321" }], { programId: "prueba", modality: "Mixta" })).toBeUndefined();
   });
 });

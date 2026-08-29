@@ -6,3 +6,6 @@ dist
 public/api/contact.config.php
 .DS_Store
 npm-debug.log*
+debug.log
+playwright-report/
+test-results/

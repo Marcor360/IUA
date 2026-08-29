@@ -4,13 +4,11 @@ import {
   IconBook as Book,
   IconBrandWhatsapp as BrandWhatsapp,
   IconCalendarEvent as Calendar,
-  IconChalkboard as Chalkboard,
   IconChecklist as Checklist,
   IconCreditCard as CreditCard,
   IconExternalLink as ExternalLink,
   IconFileText as FileText,
   IconHeartHandshake as HeartHandshake,
-  IconMail as Mail,
   IconSchool as School,
   IconUserCheck as UserCheck
 } from "@tabler/icons-react";

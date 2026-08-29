@@ -23,7 +23,10 @@ export function ContactModal({ isOpen, onClose, context }: Props) {
   const program = useMemo(() => ofertaEducativa.find((item) => item.id === programa), [programa]);
   const campuses = useMemo(() => {
     if (!program) return institution.campuses;
-    const slugs = new Set<string>(program.campus.map(campusSlugFromLabel).filter((slug): slug is string => Boolean(slug)));
+    const slugs = new Set(program.campus.flatMap((label) => {
+      const slug = campusSlugFromLabel(label);
+      return slug ? [slug] : [];
+    }));
     return institution.campuses.filter((campus) => slugs.has(campus.slug));
   }, [program]);
 

@@ -1,14 +1,11 @@
 import { useMemo, useState } from "react";
-import { IconArrowRight, IconBrandWhatsapp, IconSearch } from "@tabler/icons-react";
+import { IconArrowRight, IconSearch } from "@tabler/icons-react";
 import CareerCard from "../components/ofertaEducativa/CareerCard";
 import { ofertaEducativa } from "../data/ofertaEducativa";
 import { usePageSeo } from "../utils/seo";
 import { useContactModal } from "../context/ContactModalContext";
-import { institution } from "../config/institution";
 import { rvoeRecords } from "../data/rvoe";
 import "../styles/ofertaEducativa.css";
-
-const whatsappUrl = institution.contact.whatsapp;
 
 const levelFilters = ["Todos", "Secundaria", "Bachillerato", "Licenciaturas", "Maestrías", "Doctorado", "En línea"];
 

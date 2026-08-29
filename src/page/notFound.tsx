@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   IconArrowRight,
   IconHome,
@@ -7,10 +7,11 @@ import {
 import { usePageSeo } from "../utils/seo";
 
 export default function NotFound() {
+  const location = useLocation();
   usePageSeo({
     title: "Pagina no encontrada | Universidad IUA",
     description: "La página solicitada no existe. Consulta la oferta educativa o vuelve al inicio de Universidad IUA.",
-    path: window.location.pathname,
+    path: location.pathname,
     robots: { index: false, follow: true },
     image: "/banners/alumnos-1-banner-recorte-1920x700.webp"
   });

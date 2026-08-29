@@ -8,7 +8,7 @@ import {
   IconRosetteDiscountCheck
 } from "@tabler/icons-react";
 import { ofertaEducativa } from "../../data/ofertaEducativa";
-import { rvoeForProgram } from "../../data/rvoe";
+import { resolveProgramPageRvoe } from "../../data/rvoe";
 import { relatedProgramIds } from "../../data/relatedPrograms";
 import NotFound from "../../page/notFound";
 import { usePageSeo } from "../../utils/seo";
@@ -37,7 +37,7 @@ export default function ProgramPage({ slug }: { slug?: string }) {
   const params = useParams();
   const programSlug = slug ?? params.slug ?? "";
   const program = ofertaEducativa.find((item) => item.slug === programSlug);
-  const programRvoe = program ? rvoeForProgram(program.id).filter((record) => record.programName !== "Arquitectura del Paisaje") : [];
+  const programRvoe = program ? resolveProgramPageRvoe(program.id) : undefined;
   const relatedPrograms = program ? (relatedProgramIds[program.id] ?? []).map((id) => ofertaEducativa.find((item) => item.id === id)).filter(Boolean) : [];
   const seo = program ? buildProgramSeo(program) : null;
 
@@ -101,15 +101,9 @@ export default function ProgramPage({ slug }: { slug?: string }) {
                 {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return slug ? <Link key={campus} to={`/campus/${slug}`} className="oferta-chip oferta-chip--muted">{campus}</Link> : <span key={campus} className="oferta-chip oferta-chip--muted">{campus}</span>; })}
               </div>
             </div>
-            {programRvoe.length > 0 ? (
+            {programRvoe ? (
               <div className="program-summary__block" aria-label="Reconocimientos de Validez Oficial de Estudios">
-                <strong>Reconocimiento oficial</strong>
-                {programRvoe.map((record) => (
-                  <div key={record.number}>
-                    <span>{[record.campusName, record.modality, record.institutionName].filter(Boolean).join(" · ")}</span>
-                    <p><strong>RVOE: {record.number}</strong></p>
-                  </div>
-                ))}
+                <p><strong>RVOE: {programRvoe.number}</strong></p>
               </div>
             ) : null}
           </aside>
