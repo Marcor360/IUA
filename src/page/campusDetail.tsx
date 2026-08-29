@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { IconBrandWhatsapp, IconMapPin, IconPhone } from "@tabler/icons-react";
+import { IconBrandWhatsapp, IconChevronDown, IconMapPin, IconPhone, IconSchool } from "@tabler/icons-react";
 import Breadcrumbs from "../components/Breadcrumbs";
 import JsonLd from "../components/JsonLd";
 import { institution, campusSlugFromLabel } from "../config/institution";
@@ -38,10 +38,16 @@ export default function CampusDetailPage() {
           {campus.schedule?.length ? <><h3>Horario de atención</h3><ul>{campus.schedule.map((item) => <li key={item}>{item}</li>)}</ul></> : null}
           <a className="oferta-button" href={institution.contact.whatsapp} target="_blank" rel="noreferrer">Solicitar información <IconBrandWhatsapp size={18} /></a>
         </section>
-        <section className="program-section">
+        <section className="program-section campus-programs">
           <h2>Programas relacionados con {campus.shortName}</h2>
           <p className="program-section__text">La disponibilidad puede cambiar por periodo y modalidad; confirma la apertura con admisiones.</p>
-          <ul className="program-list">{programs.map((program) => <li key={program.id}><Link to={`/oferta/${program.slug}`}>Conocer {program.title}</Link></li>)}</ul>
+          <details className="campus-programs__dropdown">
+            <summary>
+              <span><IconSchool size={20} /> Ver {programs.length} programas disponibles</span>
+              <IconChevronDown className="campus-programs__chevron" size={22} aria-hidden="true" />
+            </summary>
+            <ul className="campus-programs__list">{programs.map((program) => <li key={program.id}><Link to={`/oferta/${program.slug}`}>{program.title}</Link></li>)}</ul>
+          </details>
         </section>
       </div>
     </main>

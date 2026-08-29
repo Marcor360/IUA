@@ -55,8 +55,10 @@ body {
 }
 
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 60;
   border-bottom: 1px solid rgb(0 0 0 / 0.1);
   background: #ffffff;
@@ -65,12 +67,25 @@ body {
   will-change: transform;
 }
 
+.site-header-spacer {
+  height: 5rem;
+  background: #ffffff;
+}
+
 .site-header--visible {
   transform: translateY(0);
 }
 
 .site-header--hidden {
   transform: translateY(-105%);
+}
+
+@media (min-width: 768px) {
+  .site-header-spacer { height: 8.5rem; }
+}
+
+@media (min-width: 1024px) {
+  .site-header-spacer { height: 9rem; }
 }
 
 .iua-footer__grid {

@@ -4,6 +4,7 @@ import {
   IconArrowRight as ArrowRight,
   IconBuildingCommunity as BuildingCommunity,
   IconCalendarEvent as Calendar,
+  IconChevronDown as ChevronDown,
   IconChevronLeft as ChevronLeft,
   IconChevronRight as ChevronRight,
   IconDeviceLaptop as Laptop,
@@ -155,6 +156,10 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
   const { openContactModal } = useContactModal();
   const [showAll, setShowAll] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const relatedPrograms = ofertaEducativa.filter((program) => program.campus.some((label) => {
+    const value = label.toLowerCase();
+    return campus.id === "campus-chalco" ? value.includes("chalco") : campus.id === "campus-reyes" ? value.includes("reyes") : campus.id === "campus-texcoco" ? value.includes("texcoco") : value.includes("línea") || value.includes("virtual");
+  }));
 
   // Close lightbox on escape key and support arrow keys for navigation
   useEffect(() => {
@@ -217,12 +222,15 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
       <div className="mt-7 rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
         <h3 className="text-xl font-black text-neutral-950">Programas relacionados con este campus</h3>
         <p className="mt-2 text-sm leading-7 text-neutral-600">La disponibilidad puede variar por modalidad y periodo; confirma la apertura con admisiones.</p>
-        <ul className="mt-3 grid gap-2">
-          {ofertaEducativa.filter((program) => program.campus.some((label) => {
-            const value = label.toLowerCase();
-            return campus.id === "campus-chalco" ? value.includes("chalco") : campus.id === "campus-reyes" ? value.includes("reyes") : campus.id === "campus-texcoco" ? value.includes("texcoco") : value.includes("línea") || value.includes("virtual");
-          })).map((program) => <li key={program.id}><Link className="font-black text-iua-burgundy hover:underline" to={`/oferta/${program.slug}`}>{program.title}</Link></li>)}
-        </ul>
+        <details className="campus-programs__dropdown mt-4">
+          <summary>
+            <span><School size={20} /> Ver {relatedPrograms.length} programas disponibles</span>
+            <ChevronDown className="campus-programs__chevron" size={22} aria-hidden="true" />
+          </summary>
+          <ul className="campus-programs__list">
+            {relatedPrograms.map((program) => <li key={program.id}><Link to={`/oferta/${program.slug}`}>{program.title}</Link></li>)}
+          </ul>
+        </details>
       </div>
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">

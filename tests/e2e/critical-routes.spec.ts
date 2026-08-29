@@ -41,3 +41,21 @@ test("mobile navigation opens and reaches the offer", async ({ page, isMobile })
   await page.getByRole("link", { name: /^oferta$/i }).first().click();
   await expect(page).toHaveURL(/\/oferta$/);
 });
+
+test("campus programs use an accessible dropdown", async ({ page }) => {
+  await page.goto("/campus");
+  const dropdown = page.locator("#campus-chalco .campus-programs__dropdown");
+  await expect(dropdown).not.toHaveAttribute("open", "");
+  await dropdown.locator("summary").click();
+  await expect(dropdown).toHaveAttribute("open", "");
+  await expect(dropdown.getByRole("link", { name: /licenciatura en psicolog/i })).toBeVisible();
+});
+
+test("navbar hides on downward scroll and returns on upward scroll", async ({ page }) => {
+  await page.goto("/");
+  const header = page.locator(".site-header");
+  await page.evaluate(() => window.scrollTo(0, 900));
+  await expect(header).toHaveClass(/site-header--hidden/);
+  await page.evaluate(() => window.scrollTo(0, 500));
+  await expect(header).toHaveClass(/site-header--visible/);
+});

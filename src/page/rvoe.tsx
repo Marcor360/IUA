@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { IconExternalLink, IconFileCertificate, IconInfoCircle } from "@tabler/icons-react";
+import { IconArrowDown, IconExternalLink, IconFileCertificate, IconSearch, IconShieldCheck } from "@tabler/icons-react";
 import Breadcrumbs from "../components/Breadcrumbs";
 import JsonLd from "../components/JsonLd";
 import { ofertaEducativa } from "../data/ofertaEducativa";
@@ -32,11 +32,15 @@ export default function RvoePage() {
 
       <div className="program-layout">
         <Breadcrumbs items={breadcrumbs} />
-        <section className="program-section">
-          <p className="program-section__eyebrow">Cómo consultar</p>
-          <h2>Qué debes revisar en un RVOE</h2>
-          <p className="program-section__text">Confirma el nombre exacto del programa, la modalidad y el plantel o institución. Un RVOE corresponde a esa combinación y no autoriza automáticamente todos los programas de una institución.</p>
-          <div className="rvoe-notice"><IconInfoCircle size={22} /><p>Cuando la fuente no identifica un plantel, esta página no lo atribuye a una sede por inferencia.</p></div>
+        <section className="rvoe-lookup" aria-labelledby="consulta-rvoe">
+          <div className="rvoe-lookup__icon"><IconSearch size={36} aria-hidden="true" /></div>
+          <div className="rvoe-lookup__content">
+            <p className="program-section__eyebrow">Consulta institucional</p>
+            <h2 id="consulta-rvoe">Consulta tu RVOE</h2>
+            <p>Encuentra el reconocimiento de tu programa y revisa el número, modalidad y plantel que aparecen en la fuente proporcionada por Universidad IUA.</p>
+            <div className="rvoe-lookup__trust"><IconShieldCheck size={19} /><span>Información clara, organizada y sin asociaciones automáticas.</span></div>
+          </div>
+          <a className="rvoe-lookup__button" href="#programas-rvoe">Consultar directorio <IconArrowDown size={18} /></a>
         </section>
 
         <section className="program-section" aria-labelledby="programas-rvoe">
@@ -52,10 +56,10 @@ export default function RvoePage() {
                 return (
                   <tr key={record.number}>
                     <th scope="row">{record.programName}</th>
-                    <td>{record.campusName ?? record.institutionName ?? "Sin plantel especificado en la fuente"}</td>
-                    <td>{record.modality}</td>
-                    <td><strong>RVOE: {record.number}</strong></td>
-                    <td>{program ? <Link to={`/oferta/${program.slug}`}>Consultar {program.title} <IconExternalLink size={15} /></Link> : null}</td>
+                    <td data-label="Plantel o institución">{record.campusName ?? record.institutionName ?? "Sin plantel especificado en la fuente"}</td>
+                    <td data-label="Modalidad">{record.modality}</td>
+                    <td data-label="RVOE"><strong>RVOE: {record.number}</strong></td>
+                    <td data-label="Ficha">{program ? <Link to={`/oferta/${program.slug}`}>Consultar {program.title} <IconExternalLink size={15} /></Link> : null}</td>
                   </tr>
                 );
               })}</tbody>

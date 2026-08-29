@@ -78,14 +78,47 @@
 .breadcrumbs a { color: #7a0e1a; font-weight: 800; }
 .breadcrumbs span { font-weight: 700; }
 
-.rvoe-notice { display: flex; gap: .75rem; margin-top: 1rem; border-left: 4px solid #b88a2e; background: #fbf7ef; padding: 1rem; line-height: 1.65; }
-.rvoe-notice svg { flex: 0 0 auto; color: #7a0e1a; }
+.rvoe-lookup { display: grid; gap: 1.2rem; align-items: center; overflow: hidden; position: relative; margin-top: 1rem; border: 1px solid rgb(184 138 46 / .45); border-radius: 1.25rem; background: linear-gradient(135deg, #4e0710, #7a0e1a 72%, #971b2a); color: white; padding: clamp(1.35rem, 4vw, 2.5rem); box-shadow: 0 1.25rem 3rem rgb(78 7 16 / .18); }
+.rvoe-lookup::after { content: "RVOE"; position: absolute; right: -1rem; bottom: -2.5rem; color: rgb(255 255 255 / .045); font-size: clamp(6rem, 16vw, 11rem); font-weight: 950; line-height: 1; pointer-events: none; }
+.rvoe-lookup__icon { display: grid; width: 4.25rem; height: 4.25rem; place-items: center; position: relative; z-index: 1; border: 1px solid rgb(255 255 255 / .18); border-radius: 1.1rem; background: rgb(255 255 255 / .1); color: #f4d99d; }
+.rvoe-lookup__content { position: relative; z-index: 1; }
+.rvoe-lookup .program-section__eyebrow { color: #f4d99d; }
+.rvoe-lookup h2 { margin-top: .35rem; color: white; font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 950; line-height: 1.05; }
+.rvoe-lookup__content > p:not(.program-section__eyebrow) { max-width: 46rem; margin-top: .75rem; color: rgb(255 255 255 / .8); line-height: 1.7; }
+.rvoe-lookup__trust { display: flex; gap: .55rem; align-items: flex-start; margin-top: 1rem; color: #f4d99d; font-size: .9rem; font-weight: 800; line-height: 1.5; }
+.rvoe-lookup__trust svg { flex: 0 0 auto; }
+.rvoe-lookup__button { display: inline-flex; width: 100%; min-height: 3.25rem; align-items: center; justify-content: center; gap: .55rem; position: relative; z-index: 1; border-radius: .85rem; background: #b88a2e; color: #240307; padding: .9rem 1.2rem; text-align: center; font-weight: 950; box-shadow: 0 .75rem 1.8rem rgb(0 0 0 / .2); transition: transform .18s ease, background .18s ease; }
+.rvoe-lookup__button:hover, .rvoe-lookup__button:focus-visible { transform: translateY(-2px); background: #d4a13a; }
 .table-scroll { margin-top: 1.25rem; overflow-x: auto; }
 .rvoe-table { width: 100%; min-width: 46rem; border-collapse: collapse; text-align: left; }
 .rvoe-table th, .rvoe-table td { border-bottom: 1px solid #eadfca; padding: .9rem; vertical-align: top; }
 .rvoe-table thead th { background: #4e0710; color: white; }
 .rvoe-table tbody th { color: #171717; }
 .rvoe-table a { display: inline-flex; gap: .35rem; color: #7a0e1a; font-weight: 900; }
+
+.campus-programs__dropdown { margin-top: 1.25rem; overflow: hidden; border: 1px solid #eadfca; border-radius: 1rem; background: #fbf7ef; }
+.campus-programs__dropdown summary { display: flex; min-height: 3.75rem; cursor: pointer; list-style: none; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.15rem; color: #7a0e1a; font-weight: 950; transition: background .18s ease, color .18s ease; }
+.campus-programs__dropdown summary::-webkit-details-marker { display: none; }
+.campus-programs__dropdown summary > span { display: inline-flex; align-items: center; gap: .65rem; }
+.campus-programs__dropdown summary:hover, .campus-programs__dropdown summary:focus-visible { background: #7a0e1a; color: white; outline: none; }
+.campus-programs__chevron { flex: 0 0 auto; transition: transform .2s ease; }
+.campus-programs__dropdown[open] .campus-programs__chevron { transform: rotate(180deg); }
+.campus-programs__list { display: grid; grid-template-columns: minmax(0, 1fr); gap: .55rem; border-top: 1px solid #eadfca; background: white; padding: 1rem; }
+.campus-programs__list a { display: flex; min-height: 3rem; align-items: center; border-radius: .75rem; background: #fbf7ef; color: #7a0e1a; padding: .75rem .9rem; font-weight: 850; line-height: 1.35; transition: background .18s ease, color .18s ease, transform .18s ease; }
+.campus-programs__list a:hover, .campus-programs__list a:focus-visible { transform: translateY(-1px); background: #7a0e1a; color: white; }
+
+@media (max-width: 719px) {
+  .table-scroll { overflow: visible; }
+  .rvoe-table { min-width: 0; }
+  .rvoe-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .rvoe-table, .rvoe-table tbody, .rvoe-table tr, .rvoe-table th, .rvoe-table td { display: block; width: 100%; }
+  .rvoe-table tbody { display: grid; gap: 1rem; }
+  .rvoe-table tr { overflow: hidden; border: 1px solid #eadfca; border-radius: 1rem; background: white; box-shadow: 0 .3rem 1rem rgb(78 7 16 / .06); }
+  .rvoe-table tbody th { border-bottom: 0; background: #4e0710; color: white; font-size: 1.03rem; }
+  .rvoe-table td { display: grid; grid-template-columns: minmax(7rem, .42fr) minmax(0, 1fr); gap: .75rem; border-bottom: 1px solid #f0e8da; }
+  .rvoe-table td:last-child { border-bottom: 0; }
+  .rvoe-table td::before { content: attr(data-label); color: #5f5a53; font-size: .76rem; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+}
 
 .program-quiz-link { display: grid; gap: 1rem; align-items: center; margin-top: 1rem; border-radius: 14px; background: #fbf7ef; padding: 1.5rem; }
 .program-quiz-link h2 { margin-top: .35rem; font-size: 1.6rem; font-weight: 950; }
@@ -637,6 +670,10 @@
 }
 
 @media (min-width: 900px) {
+  .rvoe-lookup { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .rvoe-lookup__button { width: auto; min-width: 12rem; }
+  .campus-programs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 1.25rem; }
+
   .oferta-hero__inner,
   .program-hero__inner {
     grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.45fr);

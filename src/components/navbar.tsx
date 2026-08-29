@@ -99,14 +99,14 @@ export default function Navbar() {
     let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScrollY = Math.max(window.scrollY, 0);
       closeCommunityMenuNow();
 
-      if (isMenuOpen || currentScrollY < 24) {
+      if (isMenuOpen || currentScrollY < 32) {
         setIsHeaderVisible(true);
-      } else if (currentScrollY > lastScrollY + 8) {
+      } else if (currentScrollY > lastScrollY) {
         setIsHeaderVisible(false);
-      } else if (currentScrollY < lastScrollY - 8) {
+      } else if (currentScrollY < lastScrollY) {
         setIsHeaderVisible(true);
       }
 
@@ -253,6 +253,7 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+      <div className="site-header-spacer" aria-hidden="true" />
 
       {/* Overlay */}
       <div
