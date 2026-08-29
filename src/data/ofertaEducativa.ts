@@ -370,30 +370,3 @@ export const ofertaEducativa: ProgramaOferta[] = [
     recuadro: "/recuadros/sala-abogasdos-vacia-recuadro-recorte-900x900.webp"
   }
 ];
-
-export const ofertaFaq = [
-  {
-    question: "¿El programa cuenta con RVOE?",
-    answer: "Sí, el programa cuenta con reconocimiento oficial de validez ante la SEP."
-  },
-  {
-    question: "¿Qué duración tiene el programa?",
-    answer: "La duración depende del programa. En esta página puedes consultar la duración y número de cuatrimestres correspondiente."
-  },
-  {
-    question: "¿Qué modalidades manejan?",
-    answer: "Las modalidades disponibles pueden ser escolarizada, ejecutiva y en línea, según el programa."
-  },
-  {
-    question: "¿Puedo trabajar mientras estudio?",
-    answer: "Sí, IUA cuenta con opciones de horarios flexibles pensadas para estudiantes que desean combinar su formación académica con actividades laborales o personales."
-  },
-  {
-    question: "¿Hay becas disponibles?",
-    answer: "Sí, puedes preguntar por las becas y descuentos disponibles. Un asesor puede ayudarte a revisar las opciones vigentes."
-  },
-  {
-    question: "¿Cómo puedo iniciar mi proceso de inscripción?",
-    answer: "Puedes solicitar información por WhatsApp o mediante el formulario de contacto. Un asesor te orientará paso a paso."
-  }
-];

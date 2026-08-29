@@ -13,9 +13,10 @@ import {
   IconSchool
 } from "@tabler/icons-react";
 import { usePageSeo } from "../../utils/seo";
+import { institution } from "../../config/institution";
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
-const admissionsEmail = "admisiones@iua.edu.mx";
+const whatsappUrl = institution.contact.whatsapp;
+const admissionsEmail = institution.contact.email;
 
 const campuses = [
   {

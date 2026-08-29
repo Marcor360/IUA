@@ -8,13 +8,14 @@ import {
   IconCheck as Check,
 } from "@tabler/icons-react";
 import { ofertaEducativa } from "../data/ofertaEducativa";
+import { institution } from "../config/institution";
 
 type ContactModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [step, setStep] = useState<"selection" | "form" | "success">("selection");

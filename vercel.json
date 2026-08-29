@@ -59,6 +59,30 @@
   ],
   "rewrites": [
     {
+      "source": "/oferta/:slug",
+      "destination": "/oferta/:slug/index.html"
+    },
+    {
+      "source": "/nosotros",
+      "destination": "/nosotros/index.html"
+    },
+    {
+      "source": "/oferta",
+      "destination": "/oferta/index.html"
+    },
+    {
+      "source": "/campus",
+      "destination": "/campus/index.html"
+    },
+    {
+      "source": "/rvoe",
+      "destination": "/rvoe/index.html"
+    },
+    {
+      "source": "/que-carrera-estudiar",
+      "destination": "/que-carrera-estudiar/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

@@ -1,7 +1,8 @@
 import { IconBrandWhatsapp, IconFileText } from "@tabler/icons-react";
 import { useContactModal } from "../../context/ContactModalContext";
+import { institution } from "../../config/institution";
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 
 export default function CtaBlock() {
   const { openContactModal } = useContactModal();

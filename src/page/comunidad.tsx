@@ -16,6 +16,7 @@ import {
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { usePageSeo } from "../utils/seo";
+import { institution } from "../config/institution";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
@@ -35,7 +36,7 @@ type Platform = {
   label: string;
 };
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 
 const platforms: Platform[] = [
   {

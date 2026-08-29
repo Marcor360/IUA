@@ -8,24 +8,28 @@
     "typecheck": "tsc --noEmit",
     "generate:sitemap": "node scripts/generate-sitemap.mjs",
     "prebuild": "npm run generate:sitemap",
-    "build": "vite build",
+    "build": "npm run generate:sitemap && vite build && npm run prerender",
+    "prerender": "node scripts/prerender.mjs",
+    "test": "vitest run",
+    "lint": "tsc --noEmit",
     "preview": "vite preview",
     "audit": "npm audit",
     "safe-install": "npm install --ignore-scripts"
   },
   "dependencies": {
-    "@tabler/icons-react": "^3.44.0",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "react-router-dom": "7.15.0"
+    "@tabler/icons-react": "^3.46.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "4.3.0",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "6.0.1",
-    "tailwindcss": "4.3.0",
-    "typescript": "^6.0.3",
-    "vite": "8.0.12"
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
   }
 }

@@ -7,6 +7,8 @@ const staticRoutes = [
   { path: "/nosotros", priority: "0.8" },
   { path: "/oferta", priority: "0.9" },
   { path: "/campus", priority: "0.8" },
+  { path: "/rvoe", priority: "0.8" },
+  { path: "/que-carrera-estudiar", priority: "0.8" },
   { path: "/comunidad", priority: "0.7" },
   { path: "/contacto", priority: "0.8" },
   { path: "/aviso-de-privacidad", priority: "0.4" }

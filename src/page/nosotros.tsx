@@ -14,6 +14,9 @@ import {
   IconUsersGroup as UsersGroup
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
+import JsonLd from "../components/JsonLd";
+import { institution } from "../config/institution";
+import { organizationSchema } from "../utils/structuredData";
 
 type Pillar = {
   title: string;
@@ -26,7 +29,7 @@ type Campus = {
   img: string;
 };
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 
 const pillars: Pillar[] = [
   { title: "Formación académica", text: "Programas educativos orientados al aprendizaje sólido y estructurado." },
@@ -91,6 +94,7 @@ export default function Nosotros() {
 
   return (
     <main className="min-h-screen bg-white text-neutral-950">
+      <JsonLd id="about-organization-jsonld" data={organizationSchema()} />
       <section className="relative overflow-hidden bg-iua-dark px-5 py-16 text-white md:px-6 md:py-20">
         <img
           src="/banners/plantel-calco1-banner-recorte-1920x700.webp"
@@ -105,7 +109,7 @@ export default function Nosotros() {
               <School size={16} /> Somos IUA
             </p>
             <h1 className="mt-6 max-w-4xl text-4xl font-black leading-[1.04] tracking-tight sm:text-5xl lg:text-6xl">
-              Educación con propósito, formación con futuro
+              Universidad IUA: institución, misión y modelo educativo
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/86 sm:text-lg sm:leading-8">
               En IUA creemos que la educación transforma vidas cuando combina conocimiento, valores, acompañamiento y visión profesional.

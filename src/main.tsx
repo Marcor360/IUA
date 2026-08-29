@@ -16,6 +16,8 @@ const NotFound = lazy(() => import("./page/notFound"));
 const OfertaEducativa = lazy(() => import("./page/ofertaEducativa"));
 const ProgramPage = lazy(() => import("./components/ofertaEducativa/ProgramPage"));
 const ContactoIua = lazy(() => import("./page/ofertaEducativa/contactoiua"));
+const RvoePage = lazy(() => import("./page/rvoe"));
+const CareerQuizPage = lazy(() => import("./features/careerQuiz/CareerQuizPage"));
 
 function ScrollToTop() {
   const { hash, pathname } = useLocation();
@@ -57,6 +59,8 @@ function App() {
           <Route path="/oferta" element={<OfertaEducativa />} />
           <Route path="/oferta/:slug" element={<ProgramPage />} />
           <Route path="/campus" element={<Campus />} />
+          <Route path="/rvoe" element={<RvoePage />} />
+          <Route path="/que-carrera-estudiar" element={<CareerQuizPage />} />
           <Route path="/comunidad" element={<Comunidad />} />
           <Route path="/contacto" element={<ContactoIua />} />
           <Route path="/aviso-de-privacidad" element={<AvisoDePrivacidad />} />

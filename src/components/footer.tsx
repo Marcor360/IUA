@@ -12,9 +12,10 @@ import {
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { Logo } from "./navbar";
+import { institution } from "../config/institution";
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
-const admissionsEmail = "admisiones@iua.edu.mx";
+const whatsappUrl = institution.contact.whatsapp;
+const admissionsEmail = institution.contact.email;
 
 const socialLinks = [
   { label: "Facebook", icon: BrandFacebook, href: "https://www.facebook.com/IUA.Official" },
@@ -29,16 +30,15 @@ const footerLinks = [
   { label: "Nosotros", to: "/nosotros" },
   { label: "Oferta academica", to: "/oferta" },
   { label: "Campus", to: "/campus" },
+  { label: "RVOE", to: "/rvoe" },
+  { label: "Test vocacional", to: "/que-carrera-estudiar" },
   { label: "Comunidad IUA", to: "/comunidad" },
   { label: "Contacto", to: "/contacto" }
 ];
 
-const campusContacts = [
-  { campus: "Chalco", phone: "55 2236 7939", href: "tel:+525522367939" },
-  { campus: "Chalco", phone: "55 2236 6742", href: "tel:+525522366742" },
-  { campus: "Los Reyes", phone: "55 5857 2887", href: "tel:+525558572887" },
-  { campus: "Texcoco", phone: "59 5925 1420", href: "tel:+525959251420" }
-];
+const campusContacts = institution.campuses.flatMap((campus) =>
+  (campus.phones ?? []).map((phone) => ({ campus: campus.shortName, phone: phone.label, href: phone.href }))
+);
 
 export default function Footer() {
   const openCookieSettings = () => {

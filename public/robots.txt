@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
+# OAI-SearchBot supports search discovery. GPTBot is a separate crawler used
+# for model-training controls and is intentionally not treated as equivalent.
+
 Sitemap: https://iua.edu.mx/sitemap.xml

@@ -1,4 +1,5 @@
 import { type ComponentType, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   IconArrowRight as ArrowRight,
   IconBuildingCommunity as BuildingCommunity,
@@ -14,6 +15,9 @@ import {
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
 import { useContactModal } from "../context/ContactModalContext";
+import { ofertaEducativa } from "../data/ofertaEducativa";
+import JsonLd from "../components/JsonLd";
+import { organizationSchema } from "../utils/structuredData";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
@@ -210,6 +214,17 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
         </div>
       ) : null}
 
+      <div className="mt-7 rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
+        <h3 className="text-xl font-black text-neutral-950">Programas relacionados con este campus</h3>
+        <p className="mt-2 text-sm leading-7 text-neutral-600">La disponibilidad puede variar por modalidad y periodo; confirma la apertura con admisiones.</p>
+        <ul className="mt-3 grid gap-2">
+          {ofertaEducativa.filter((program) => program.campus.some((label) => {
+            const value = label.toLowerCase();
+            return campus.id === "campus-chalco" ? value.includes("chalco") : campus.id === "campus-reyes" ? value.includes("reyes") : campus.id === "campus-texcoco" ? value.includes("texcoco") : value.includes("línea") || value.includes("virtual");
+          })).map((program) => <li key={program.id}><Link className="font-black text-iua-burgundy hover:underline" to={`/oferta/${program.slug}`}>{program.title}</Link></li>)}
+        </ul>
+      </div>
+
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">
         {campus.visitUrl === leadFormUrl ? (
           <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
@@ -378,6 +393,7 @@ export default function Campus() {
 
   return (
     <main className="min-h-screen bg-white text-neutral-950">
+      <JsonLd id="campus-organization-jsonld" data={organizationSchema()} />
       <section className="relative overflow-hidden bg-iua-dark px-5 py-16 text-white md:px-6 md:py-24">
         <img src="/banners/patio-1-banner-recorte-1920x700.webp" alt="" className="absolute inset-0 h-full w-full object-cover object-center opacity-55" fetchPriority="high" />
         <div className="absolute inset-0 bg-linear-to-r from-iua-dark/92 via-iua-burgundy/68 to-iua-dark/40" />

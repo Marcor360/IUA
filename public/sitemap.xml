@@ -4,6 +4,8 @@
   <url><loc>https://iua.edu.mx/nosotros</loc><priority>0.8</priority></url>
   <url><loc>https://iua.edu.mx/oferta</loc><priority>0.9</priority></url>
   <url><loc>https://iua.edu.mx/campus</loc><priority>0.8</priority></url>
+  <url><loc>https://iua.edu.mx/rvoe</loc><priority>0.8</priority></url>
+  <url><loc>https://iua.edu.mx/que-carrera-estudiar</loc><priority>0.8</priority></url>
   <url><loc>https://iua.edu.mx/comunidad</loc><priority>0.7</priority></url>
   <url><loc>https://iua.edu.mx/contacto</loc><priority>0.8</priority></url>
   <url><loc>https://iua.edu.mx/aviso-de-privacidad</loc><priority>0.4</priority></url>

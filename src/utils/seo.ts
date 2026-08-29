@@ -11,6 +11,7 @@ type SeoConfig = {
   path?: string;
   image?: string;
   type?: "website" | "article";
+  noIndex?: boolean;
 };
 
 function absoluteUrl(path = "/") {
@@ -55,18 +56,14 @@ function ensureCanonical(url: string) {
   element.setAttribute("href", url);
 }
 
-export function setPageSeo({ title, description, keywords = [], path = "/", image = DEFAULT_OG_IMAGE, type = "website" }: SeoConfig) {
+export function setPageSeo({ title, description, path = "/", image = DEFAULT_OG_IMAGE, type = "website", noIndex = false }: SeoConfig) {
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
 
   document.title = title;
   setMeta('meta[name="description"]', "content", description);
-  setMeta('meta[name="robots"]', "content", "index, follow");
-  if (keywords.length > 0) {
-    ensureMetaByName("keywords", keywords.join(", "));
-  } else {
-    document.head.querySelector<HTMLMetaElement>('meta[name="keywords"]')?.remove();
-  }
+  setMeta('meta[name="robots"]', "content", noIndex ? "noindex, follow" : "index, follow");
+  document.head.querySelector<HTMLMetaElement>('meta[name="keywords"]')?.remove();
   ensureCanonical(url);
 
   ensureMetaByProperty("og:locale", "es_MX");
@@ -89,5 +86,5 @@ export function usePageSeo(config: SeoConfig) {
 
   useEffect(() => {
     setPageSeo(config);
-  }, [config.title, config.description, keywords, config.path, config.image, config.type]);
+  }, [config.title, config.description, keywords, config.path, config.image, config.type, config.noIndex]);
 }

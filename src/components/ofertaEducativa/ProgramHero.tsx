@@ -1,8 +1,9 @@
 import { IconBrandWhatsapp, IconChecklist, IconClockHour4 } from "@tabler/icons-react";
 import type { ProgramaOferta } from "../../data/ofertaEducativa";
 import { useContactModal } from "../../context/ContactModalContext";
+import { institution } from "../../config/institution";
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 
 export default function ProgramHero({ program }: { program: ProgramaOferta }) {
   const { openContactModal } = useContactModal();
@@ -24,6 +25,7 @@ export default function ProgramHero({ program }: { program: ProgramaOferta }) {
           <p className="program-hero__eyebrow">{program.level}</p>
           <h1>{program.title}</h1>
           <p className="program-hero__description">{program.heroDescription}</p>
+          <p className="program-hero__direct-answer">{program.shortDescription} Universidad IUA lo ofrece como programa de nivel {program.level.toLowerCase()} en {program.modalities.join(", ")}, según disponibilidad por campus.</p>
           <div className="program-hero__badges">
             {program.badges.map((badge) => (
               <span key={badge}>{badge}</span>

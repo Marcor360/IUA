@@ -4,9 +4,10 @@ import CareerCard from "../components/ofertaEducativa/CareerCard";
 import { ofertaEducativa } from "../data/ofertaEducativa";
 import { usePageSeo } from "../utils/seo";
 import { useContactModal } from "../context/ContactModalContext";
+import { institution } from "../config/institution";
 import "../styles/ofertaEducativa.css";
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 
 const levelFilters = ["Todos", "Secundaria", "Bachillerato", "Licenciaturas", "Maestrías", "Doctorado", "En línea"];
 

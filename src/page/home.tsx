@@ -29,6 +29,9 @@ import {
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
 import { useContactModal } from "../context/ContactModalContext";
+import JsonLd from "../components/JsonLd";
+import { institution } from "../config/institution";
+import { organizationSchema } from "../utils/structuredData";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
@@ -58,7 +61,7 @@ type Campus = {
   imgPosition?: string;
 };
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 const leadFormUrl = "https://apps.clientify.net/formbuilderembed/simpleembed/#/success/twostepformpopup/171625/45670";
 
 const imageAssets = {
@@ -164,7 +167,7 @@ function Hero() {
             <Award size={16} /> Becas disponibles para nuevo ingreso
           </div>
           <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-tight sm:text-5xl lg:text-5xl xl:text-6xl">
-            Estudia en IUA y empieza tu futuro hoy
+            Universidad IUA: secundaria, bachillerato, licenciaturas y posgrados
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-white/82 sm:text-lg sm:leading-8">
             Bachillerato, licenciaturas y posgrados con validez oficial, campus cercanos y un proceso de inscripción claro desde el primer contacto.
@@ -394,6 +397,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-white font-sans text-neutral-950">
+      <JsonLd id="organization-jsonld" data={organizationSchema()} />
       <Hero />
       <TrustBand />
       <BenefitsSection />

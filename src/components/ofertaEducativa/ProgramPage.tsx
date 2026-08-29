@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   IconArrowLeft,
@@ -10,7 +9,11 @@ import {
 } from "@tabler/icons-react";
 import { ofertaEducativa } from "../../data/ofertaEducativa";
 import NotFound from "../../page/notFound";
-import { SITE_URL, usePageSeo } from "../../utils/seo";
+import { usePageSeo } from "../../utils/seo";
+import { campusSlugFromLabel } from "../../config/institution";
+import { breadcrumbSchema, educationalProgramSchema } from "../../utils/structuredData";
+import Breadcrumbs from "../Breadcrumbs";
+import JsonLd from "../JsonLd";
 import CtaBlock from "./CtaBlock";
 import FaqAccordion from "./FaqAccordion";
 import InfoSection from "./InfoSection";
@@ -24,7 +27,6 @@ const generalProgramKeywords = [
   "licenciaturas IUA",
   "posgrados IUA",
   "becas IUA",
-  "RVOE SEP",
   "estudiar en IUA",
   "campus Chalco",
   "campus Los Reyes",
@@ -43,13 +45,11 @@ function buildProgramSeo(program: Program) {
   const online = program.modalities.includes("En línea");
   const titleSuffix = online ? "en línea | Universidad IUA" : "en IUA | Universidad IUA";
   const title = `${program.title} ${titleSuffix}`;
-  const modalityText = program.modalities.join(", ");
   const campusText = program.campus.join(", ");
-  const description = `${program.title} en Universidad IUA. Estudia en modalidad ${modalityText}, con RVOE, becas disponibles, duración de ${program.duration} y atención en ${campusText}.`;
+  const description = `${program.title} en Universidad IUA: perfil de ingreso y egreso, áreas de formación, duración, modalidades y disponibilidad en ${campusText}.`;
   const keywords = uniqueKeywords([
     program.title,
     `${program.title} IUA`,
-    `${program.title} con RVOE`,
     `${program.title} becas`,
     `${program.level} IUA`,
     ...program.modalities.map((modality) => `${program.title} ${modality.toLowerCase()}`),
@@ -78,55 +78,23 @@ export default function ProgramPage({ slug }: { slug?: string }) {
     type: "article"
   });
 
-  useEffect(() => {
-    const scriptId = "program-course-jsonld";
-    document.getElementById(scriptId)?.remove();
-    if (!program) return;
-
-    const script = document.createElement("script");
-    script.id = scriptId;
-    script.type = "application/ld+json";
-    script.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Course",
-      name: program.title,
-      description: seo?.description ?? program.shortDescription,
-      url: `${SITE_URL}/oferta/${program.slug}`,
-      inLanguage: "es-MX",
-      keywords: seo?.keywords.join(", "),
-      provider: {
-        "@type": "CollegeOrUniversity",
-        name: "Universidad IUA",
-        url: SITE_URL
-      },
-      educationalLevel: program.level,
-      educationalCredentialAwarded: program.title,
-      timeRequired: program.duration,
-      courseMode: program.modalities,
-      areaServed: program.campus,
-      hasCourseInstance: program.modalities.map((modality) => ({
-        "@type": "CourseInstance",
-        courseMode: modality,
-        courseWorkload: program.duration,
-        location: program.campus.join(", ")
-      }))
-    });
-    document.head.appendChild(script);
-
-    return () => {
-      document.getElementById(scriptId)?.remove();
-    };
-  }, [program]);
-
   if (!program) {
     return <NotFound />;
   }
 
+  const breadcrumbs = [
+    { name: "Inicio", path: "/" },
+    { name: "Oferta educativa", path: "/oferta" },
+    { name: program.title, path: `/oferta/${program.slug}` }
+  ];
+
   return (
     <main className="oferta-page">
+      <JsonLd id="program-jsonld" data={[educationalProgramSchema(program), breadcrumbSchema(breadcrumbs)]} />
       <ProgramHero program={program} />
 
       <div className="program-layout">
+        <Breadcrumbs items={breadcrumbs} />
         <Link to="/oferta" className="program-back">
           <IconArrowLeft size={17} /> Volver a oferta educativa
         </Link>
@@ -159,7 +127,7 @@ export default function ProgramPage({ slug }: { slug?: string }) {
             <div className="program-summary__block">
               <strong>Campus</strong>
               <div className="oferta-chip-list">
-                {program.campus.map((campus) => <span key={campus} className="oferta-chip oferta-chip--muted">{campus}</span>)}
+                {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return slug ? <Link key={campus} to={`/campus#campus-${slug}`} className="oferta-chip oferta-chip--muted">{campus}</Link> : <span key={campus} className="oferta-chip oferta-chip--muted">{campus}</span>; })}
               </div>
             </div>
           </aside>
@@ -181,9 +149,7 @@ export default function ProgramPage({ slug }: { slug?: string }) {
 
           <InfoSection eyebrow="Campus y modalidad" title="Disponibilidad del programa">
             <ul className="program-list">
-              {program.campus.map((campus) => (
-                <li key={campus}><IconMapPin size={19} /> {campus}</li>
-              ))}
+              {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return <li key={campus}><IconMapPin size={19} /> {slug ? <Link to={`/campus#campus-${slug}`}>{campus}</Link> : campus}</li>; })}
             </ul>
             <div className="program-inline-chips">
               {program.modalities.map((modality) => <span key={modality}>{modality}</span>)}
@@ -202,8 +168,10 @@ export default function ProgramPage({ slug }: { slug?: string }) {
         <InfoSection eyebrow="Becas" title="Pregunta por becas disponibles" text="IUA cuenta con opciones de becas y descuentos disponibles según convocatoria, sede y proceso de inscripción. Un asesor puede ayudarte a revisar las opciones vigentes." />
 
         <InfoSection eyebrow="Preguntas frecuentes" title="Dudas comunes antes de inscribirte">
-          <FaqAccordion />
+          <FaqAccordion program={program} />
         </InfoSection>
+
+        <section className="program-quiz-link"><div><p className="program-section__eyebrow">Orientación vocacional</p><h2>¿No sabes si este programa es para ti?</h2><p>Compara tus intereses con distintas áreas mediante nuestro test orientativo gratuito.</p></div><Link to="/que-carrera-estudiar" className="oferta-button">Realizar test vocacional</Link></section>
 
         <CtaBlock />
       </div>

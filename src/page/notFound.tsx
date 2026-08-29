@@ -17,6 +17,7 @@ export default function NotFound() {
     title: "Pagina no encontrada | Universidad IUA",
     description: "La pagina solicitada no existe. Seras redirigido al inicio de Universidad IUA.",
     path: window.location.pathname,
+    noIndex: true,
     image: "/banners/alumnos-1-banner-recorte-1920x700.webp"
   });
 

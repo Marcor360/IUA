@@ -9,6 +9,7 @@ import {
   IconX as X
 } from "@tabler/icons-react";
 import { useContactModal } from "../context/ContactModalContext";
+import { institution } from "../config/institution";
 
 type NavItem = {
   label: string;
@@ -25,6 +26,8 @@ const navItems: NavItem[] = [
   { label: "Nosotros", to: "/nosotros" },
   { label: "Oferta", to: "/oferta" },
   { label: "Campus", to: "/campus" },
+  { label: "RVOE", to: "/rvoe" },
+  { label: "Test vocacional", to: "/que-carrera-estudiar" },
   { label: "Comunidad", to: "/comunidad" },
   { label: "Contacto", to: "/contacto" },
   { label: "Blog", to: "https://blog.iua.edu.mx/", external: true }
@@ -37,8 +40,8 @@ const communityLinks = [
   { label: "Apoyo institucional", to: "/comunidad#apoyo" }
 ];
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
-const admissionsEmail = "admisiones@iua.edu.mx";
+const whatsappUrl = institution.contact.whatsapp;
+const admissionsEmail = institution.contact.email;
 
 export function Logo({ inverse = false, footer = false }: LogoProps) {
   return (

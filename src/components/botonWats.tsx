@@ -1,6 +1,7 @@
 import { IconBrandWhatsapp as BrandWhatsapp } from "@tabler/icons-react";
+import { institution } from "../config/institution";
 
-const whatsappUrl = "https://api.whatsapp.com/send?phone=+2201349213&text=Hola";
+const whatsappUrl = institution.contact.whatsapp;
 
 export default function BotonWats() {
   return (
