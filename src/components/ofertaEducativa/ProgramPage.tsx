@@ -8,6 +8,8 @@ import {
   IconRosetteDiscountCheck
 } from "@tabler/icons-react";
 import { ofertaEducativa } from "../../data/ofertaEducativa";
+import { rvoeForProgram } from "../../data/rvoe";
+import { relatedProgramIds } from "../../data/relatedPrograms";
 import NotFound from "../../page/notFound";
 import { usePageSeo } from "../../utils/seo";
 import { campusSlugFromLabel } from "../../config/institution";
@@ -20,26 +22,7 @@ import InfoSection from "./InfoSection";
 import ProgramHero from "./ProgramHero";
 import "../../styles/ofertaEducativa.css";
 
-const generalProgramKeywords = [
-  "Universidad IUA",
-  "oferta educativa IUA",
-  "carreras IUA",
-  "licenciaturas IUA",
-  "posgrados IUA",
-  "becas IUA",
-  "estudiar en IUA",
-  "campus Chalco",
-  "campus Los Reyes",
-  "campus Texcoco",
-  "Conecta IUA",
-  "Plantel virtual"
-];
-
 type Program = (typeof ofertaEducativa)[number];
-
-function uniqueKeywords(values: string[]) {
-  return Array.from(new Set(values.filter(Boolean)));
-}
 
 function buildProgramSeo(program: Program) {
   const online = program.modalities.includes("En línea");
@@ -47,32 +30,20 @@ function buildProgramSeo(program: Program) {
   const title = `${program.title} ${titleSuffix}`;
   const campusText = program.campus.join(", ");
   const description = `${program.title} en Universidad IUA: perfil de ingreso y egreso, áreas de formación, duración, modalidades y disponibilidad en ${campusText}.`;
-  const keywords = uniqueKeywords([
-    program.title,
-    `${program.title} IUA`,
-    `${program.title} becas`,
-    `${program.level} IUA`,
-    ...program.modalities.map((modality) => `${program.title} ${modality.toLowerCase()}`),
-    ...program.campus.map((campus) => `${program.title} ${campus}`),
-    ...program.planEstudios,
-    ...program.campoLaboral,
-    ...(program.seoKeywords ?? []),
-    ...generalProgramKeywords
-  ]);
-
-  return { title, description, keywords };
+  return { title, description };
 }
 
 export default function ProgramPage({ slug }: { slug?: string }) {
   const params = useParams();
   const programSlug = slug ?? params.slug ?? "";
   const program = ofertaEducativa.find((item) => item.slug === programSlug);
+  const programRvoe = program ? rvoeForProgram(program.id).filter((record) => record.programName !== "Arquitectura del Paisaje") : [];
+  const relatedPrograms = program ? (relatedProgramIds[program.id] ?? []).map((id) => ofertaEducativa.find((item) => item.id === id)).filter(Boolean) : [];
   const seo = program ? buildProgramSeo(program) : null;
 
   usePageSeo({
     title: seo?.title ?? "Programa no encontrado | Universidad IUA",
     description: seo?.description ?? "El programa solicitado no está disponible en la oferta educativa de Universidad IUA.",
-    keywords: seo?.keywords ?? generalProgramKeywords,
     path: program ? `/oferta/${program.slug}` : "/oferta",
     image: "/banners/educacion-2-banner-recorte-1920x700.webp",
     type: "article"
@@ -127,9 +98,20 @@ export default function ProgramPage({ slug }: { slug?: string }) {
             <div className="program-summary__block">
               <strong>Campus</strong>
               <div className="oferta-chip-list">
-                {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return slug ? <Link key={campus} to={`/campus#campus-${slug}`} className="oferta-chip oferta-chip--muted">{campus}</Link> : <span key={campus} className="oferta-chip oferta-chip--muted">{campus}</span>; })}
+                {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return slug ? <Link key={campus} to={`/campus/${slug}`} className="oferta-chip oferta-chip--muted">{campus}</Link> : <span key={campus} className="oferta-chip oferta-chip--muted">{campus}</span>; })}
               </div>
             </div>
+            {programRvoe.length > 0 ? (
+              <div className="program-summary__block" aria-label="Reconocimientos de Validez Oficial de Estudios">
+                <strong>Reconocimiento oficial</strong>
+                {programRvoe.map((record) => (
+                  <div key={record.number}>
+                    <span>{[record.campusName, record.modality, record.institutionName].filter(Boolean).join(" · ")}</span>
+                    <p><strong>RVOE: {record.number}</strong></p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </aside>
         </div>
 
@@ -149,7 +131,7 @@ export default function ProgramPage({ slug }: { slug?: string }) {
 
           <InfoSection eyebrow="Campus y modalidad" title="Disponibilidad del programa">
             <ul className="program-list">
-              {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return <li key={campus}><IconMapPin size={19} /> {slug ? <Link to={`/campus#campus-${slug}`}>{campus}</Link> : campus}</li>; })}
+              {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return <li key={campus}><IconMapPin size={19} /> {slug ? <Link to={`/campus/${slug}`}>{campus}</Link> : campus}</li>; })}
             </ul>
             <div className="program-inline-chips">
               {program.modalities.map((modality) => <span key={modality}>{modality}</span>)}
@@ -173,7 +155,9 @@ export default function ProgramPage({ slug }: { slug?: string }) {
 
         <section className="program-quiz-link"><div><p className="program-section__eyebrow">Orientación vocacional</p><h2>¿No sabes si este programa es para ti?</h2><p>Compara tus intereses con distintas áreas mediante nuestro test orientativo gratuito.</p></div><Link to="/que-carrera-estudiar" className="oferta-button">Realizar test vocacional</Link></section>
 
-        <CtaBlock />
+        {relatedPrograms.length ? <InfoSection eyebrow="Explora opciones" title="Programas relacionados"><ul className="program-list">{relatedPrograms.map((related) => related ? <li key={related.id}><Link to={`/oferta/${related.slug}`}>Conocer {related.title}</Link></li> : null)}</ul></InfoSection> : null}
+
+        <CtaBlock program={program} />
       </div>
     </main>
   );

@@ -123,7 +123,7 @@ function LeadForm() {
         <p className="mt-1 text-sm leading-6 text-neutral-600">Un asesor te contacta para becas, campus y programa ideal.</p>
       </div>
       <button
-        onClick={openContactModal}
+        onClick={() => openContactModal()}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-5 py-4 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark focus:outline-none focus:ring-4 focus:ring-iua-gold/20"
       >
         Quiero que me contacten <ArrowRight size={18} />
@@ -174,7 +174,7 @@ function Hero() {
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
+            <button onClick={() => openContactModal()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-gold px-7 py-4 text-sm font-black text-iua-dark shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#d4a13a]">
               Solicitar información <ArrowRight size={18} />
             </button>
             <a href={whatsappUrl} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
@@ -256,7 +256,7 @@ function ModalitiesSection() {
             <p className="text-xs font-black uppercase tracking-[0.22em] text-iua-gold">Oferta académica</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-neutral-950 md:text-4xl">Elige cómo quieres avanzar</h2>
           </div>
-          <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
+          <button onClick={() => openContactModal()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
             Pedir plan de estudios <ArrowRight size={17} />
           </button>
         </div>
@@ -378,7 +378,7 @@ function FinalCTA() {
           </div>
         </div>
         <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-          <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-7 py-4 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:bg-iua-dark">Pedir información <ArrowRight size={17} /></button>
+          <button onClick={() => openContactModal()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-7 py-4 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:bg-iua-dark">Pedir información <ArrowRight size={17} /></button>
           <a href={whatsappUrl} className="inline-flex items-center justify-center gap-2 rounded-xl border border-iua-burgundy bg-white px-7 py-4 text-sm font-black text-iua-burgundy transition hover:bg-white/70"><BrandWhatsapp size={17} /> WhatsApp</a>
         </div>
       </div>
@@ -390,7 +390,6 @@ export default function HomePage() {
   usePageSeo({
     title: "Universidad IUA | Preparatoria, Licenciaturas, Maestrías y Doctorados",
     description: "Estudia en Universidad IUA. Secundaria, preparatoria, licenciaturas ejecutivas y en línea, maestrías y doctorado. Campus en Chalco y Los Reyes con becas disponibles.",
-    keywords: ["universidad en chalco", "universidad en los reyes", "universidad iua", "licenciaturas en linea", "preparatoria en chalco", "secundaria iua", "maestrias en linea", "universidad ejecutiva", "universidades privadas estado de mexico", "estudiar sabados", "becas universitarias"],
     path: "/",
     image: "/banners/alumnos-1-banner-recorte-1920x700.webp"
   });

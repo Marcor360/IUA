@@ -3,17 +3,22 @@
   "version": "1.0.1",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
     "generate:sitemap": "node scripts/generate-sitemap.mjs",
     "prebuild": "npm run generate:sitemap",
-    "build": "npm run generate:sitemap && vite build && npm run prerender",
+    "build": "npm run generate:sitemap && vite build && npm run prerender && npm run validate:seo",
     "prerender": "node scripts/prerender.mjs",
-    "test": "vitest run",
-    "lint": "tsc --noEmit",
+    "validate:seo": "node scripts/validate-seo-build.mjs",
+    "test": "vitest run src",
+    "test:e2e": "playwright test",
+    "lint": "eslint . --max-warnings=0",
     "preview": "vite preview",
-    "audit": "npm audit",
+    "audit": "npm audit --audit-level=high",
     "safe-install": "npm install --ignore-scripts"
   },
   "dependencies": {
@@ -23,12 +28,18 @@
     "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.62.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "10.9.1",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.4.24",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.68.0",
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
   }

@@ -16,7 +16,7 @@ export type Institution = {
   description: string;
   url: string;
   logo: string;
-  contact: { phone: string; whatsapp: string; email: string };
+  contact: { phone: string; whatsappPhone: string; whatsapp: string; email: string };
   campuses: Campus[];
   socialProfiles: string[];
 };
@@ -28,6 +28,7 @@ export const institution: Institution = {
   logo: "https://iua.edu.mx/Logo-iua.png",
   contact: {
     phone: "+522201349213",
+    whatsappPhone: "522201349213",
     whatsapp: "https://api.whatsapp.com/send?phone=2201349213&text=Hola",
     email: "admisiones@iua.edu.mx"
   },
@@ -84,6 +85,10 @@ export const institution: Institution = {
     "https://www.tiktok.com/@iua_oficial"
   ]
 };
+
+export function whatsappUrl(message = "Hola, quiero recibir información sobre Universidad IUA.") {
+  return `https://wa.me/${institution.contact.whatsappPhone}?text=${encodeURIComponent(message)}`;
+}
 
 export function campusSlugFromLabel(label: string) {
   const normalized = label.toLowerCase();

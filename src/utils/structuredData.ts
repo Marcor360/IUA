@@ -1,4 +1,5 @@
 import { institution } from "../config/institution";
+import type { Campus } from "../config/institution";
 
 export function organizationSchema() {
   return {
@@ -57,5 +58,19 @@ export function educationalProgramSchema(program: {
     timeToComplete: program.duration,
     educationalProgramMode: program.modalities,
     areaServed: program.campus
+  };
+}
+
+export function campusSchema(campus: Campus) {
+  return {
+    "@context": "https://schema.org",
+    "@type": campus.isVirtual ? "EducationalOrganization" : "CollegeOrUniversity",
+    "@id": `${institution.url}/campus/${campus.slug}#campus`,
+    name: campus.name,
+    url: `${institution.url}/campus/${campus.slug}`,
+    image: `${institution.url}${campus.image}`,
+    parentOrganization: { "@id": `${institution.url}/#organization` },
+    ...(campus.address ? { address: { "@type": "PostalAddress", streetAddress: campus.address, addressCountry: "MX" } } : {}),
+    ...(campus.phones?.[0] ? { telephone: campus.phones[0].href.replace("tel:", "") } : {})
   };
 }

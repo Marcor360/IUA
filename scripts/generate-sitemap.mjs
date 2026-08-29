@@ -1,31 +1,14 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 const siteUrl = "https://iua.edu.mx";
-
-const staticRoutes = [
-  { path: "/", priority: "1.0" },
-  { path: "/nosotros", priority: "0.8" },
-  { path: "/oferta", priority: "0.9" },
-  { path: "/campus", priority: "0.8" },
-  { path: "/rvoe", priority: "0.8" },
-  { path: "/que-carrera-estudiar", priority: "0.8" },
-  { path: "/comunidad", priority: "0.7" },
-  { path: "/contacto", priority: "0.8" },
-  { path: "/aviso-de-privacidad", priority: "0.4" }
-];
-
-const dataSource = readFileSync("src/data/ofertaEducativa.ts", "utf8");
-const programSlugs = Array.from(dataSource.matchAll(/slug:\s*"([^"]+)"/g), (match) => match[1]);
-
-const routes = [
-  ...staticRoutes,
-  ...programSlugs.map((slug) => ({ path: `/oferta/${slug}`, priority: "0.8" }))
-];
+const routes = JSON.parse(readFileSync("src/config/indexableRoutes.json", "utf8"));
+const escapeXml = (value) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes.map((route) => `  <url><loc>${siteUrl}${route.path === "/" ? "/" : route.path}</loc><priority>${route.priority}</priority></url>`).join("\n")}
+${routes.map(({ path, updatedAt }) => `  <url><loc>${escapeXml(`${siteUrl}${path === "/" ? "/" : path}`)}</loc>${updatedAt ? `<lastmod>${updatedAt}</lastmod>` : ""}</url>`).join("\n")}
 </urlset>
 `;
 
 writeFileSync("public/sitemap.xml", sitemap, "utf8");
+console.log(`Generated sitemap with ${routes.length} structured routes.`);

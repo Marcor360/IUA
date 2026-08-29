@@ -227,7 +227,7 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">
         {campus.visitUrl === leadFormUrl ? (
-          <button onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
+          <button onClick={() => openContactModal()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-iua-burgundy px-6 py-3 text-sm font-black text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark">
             {campus.visitLabel ?? "Agendar visita"} <Calendar size={17} />
           </button>
         ) : (
@@ -386,7 +386,6 @@ export default function Campus() {
   usePageSeo({
     title: "Campus IUA | Universidades en Chalco, Los Reyes, Texcoco",
     description: "Conoce los campus de Universidad IUA ubicados en Chalco, Los Reyes y Texcoco. Descubre nuestras instalaciones, laboratorios, aulas y modalidad en línea. ¡Agenda tu visita hoy!",
-    keywords: ["universidad en chalco", "universidad en los reyes la paz", "universidad en texcoco", "campus iua", "instalaciones iua", "universidades estado de mexico", "estudiar en chalco", "estudiar en los reyes"],
     path: "/campus",
     image: "/banners/patio-1-banner-recorte-1920x700.webp"
   });
@@ -457,7 +456,7 @@ export default function Campus() {
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             {campusDetails.map((campus) => (
               campus.visitUrl === leadFormUrl ? (
-                <button key={campus.id} onClick={openContactModal} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
+                <button key={campus.id} onClick={() => openContactModal()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-black text-iua-burgundy shadow-xl shadow-black/10 transition hover:-translate-y-0.5 hover:bg-iua-cream">
                   {campus.id === "campus-chalco" ? "Chalco" : campus.id === "campus-reyes" ? "Reyes" : campus.id === "campus-texcoco" ? "Texcoco" : "En línea"}
                   <ExternalLink size={17} />
                 </button>

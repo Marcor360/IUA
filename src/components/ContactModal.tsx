@@ -1,288 +1,94 @@
-import { useEffect, useState, useMemo } from "react";
-import {
-  IconBrandWhatsapp as BrandWhatsapp,
-  IconPhone as Phone,
-  IconMail as Mail,
-  IconX as X,
-  IconArrowLeft as ArrowLeft,
-  IconCheck as Check,
-} from "@tabler/icons-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { IconArrowLeft, IconBrandWhatsapp, IconCheck, IconMail, IconPhone, IconX } from "@tabler/icons-react";
+import { campusSlugFromLabel, institution, whatsappUrl } from "../config/institution";
+import type { ContactContext } from "../context/ContactModalContext";
 import { ofertaEducativa } from "../data/ofertaEducativa";
-import { institution } from "../config/institution";
+import { trackEvent } from "../utils/analytics";
 
-type ContactModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-};
+type Props = { isOpen: boolean; onClose: () => void; context: ContactContext };
+type Step = "selection" | "form" | "success";
 
-const whatsappUrl = institution.contact.whatsapp;
-
-export function ContactModal({ isOpen, onClose }: ContactModalProps) {
-  const [step, setStep] = useState<"selection" | "form" | "success">("selection");
-  const [selectedMethod, setSelectedMethod] = useState<"phone" | "email" | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-
-  // Form state
+export function ContactModal({ isOpen, onClose, context }: Props) {
+  const [step, setStep] = useState<Step>("selection");
+  const [method, setMethod] = useState<"phone" | "email" | null>(null);
   const [nombre, setNombre] = useState("");
   const [contacto, setContacto] = useState("");
   const [programa, setPrograma] = useState("");
   const [plantel, setPlantel] = useState("");
-
-  const campusOptions = useMemo(() => {
-    const campus = new Set(
-      ofertaEducativa.flatMap((program) => 
-        program.campus.map(c => c.replace("Plantel", "Campus"))
-      )
-    );
-    return Array.from(campus);
-  }, []);
+  const [website, setWebsite] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
+  const program = useMemo(() => ofertaEducativa.find((item) => item.id === programa), [programa]);
+  const campuses = useMemo(() => {
+    if (!program) return institution.campuses;
+    const slugs = new Set<string>(program.campus.map(campusSlugFromLabel).filter((slug): slug is string => Boolean(slug)));
+    return institution.campuses.filter((campus) => slugs.has(campus.slug));
+  }, [program]);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-      // Reset state when opening
-      setStep("selection");
-      setSelectedMethod(null);
-      setNombre("");
-      setContacto("");
-      setPrograma("");
-      setPlantel("");
-      setIsSubmitting(false);
-      setSubmitError("");
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
+    if (!isOpen) return;
+    previousFocus.current = document.activeElement as HTMLElement | null;
+    setStep("selection"); setMethod(null); setNombre(""); setContacto("");
+    setPrograma(context.programId ?? ""); setPlantel(context.campusId ?? ""); setWebsite(""); setError("");
+    document.body.style.overflow = "hidden";
+    window.setTimeout(() => dialogRef.current?.focus(), 0);
+    return () => { document.body.style.overflow = ""; previousFocus.current?.focus(); };
+  }, [context.campusId, context.programId, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { onClose(); return; }
+      if (event.key !== "Tab" || !dialogRef.current) return;
+      const nodes = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]):not([tabindex="-1"]),select:not([disabled])'));
+      if (!nodes.length) return;
+      if (event.shiftKey && document.activeElement === nodes[0]) { event.preventDefault(); nodes.at(-1)?.focus(); }
+      else if (!event.shiftKey && document.activeElement === nodes.at(-1)) { event.preventDefault(); nodes[0].focus(); }
     };
-  }, [isOpen]);
+    document.addEventListener("keydown", keydown);
+    return () => document.removeEventListener("keydown", keydown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+  const message = program ? `Hola, quiero recibir información sobre ${program.title}.` : "Hola, quiero recibir información sobre Universidad IUA.";
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError("");
-
+  async function submit(event: React.FormEvent) {
+    event.preventDefault(); setIsSubmitting(true); setError("");
     try {
-      const response = await fetch("/api/contact.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ method: selectedMethod, nombre, contacto, programa, plantel })
-      });
-
-      if (!response.ok) {
-        throw new Error("No se pudo enviar la informacion");
-      }
-
-      setStep("success");
-    } catch {
-      setSubmitError("No pudimos enviar tus datos. Intenta de nuevo o escríbenos por WhatsApp.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      const response = await fetch("/api/contact.php", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ method, nombre, contacto, programa, plantel, website }) });
+      if (!response.ok) throw new Error();
+      setStep("success"); trackEvent("lead_submit", { program: programa, campus: plantel, method: method ?? "" });
+    } catch { setError("No pudimos enviar tus datos. Intenta de nuevo o escríbenos por WhatsApp."); }
+    finally { setIsSubmitting(false); }
+  }
 
   return (
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-fade-in"
-      onClick={handleOverlayClick}
-      aria-hidden="true"
-    >
-      <div className="relative w-full max-w-sm rounded-[2rem] bg-white p-6 sm:p-8 shadow-2xl ring-1 ring-black/5 animate-rise max-h-[90vh] overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-900"
-          aria-label="Cerrar modal"
-        >
-          <X size={20} />
-        </button>
-
-        {step === "selection" && (
-          <>
-            <div className="mb-6 mt-6">
-              <h3 className="text-xl font-black tracking-tight text-iua-burgundy text-center px-2">
-                Selecciona por qué método quieres recibir la información
-              </h3>
-              <p className="mt-2 text-center text-sm text-neutral-600 px-2">
-                Un asesor se pondrá en contacto contigo a la brevedad.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                onClick={onClose}
-                className="flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 transition duration-300 hover:-translate-y-1 hover:border-[#25D366] hover:bg-neutral-50 hover:shadow-lg"
-              >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#25D366]/10 text-[#25D366]">
-                  <BrandWhatsapp size={28} />
-                </div>
-                <div>
-                  <p className="font-bold text-neutral-900">WhatsApp</p>
-                  <p className="text-xs text-neutral-500">Respuesta rápida</p>
-                </div>
-              </a>
-
-              <button
-                onClick={() => {
-                  setSelectedMethod("phone");
-                  setStep("form");
-                }}
-                className="w-full text-left flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 transition duration-300 hover:-translate-y-1 hover:border-iua-gold hover:bg-neutral-50 hover:shadow-lg"
-              >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-iua-cream text-iua-gold">
-                  <Phone size={28} />
-                </div>
-                <div>
-                  <p className="font-bold text-neutral-900">Teléfono</p>
-                  <p className="text-xs text-neutral-500">Te llamamos nosotros</p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setSelectedMethod("email");
-                  setStep("form");
-                }}
-                className="w-full text-left flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 transition duration-300 hover:-translate-y-1 hover:border-iua-burgundy hover:bg-neutral-50 hover:shadow-lg"
-              >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-iua-burgundy/10 text-iua-burgundy">
-                  <Mail size={28} />
-                </div>
-                <div>
-                  <p className="font-bold text-neutral-900">Correo electrónico</p>
-                  <p className="text-xs text-neutral-500">Recibe toda la información</p>
-                </div>
-              </button>
-            </div>
-          </>
-        )}
-
-        {step === "form" && (
-          <>
-            <div className="mb-6 mt-6 flex items-center pr-6">
-              <button
-                onClick={() => setStep("selection")}
-                className="mr-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 transition hover:bg-neutral-200 hover:text-neutral-900"
-                aria-label="Volver"
-              >
-                <ArrowLeft size={20} />
-              </button>
-              <h3 className="text-xl font-black tracking-tight text-iua-burgundy leading-tight">
-                Compártenos tus datos
-              </h3>
-            </div>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-bold text-neutral-700">Nombre completo</span>
-                <input
-                  type="text"
-                  required
-                  disabled={isSubmitting}
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
-                  placeholder="Tu nombre"
-                />
-              </label>
-
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-bold text-neutral-700">
-                  {selectedMethod === "phone" ? "Número de teléfono" : "Correo electrónico"}
-                </span>
-                <input
-                  type={selectedMethod === "phone" ? "tel" : "email"}
-                  required
-                  disabled={isSubmitting}
-                  value={contacto}
-                  onChange={(e) => setContacto(e.target.value)}
-                  className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
-                  placeholder={selectedMethod === "phone" ? "55 1234 5678" : "correo@ejemplo.com"}
-                />
-              </label>
-
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-bold text-neutral-700">Programa de interés</span>
-                <select
-                  required
-                  disabled={isSubmitting}
-                  value={programa}
-                  onChange={(e) => setPrograma(e.target.value)}
-                  className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
-                >
-                  <option value="" disabled>Selecciona una opción</option>
-                  {ofertaEducativa.map((prog) => (
-                    <option key={prog.id} value={prog.title}>{prog.title}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-bold text-neutral-700">Plantel</span>
-                <select
-                  required
-                  disabled={isSubmitting}
-                  value={plantel}
-                  onChange={(e) => setPlantel(e.target.value)}
-                  className="rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2.5 text-sm transition focus:border-iua-burgundy focus:bg-white focus:outline-none focus:ring-1 focus:ring-iua-burgundy"
-                >
-                  <option value="" disabled>Selecciona un plantel</option>
-                  {campusOptions.map((campus) => (
-                    <option key={campus} value={campus}>{campus}</option>
-                  ))}
-                  <option value="En línea">En línea</option>
-                </select>
-              </label>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="mt-2 w-full rounded-xl bg-iua-burgundy px-4 py-3 text-sm font-bold text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
-              >
-                {isSubmitting ? "Enviando..." : "Enviar información"}
-              </button>
-              {submitError ? (
-                <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-                  {submitError}
-                </p>
-              ) : null}
-            </form>
-          </>
-        )}
-
-        {step === "success" && (
-          <div className="flex flex-col items-center justify-center py-6 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <Check size={36} />
-            </div>
-            <h3 className="mb-2 text-2xl font-black text-iua-burgundy">¡Datos enviados!</h3>
-            <p className="text-neutral-600">
-              Gracias por tu interés. Un asesor se pondrá en contacto contigo muy pronto.
-            </p>
-            <button
-              onClick={onClose}
-              className="mt-6 w-full rounded-xl bg-neutral-100 px-4 py-3 text-sm font-bold text-neutral-700 transition hover:bg-neutral-200"
-            >
-              Cerrar
-            </button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <div ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" className="relative max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8">
+        <button type="button" onClick={onClose} className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100" aria-label="Cerrar modal"><IconX size={20} /></button>
+        {step === "selection" ? <>
+          <div className="mb-6 mt-6 text-center"><h2 id="contact-modal-title" className="text-xl font-black text-iua-burgundy">¿Cómo quieres recibir información?</h2><p className="mt-2 text-sm text-neutral-600">Un asesor se pondrá en contacto contigo.</p></div>
+          <div className="flex flex-col gap-3">
+            <a href={whatsappUrl(message)} target="_blank" rel="noreferrer" onClick={() => { trackEvent("whatsapp_click", { program: programa }); onClose(); }} className="flex items-center gap-4 rounded-2xl border p-4"><IconBrandWhatsapp size={28} className="text-[#25D366]" /><span><strong>WhatsApp</strong><small className="block">Respuesta rápida</small></span></a>
+            <button type="button" onClick={() => { setMethod("phone"); setStep("form"); }} className="flex items-center gap-4 rounded-2xl border p-4 text-left"><IconPhone size={28} /><span><strong>Teléfono</strong><small className="block">Te llamamos nosotros</small></span></button>
+            <button type="button" onClick={() => { setMethod("email"); setStep("form"); }} className="flex items-center gap-4 rounded-2xl border p-4 text-left"><IconMail size={28} /><span><strong>Correo electrónico</strong><small className="block">Recibe la información</small></span></button>
           </div>
-        )}
+        </> : null}
+        {step === "form" ? <>
+          <div className="mb-6 mt-6 flex items-center"><button type="button" onClick={() => setStep("selection")} aria-label="Volver" className="mr-3 rounded-full bg-neutral-100 p-2"><IconArrowLeft size={20} /></button><h2 id="contact-modal-title" className="text-xl font-black text-iua-burgundy">Compártenos tus datos</h2></div>
+          <form onSubmit={submit} className="flex flex-col gap-4">
+            <label className="sr-only" aria-hidden="true">Sitio web<input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} /></label>
+            <label className="flex flex-col gap-1"><strong>Nombre completo</strong><input required maxLength={100} value={nombre} onChange={(e) => setNombre(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
+            <label className="flex flex-col gap-1"><strong>{method === "phone" ? "Número de teléfono" : "Correo electrónico"}</strong><input required maxLength={254} type={method === "phone" ? "tel" : "email"} value={contacto} onChange={(e) => setContacto(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
+            <label className="flex flex-col gap-1"><strong>Programa de interés</strong><select required value={programa} onChange={(e) => { setPrograma(e.target.value); setPlantel(""); }} className="rounded-xl border px-4 py-2.5"><option value="">Selecciona un programa</option>{ofertaEducativa.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
+            <label className="flex flex-col gap-1"><strong>Plantel</strong><select required value={plantel} onChange={(e) => setPlantel(e.target.value)} className="rounded-xl border px-4 py-2.5"><option value="">Selecciona un plantel</option>{campuses.map((campus) => <option key={campus.id} value={campus.id}>{campus.shortName}</option>)}</select></label>
+            <button type="submit" disabled={isSubmitting} className="rounded-xl bg-iua-burgundy px-4 py-3 font-bold text-white disabled:opacity-60">{isSubmitting ? "Enviando…" : "Enviar información"}</button>
+            {error ? <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
+          </form>
+        </> : null}
+        {step === "success" ? <div className="py-8 text-center"><IconCheck size={44} className="mx-auto text-green-600" /><h2 id="contact-modal-title" className="mt-3 text-2xl font-black text-iua-burgundy">Datos enviados</h2><p>Un asesor se pondrá en contacto contigo.</p><button type="button" onClick={onClose} className="mt-6 rounded-xl bg-neutral-100 px-5 py-3 font-bold">Cerrar</button></div> : null}
       </div>
     </div>
   );

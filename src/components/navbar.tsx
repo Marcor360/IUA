@@ -237,7 +237,7 @@ export default function Navbar() {
         </nav>
         <div className="flex items-center gap-3">
           <button
-            onClick={openContactModal}
+            onClick={() => openContactModal()}
             className="hidden rounded-xl bg-iua-burgundy px-5 py-3 text-sm font-bold text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark md:inline-flex md:items-center md:gap-2"
           >
             Pedir informacion <ArrowRight size={16} />

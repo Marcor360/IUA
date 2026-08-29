@@ -1,10 +1,9 @@
 import { IconBrandWhatsapp, IconFileText } from "@tabler/icons-react";
 import { useContactModal } from "../../context/ContactModalContext";
-import { institution } from "../../config/institution";
+import { whatsappUrl } from "../../config/institution";
+import type { ProgramaOferta } from "../../data/ofertaEducativa";
 
-const whatsappUrl = institution.contact.whatsapp;
-
-export default function CtaBlock() {
+export default function CtaBlock({ program }: { program: ProgramaOferta }) {
   const { openContactModal } = useContactModal();
   return (
     <section className="program-cta">
@@ -16,10 +15,10 @@ export default function CtaBlock() {
         </p>
       </div>
       <div className="program-cta__actions">
-        <a href={whatsappUrl} target="_blank" rel="noreferrer" className="oferta-button oferta-button--light">
+        <a href={whatsappUrl(`Hola, quiero recibir información sobre ${program.title}.`)} target="_blank" rel="noreferrer" className="oferta-button oferta-button--light">
           Solicitar información por WhatsApp <IconBrandWhatsapp size={18} />
         </a>
-        <button onClick={openContactModal} className="oferta-button oferta-button--outline-light">
+        <button onClick={() => openContactModal({ programId: program.id })} className="oferta-button oferta-button--outline-light">
           Ver plan de estudios <IconFileText size={18} />
         </button>
       </div>

@@ -87,7 +87,6 @@ export default function Nosotros() {
   usePageSeo({
     title: "Nosotros | Universidad IUA | Misión, Visión y Valores",
     description: "Conoce Universidad IUA. Descubre nuestra historia, misión, visión, modelo educativo, docentes, instalaciones y nuestro compromiso con tu formación académica y humana en Chalco y Los Reyes.",
-    keywords: ["sobre universidad iua", "mision vision iua", "modelo educativo iua", "docentes iua", "universidades en el estado de mexico", "quienes somos iua", "educacion con valores"],
     path: "/nosotros",
     image: "/banners/plantel-calco1-banner-recorte-1920x700.webp"
   });

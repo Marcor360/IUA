@@ -10,6 +10,7 @@ import "./styles.css";
 const HomePage = lazy(() => import("./page/home"));
 const AvisoDePrivacidad = lazy(() => import("./page/avisoDePrivacidad"));
 const Campus = lazy(() => import("./page/campus"));
+const CampusDetail = lazy(() => import("./page/campusDetail"));
 const Comunidad = lazy(() => import("./page/comunidad"));
 const Nosotros = lazy(() => import("./page/nosotros"));
 const NotFound = lazy(() => import("./page/notFound"));
@@ -59,6 +60,7 @@ function App() {
           <Route path="/oferta" element={<OfertaEducativa />} />
           <Route path="/oferta/:slug" element={<ProgramPage />} />
           <Route path="/campus" element={<Campus />} />
+          <Route path="/campus/:slug" element={<CampusDetail />} />
           <Route path="/rvoe" element={<RvoePage />} />
           <Route path="/que-carrera-estudiar" element={<CareerQuizPage />} />
           <Route path="/comunidad" element={<Comunidad />} />

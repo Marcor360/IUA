@@ -5,6 +5,7 @@ import { ofertaEducativa } from "../data/ofertaEducativa";
 import { usePageSeo } from "../utils/seo";
 import { useContactModal } from "../context/ContactModalContext";
 import { institution } from "../config/institution";
+import { rvoeRecords } from "../data/rvoe";
 import "../styles/ofertaEducativa.css";
 
 const whatsappUrl = institution.contact.whatsapp;
@@ -24,7 +25,6 @@ export default function OfertaEducativa() {
   usePageSeo({
     title: "Oferta Educativa IUA | Licenciaturas, Maestrías, Doctorado y Preparatoria",
     description: "Conoce la amplia oferta educativa de Universidad IUA. Ofrecemos secundaria, preparatoria, licenciaturas, maestrías y doctorado en modalidades escolarizada, ejecutiva (sábados) y en línea.",
-    keywords: ["oferta educativa iua", "carreras universitarias", "licenciaturas iua", "estudiar maestria iua", "universidades en chalco y los reyes", "carreras en linea", "licenciaturas ejecutivas", "doctorado en derecho", "bachillerato general", "licenciaturas con rvoe"],
     path: "/oferta",
     image: "/banners/educacion-2-banner-recorte-1920x700.webp"
   });
@@ -70,7 +70,7 @@ export default function OfertaEducativa() {
               Elige el programa que mejor se adapte a tu futuro profesional y estudia en modalidad escolarizada, ejecutiva o en línea, según disponibilidad.
             </p>
             <div className="oferta-hero__actions">
-              <button onClick={openContactModal} className="oferta-button">
+              <button onClick={() => openContactModal()} className="oferta-button">
                 Solicitar información <IconArrowRight size={18} />
               </button>
               <a href="#programas" className="oferta-button oferta-button--secondary">
@@ -81,7 +81,7 @@ export default function OfertaEducativa() {
           <div className="oferta-hero__stats" aria-label="Resumen de oferta educativa">
             <div><strong>{ofertaEducativa.length}</strong><span>programas</span></div>
             <div><strong>3</strong><span>modalidades</span></div>
-            <div><strong>RVOE</strong><span>validez oficial</span></div>
+            <div><strong>{rvoeRecords.length}</strong><span>RVOE publicados</span></div>
           </div>
         </div>
       </section>

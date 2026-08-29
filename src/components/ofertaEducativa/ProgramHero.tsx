@@ -1,12 +1,11 @@
 import { IconBrandWhatsapp, IconChecklist, IconClockHour4 } from "@tabler/icons-react";
 import type { ProgramaOferta } from "../../data/ofertaEducativa";
 import { useContactModal } from "../../context/ContactModalContext";
-import { institution } from "../../config/institution";
-
-const whatsappUrl = institution.contact.whatsapp;
+import { whatsappUrl } from "../../config/institution";
 
 export default function ProgramHero({ program }: { program: ProgramaOferta }) {
   const { openContactModal } = useContactModal();
+  const contextualWhatsapp = whatsappUrl(`Hola, quiero recibir información sobre ${program.title}.`);
   const Icon = program.icon;
 
   return (
@@ -32,10 +31,10 @@ export default function ProgramHero({ program }: { program: ProgramaOferta }) {
             ))}
           </div>
           <div className="program-hero__actions">
-            <a href={whatsappUrl} target="_blank" rel="noreferrer" className="oferta-button oferta-button--light">
+            <a href={contextualWhatsapp} target="_blank" rel="noreferrer" className="oferta-button oferta-button--light">
               Solicitar información por WhatsApp <IconBrandWhatsapp size={18} />
             </a>
-            <button onClick={openContactModal} className="oferta-button oferta-button--outline-light">
+            <button onClick={() => openContactModal({ programId: program.id })} className="oferta-button oferta-button--outline-light">
               Ver plan de estudios <IconChecklist size={18} />
             </button>
           </div>

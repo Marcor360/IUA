@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   IconArrowRight,
   IconHome,
@@ -7,34 +6,14 @@ import {
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
 
-const redirectSeconds = 7;
-
 export default function NotFound() {
-  const navigate = useNavigate();
-  const [secondsLeft, setSecondsLeft] = useState(redirectSeconds);
-
   usePageSeo({
     title: "Pagina no encontrada | Universidad IUA",
-    description: "La pagina solicitada no existe. Seras redirigido al inicio de Universidad IUA.",
+    description: "La página solicitada no existe. Consulta la oferta educativa o vuelve al inicio de Universidad IUA.",
     path: window.location.pathname,
-    noIndex: true,
+    robots: { index: false, follow: true },
     image: "/banners/alumnos-1-banner-recorte-1920x700.webp"
   });
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setSecondsLeft((current) => Math.max(current - 1, 0));
-    }, 1000);
-
-    const timeoutId = window.setTimeout(() => {
-      navigate("/", { replace: true });
-    }, redirectSeconds * 1000);
-
-    return () => {
-      window.clearInterval(intervalId);
-      window.clearTimeout(timeoutId);
-    };
-  }, [navigate]);
 
   return (
     <main className="min-h-screen bg-white text-neutral-950">
@@ -54,7 +33,7 @@ export default function NotFound() {
             Pagina no encontrada
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-white/82 sm:text-lg sm:leading-8">
-            La direccion que abriste no existe o ya no esta disponible. Te llevaremos al inicio en {secondsLeft} segundo{secondsLeft === 1 ? "" : "s"}.
+            La dirección que abriste no existe o ya no está disponible. Puedes volver al inicio o consultar la oferta educativa.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link

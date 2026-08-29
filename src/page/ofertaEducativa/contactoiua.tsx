@@ -63,7 +63,6 @@ export default function ContactoIua() {
   usePageSeo({
     title: "Contacto IUA | Admisiones, WhatsApp y Ubicación de Campus",
     description: "Contacta a Universidad IUA por WhatsApp, correo o teléfono. Agenda una cita en nuestros campus de Chalco, Los Reyes o Texcoco y recibe orientación de admisiones, becas y colegiaturas.",
-    keywords: ["contacto universidad iua", "admisiones iua", "telefonos universidad iua", "whatsapp iua", "ubicacion campus iua", "informacion inscripciones iua", "universidades estado de mexico contacto", "agendar cita iua", "becas iua informacion"],
     path: "/contacto",
     image: "/banners/alumnos-1-banner-recorte-1920x700.webp"
   });

@@ -8,6 +8,7 @@ import {
 } from "@tabler/icons-react";
 
 type CookiePreferences = {
+  version: 2;
   necessary: true;
   analytics: boolean;
   marketing: boolean;
@@ -17,6 +18,7 @@ type CookiePreferences = {
 const STORAGE_KEY = "iua_cookie_preferences";
 
 const defaultPreferences: CookiePreferences = {
+  version: 2,
   necessary: true,
   analytics: false,
   marketing: false,
@@ -27,7 +29,8 @@ function readPreferences() {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (!stored) return null;
-    return JSON.parse(stored) as CookiePreferences;
+    const preferences = JSON.parse(stored) as CookiePreferences;
+    return preferences.version === 2 ? preferences : null;
   } catch {
     return null;
   }
@@ -37,10 +40,15 @@ function applyPreferences(preferences: CookiePreferences) {
   const globalWindow = window as Window & { iuaCookieConsent?: CookiePreferences };
   globalWindow.iuaCookieConsent = preferences;
   window.dispatchEvent(new CustomEvent("iua-cookie-consent-change", { detail: preferences }));
+  const consent = preferences.analytics ? "granted" : "denied";
+  const advertising = preferences.marketing ? "granted" : "denied";
+  const gtag = (...args: unknown[]) => { window.dataLayer = window.dataLayer ?? []; window.dataLayer.push(args as unknown as Record<string, unknown>); };
+  gtag("consent", "update", { analytics_storage: consent, ad_storage: advertising, ad_user_data: advertising, ad_personalization: advertising });
 }
 
-function savePreferences(preferences: Omit<CookiePreferences, "necessary" | "updatedAt">) {
+function savePreferences(preferences: Omit<CookiePreferences, "version" | "necessary" | "updatedAt">) {
   const nextPreferences: CookiePreferences = {
+    version: 2,
     necessary: true,
     analytics: preferences.analytics,
     marketing: preferences.marketing,
@@ -78,14 +86,14 @@ export default function CookieConsent() {
 
   const acceptAll = () => {
     savePreferences({ analytics: true, marketing: true });
-    setPreferences({ necessary: true, analytics: true, marketing: true, updatedAt: new Date().toISOString() });
+    setPreferences({ version: 2, necessary: true, analytics: true, marketing: true, updatedAt: new Date().toISOString() });
     setIsVisible(false);
     setIsConfigOpen(false);
   };
 
   const rejectOptional = () => {
     savePreferences({ analytics: false, marketing: false });
-    setPreferences({ necessary: true, analytics: false, marketing: false, updatedAt: new Date().toISOString() });
+    setPreferences({ version: 2, necessary: true, analytics: false, marketing: false, updatedAt: new Date().toISOString() });
     setIsVisible(false);
     setIsConfigOpen(false);
   };

@@ -3,180 +3,93 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+header('X-Content-Type-Options: nosniff');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
+function fail(int $status, string $message): never {
+    http_response_code($status);
+    echo json_encode(['error' => $message], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
-    echo json_encode(['error' => 'Metodo no permitido']);
-    exit;
+    fail(405, 'Método no permitido');
 }
+if (!str_starts_with(strtolower((string)($_SERVER['CONTENT_TYPE'] ?? '')), 'application/json')) fail(415, 'Se requiere JSON');
+$contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($contentLength <= 0 || $contentLength > 16384) fail(413, 'Carga no válida');
 
-$rawBody = file_get_contents('php://input');
-$body = json_decode($rawBody ?: '', true);
+$raw = file_get_contents('php://input', false, null, 0, 16385);
+if ($raw === false || strlen($raw) > 16384) fail(413, 'Carga demasiado grande');
+$body = json_decode($raw, true, 16, JSON_INVALID_UTF8_SUBSTITUTE);
+if (!is_array($body) || json_last_error() !== JSON_ERROR_NONE) fail(400, 'JSON inválido');
 
-if (!is_array($body)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'JSON invalido']);
-    exit;
+function value(array $body, string $key, int $max): string {
+    $result = trim((string)($body[$key] ?? ''));
+    if ($result === '' || mb_strlen($result) > $max) fail(400, 'Datos inválidos');
+    return $result;
 }
+function html(string $value): string { return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 
-function clean_value(array $body, string $key): string
-{
-    return trim((string)($body[$key] ?? ''));
-}
+if (trim((string)($body['website'] ?? '')) !== '') fail(400, 'Solicitud inválida');
+$method = value($body, 'method', 10);
+$name = value($body, 'nombre', 100);
+$contact = value($body, 'contacto', 254);
+$programId = value($body, 'programa', 80);
+$campusId = value($body, 'plantel', 40);
+if (!in_array($method, ['phone', 'email'], true)) fail(400, 'Método inválido');
+if ($method === 'email' && !filter_var($contact, FILTER_VALIDATE_EMAIL)) fail(400, 'Correo inválido');
+if ($method === 'phone' && !preg_match('/^\+?[0-9 ()-]{8,20}$/', $contact)) fail(400, 'Teléfono inválido');
 
-function h(string $value): string
-{
-    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-}
-
-$payload = [
-    'method' => clean_value($body, 'method'),
-    'nombre' => clean_value($body, 'nombre'),
-    'contacto' => clean_value($body, 'contacto'),
-    'programa' => clean_value($body, 'programa'),
-    'plantel' => clean_value($body, 'plantel'),
+$programs = [
+  'secundaria'=>'Secundaria','bachillerato'=>'Bachillerato','derecho'=>'Licenciatura en Derecho','psicologia'=>'Licenciatura en Psicología',
+  'pedagogia'=>'Licenciatura en Pedagogía','arquitectura'=>'Licenciatura en Arquitectura','artes-culinarias'=>'Licenciatura en Artes Culinarias',
+  'contaduria-publica'=>'Licenciatura en Contaduría Pública','administracion-de-empresas'=>'Licenciatura en Administración de Empresas',
+  'diseno-grafico'=>'Licenciatura en Diseño Gráfico','lenguas-extranjeras'=>'Licenciatura en Lenguas Extranjeras',
+  'ingenieria-en-sistemas-computacionales'=>'Ingeniería en Sistemas Computacionales','maestria-derecho-penal'=>'Maestría en Derecho Penal',
+  'maestria-educacion'=>'Maestría en Educación','doctorado-derecho'=>'Doctorado en Derecho'
 ];
+$campuses = ['campus-chalco'=>'Campus Chalco','campus-reyes'=>'Campus Reyes','campus-texcoco'=>'Plantel Texcoco','campus-en-linea'=>'Plantel virtual'];
+if (!isset($programs[$programId]) || !isset($campuses[$campusId])) fail(400, 'Programa o plantel inválido');
 
-if (
-    $payload['method'] === '' ||
-    $payload['nombre'] === '' ||
-    $payload['contacto'] === '' ||
-    $payload['programa'] === '' ||
-    $payload['plantel'] === ''
-) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Faltan datos obligatorios']);
-    exit;
-}
-
-if (!in_array($payload['method'], ['phone', 'email'], true)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Metodo de contacto invalido']);
-    exit;
+$clientIp = (string)($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+$bucket = hash('sha256', $clientIp . '|' . date('Y-m-d-H-i'));
+$rateFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'iua-contact-' . $bucket;
+$handle = fopen($rateFile, 'c+');
+if ($handle !== false) {
+    flock($handle, LOCK_EX); $count = (int)stream_get_contents($handle);
+    if ($count >= 5) { flock($handle, LOCK_UN); fclose($handle); fail(429, 'Demasiadas solicitudes'); }
+    ftruncate($handle, 0); rewind($handle); fwrite($handle, (string)($count + 1)); flock($handle, LOCK_UN); fclose($handle);
 }
 
 $config = [];
 $configPath = __DIR__ . '/contact.config.php';
-if (is_file($configPath)) {
-    $loadedConfig = require $configPath;
-    if (is_array($loadedConfig)) {
-        $config = $loadedConfig;
-    }
+if (is_file($configPath)) { $loaded = require $configPath; if (is_array($loaded)) $config = $loaded; }
+$turnstileSecret = getenv('TURNSTILE_SECRET_KEY') ?: (string)($config['turnstile_secret_key'] ?? '');
+if ($turnstileSecret !== '') {
+    $token = trim((string)($body['turnstileToken'] ?? ''));
+    if ($token === '') fail(400, 'Verificación requerida');
+    $verify = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt_array($verify, [CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_POSTFIELDS=>http_build_query(['secret'=>$turnstileSecret,'response'=>$token,'remoteip'=>$clientIp]),CURLOPT_TIMEOUT=>8,CURLOPT_CONNECTTIMEOUT=>4,CURLOPT_SSL_VERIFYPEER=>true,CURLOPT_SSL_VERIFYHOST=>2]);
+    $verification = curl_exec($verify); $verifyStatus = (int)curl_getinfo($verify, CURLINFO_HTTP_CODE); curl_close($verify);
+    $verified = is_string($verification) ? json_decode($verification, true) : null;
+    if ($verifyStatus !== 200 || !is_array($verified) || ($verified['success'] ?? false) !== true) fail(400, 'Verificación fallida');
 }
 
-$resendApiKey = getenv('RESEND_API_KEY') ?: (string)($config['resend_api_key'] ?? '');
-$toEmail = getenv('CONTACT_TO_EMAIL') ?: (string)($config['to_email'] ?? 'soy@iua.edu.mx');
-$fromEmail = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? 'Universidad IUA <onboarding@resend.dev>');
+$apiKey = getenv('RESEND_API_KEY') ?: (string)($config['resend_api_key'] ?? '');
+$to = getenv('CONTACT_TO_EMAIL') ?: (string)($config['to_email'] ?? '');
+$from = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? '');
+if ($apiKey === '' || !filter_var($to, FILTER_VALIDATE_EMAIL) || $from === '') { error_log('IUA contact configuration missing'); fail(503, 'Servicio temporalmente no disponible'); }
 
-$contactLabel = $payload['method'] === 'phone' ? 'Telefono' : 'Correo electronico';
-$methodLabel = $payload['method'] === 'phone' ? 'Llamada telefonica' : 'Correo electronico';
-
-$rows = [
-    ['Nombre', $payload['nombre']],
-    [$contactLabel, $payload['contacto']],
-    ['Programa de interes', $payload['programa']],
-    ['Plantel', $payload['plantel']],
-    ['Metodo elegido', $methodLabel],
-];
-
+$program = $programs[$programId]; $campus = $campuses[$campusId];
+$rows = [['Nombre',$name],[$method === 'email' ? 'Correo' : 'Teléfono',$contact],['Programa',$program],['Plantel',$campus]];
 $htmlRows = '';
-foreach ($rows as [$label, $value]) {
-    $htmlRows .= '
-        <tr>
-            <td style="border:1px solid #eee;background:#f8f4ec;padding:10px 12px;font-weight:700;width:190px">' . h($label) . '</td>
-            <td style="border:1px solid #eee;padding:10px 12px">' . h($value) . '</td>
-        </tr>';
-}
+foreach ($rows as [$label,$item]) $htmlRows .= '<tr><th style="text-align:left;padding:8px">'.html($label).'</th><td style="padding:8px">'.html($item).'</td></tr>';
+$email = ['from'=>$from,'to'=>[$to],'subject'=>'Nueva solicitud IUA: '.$program,'html'=>'<h1>Nueva solicitud de información IUA</h1><table>'.$htmlRows.'</table>','text'=>"Nueva solicitud IUA\nPrograma: $program\nPlantel: $campus"];
+if ($method === 'email') $email['reply_to'] = $contact;
 
-$html = '
-    <div style="font-family:Arial,sans-serif;color:#1f1f1f;line-height:1.5">
-        <h1 style="color:#650B15;font-size:22px;margin:0 0 12px">Nueva solicitud de informacion IUA</h1>
-        <p style="margin:0 0 18px">Un prospecto dejo sus datos desde el formulario del sitio web.</p>
-        <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;max-width:620px">' . $htmlRows . '</table>
-    </div>';
-
-$text = implode("\n", [
-    'Nueva solicitud de informacion IUA',
-    'Nombre: ' . $payload['nombre'],
-    $contactLabel . ': ' . $payload['contacto'],
-    'Programa de interes: ' . $payload['programa'],
-    'Plantel: ' . $payload['plantel'],
-    'Metodo elegido: ' . $methodLabel,
-]);
-
-$emailPayload = [
-    'from' => $fromEmail,
-    'to' => [$toEmail],
-    'subject' => 'Nueva solicitud IUA: ' . $payload['programa'],
-    'html' => $html,
-    'text' => $text,
-];
-
-if ($payload['method'] === 'email' && filter_var($payload['contacto'], FILTER_VALIDATE_EMAIL)) {
-    $emailPayload['reply_to'] = $payload['contacto'];
-}
-
-// --- Intento 1: Resend API ---
-if ($resendApiKey !== '') {
-    $ch = curl_init('https://api.resend.com/emails');
-
-    $caBundle = '';
-    foreach (['/etc/ssl/certs/ca-bundle.crt', '/etc/pki/tls/certs/ca-bundle.crt', '/etc/ssl/ca-bundle.pem'] as $path) {
-        if (file_exists($path)) {
-            $caBundle = $path;
-            break;
-        }
-    }
-
-    $curlOpts = [
-        CURLOPT_POST           => true,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER     => [
-            'Authorization: Bearer ' . $resendApiKey,
-            'Content-Type: application/json',
-        ],
-        CURLOPT_POSTFIELDS     => json_encode($emailPayload),
-        CURLOPT_TIMEOUT        => 15,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_SSL_VERIFYHOST => 2,
-    ];
-
-    if ($caBundle !== '') {
-        $curlOpts[CURLOPT_CAINFO] = $caBundle;
-    }
-
-    curl_setopt_array($ch, $curlOpts);
-
-    $response  = curl_exec($ch);
-    $status    = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
-    curl_close($ch);
-
-    if ($response !== false && $status >= 200 && $status < 300) {
-        echo json_encode(['ok' => true]);
-        exit;
-    }
-
-    error_log('Resend contact form error [' . $status . ']: ' . ($curlError ?: (string)$response));
-}
-
-// --- Intento 2: PHP mail() nativo (cPanel) ---
-$mailSubject = '=?UTF-8?B?' . base64_encode('Nueva solicitud IUA: ' . $payload['programa']) . '?=';
-$mailHeaders = implode("\r\n", [
-    'MIME-Version: 1.0',
-    'Content-Type: text/html; charset=UTF-8',
-    'From: Formulario IUA <noreply@iua.edu.mx>',
-    'X-Mailer: PHP/' . PHP_VERSION,
-]);
-
-$sent = @mail($toEmail, $mailSubject, $html, $mailHeaders);
-
-if (!$sent) {
-    error_log('PHP mail() also failed for contact form submission');
-    http_response_code(502);
-    echo json_encode(['error' => 'No se pudo enviar el correo']);
-    exit;
-}
-
-echo json_encode(['ok' => true]);
+$request = curl_init('https://api.resend.com/emails');
+curl_setopt_array($request, [CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_HTTPHEADER=>['Authorization: Bearer '.$apiKey,'Content-Type: application/json'],CURLOPT_POSTFIELDS=>json_encode($email, JSON_UNESCAPED_UNICODE),CURLOPT_TIMEOUT=>12,CURLOPT_CONNECTTIMEOUT=>5,CURLOPT_SSL_VERIFYPEER=>true,CURLOPT_SSL_VERIFYHOST=>2]);
+$response = curl_exec($request); $status = (int)curl_getinfo($request, CURLINFO_HTTP_CODE); curl_close($request);
+if ($response === false || $status < 200 || $status >= 300) { error_log('IUA contact provider failure status='.$status); fail(502, 'No se pudo enviar la solicitud'); }
+echo json_encode(['ok'=>true]);

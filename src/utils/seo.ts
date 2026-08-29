@@ -4,14 +4,14 @@ export const SITE_URL = "https://iua.edu.mx";
 export const SITE_NAME = "Universidad IUA";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/banners/alumnos-1-banner-recorte-1920x700.webp`;
 
-type SeoConfig = {
+export type SeoConfig = {
   title: string;
   description: string;
-  keywords?: string[];
   path?: string;
+  canonical?: string;
   image?: string;
   type?: "website" | "article";
-  noIndex?: boolean;
+  robots?: { index: boolean; follow: boolean };
 };
 
 function absoluteUrl(path = "/") {
@@ -56,14 +56,13 @@ function ensureCanonical(url: string) {
   element.setAttribute("href", url);
 }
 
-export function setPageSeo({ title, description, path = "/", image = DEFAULT_OG_IMAGE, type = "website", noIndex = false }: SeoConfig) {
-  const url = absoluteUrl(path);
+export function setPageSeo({ title, description, path = "/", canonical, image = DEFAULT_OG_IMAGE, type = "website", robots = { index: true, follow: true } }: SeoConfig) {
+  const url = absoluteUrl(canonical ?? path);
   const imageUrl = absoluteUrl(image);
 
   document.title = title;
   setMeta('meta[name="description"]', "content", description);
-  setMeta('meta[name="robots"]', "content", noIndex ? "noindex, follow" : "index, follow");
-  document.head.querySelector<HTMLMetaElement>('meta[name="keywords"]')?.remove();
+  setMeta('meta[name="robots"]', "content", `${robots.index ? "index" : "noindex"}, ${robots.follow ? "follow" : "nofollow"}`);
   ensureCanonical(url);
 
   ensureMetaByProperty("og:locale", "es_MX");
@@ -82,9 +81,7 @@ export function setPageSeo({ title, description, path = "/", image = DEFAULT_OG_
 }
 
 export function usePageSeo(config: SeoConfig) {
-  const keywords = config.keywords?.join("|") ?? "";
-
   useEffect(() => {
     setPageSeo(config);
-  }, [config.title, config.description, keywords, config.path, config.image, config.type, config.noIndex]);
+  }, [config.title, config.description, config.path, config.canonical, config.image, config.type, config.robots?.index, config.robots?.follow]);
 }
