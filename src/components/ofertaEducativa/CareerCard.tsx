@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { IconArrowRight } from "@tabler/icons-react";
 import type { ProgramaOferta } from "../../data/ofertaEducativa";
+import OfferingRvoeList from "./OfferingRvoeList";
 
 export default function CareerCard({ program }: { program: ProgramaOferta }) {
   const Icon = program.icon;
@@ -41,6 +42,8 @@ export default function CareerCard({ program }: { program: ProgramaOferta }) {
           ))}
         </div>
       </div>
+
+      <OfferingRvoeList programId={program.id} compact />
 
       <div className="oferta-card__footer">
         <Link to={`/oferta/${program.slug}`} className="oferta-card__button" aria-label={`Ver programa ${program.title}`}>

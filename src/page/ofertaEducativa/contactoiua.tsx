@@ -14,9 +14,12 @@ import {
 } from "@tabler/icons-react";
 import { usePageSeo } from "../../utils/seo";
 import { institution } from "../../config/institution";
+import PageBreadcrumbs from "../../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../../config/breadcrumbs";
 
 const whatsappUrl = institution.contact.whatsapp;
 const admissionsEmail = institution.contact.email;
+const breadcrumbs = sectionBreadcrumbs("contacto");
 
 const campuses = [
   {
@@ -99,6 +102,8 @@ export default function ContactoIua() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="contacto-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section className="bg-iua-cream px-5 py-12 md:px-6">
         <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3">

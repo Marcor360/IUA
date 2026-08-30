@@ -19,8 +19,11 @@ import { useContactModal } from "../context/ContactModalContext";
 import { ofertaEducativa } from "../data/ofertaEducativa";
 import JsonLd from "../components/JsonLd";
 import { organizationSchema } from "../utils/structuredData";
+import PageBreadcrumbs from "../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../config/breadcrumbs";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
+const breadcrumbs = sectionBreadcrumbs("campus");
 
 type CampusSummary = {
   id: string;
@@ -424,6 +427,8 @@ export default function Campus() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="campus-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section className="px-5 py-16 md:px-6">
         <div className="mx-auto max-w-7xl">

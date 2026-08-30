@@ -1,9 +1,9 @@
 # Mapping RVOE
 
-La fuente central `src/data/rvoe.ts` contiene 22 registros. Un número válido tiene ocho dígitos. `resolveRvoe` exige coincidencia exacta de programa, modalidad, campus e institución; con cero o varias coincidencias devuelve `undefined`.
+La fuente central `src/data/rvoe.ts` contiene 22 registros. Un número válido tiene ocho dígitos. `resolveRvoe` exige coincidencia exacta de programa, modalidad oficial, campus e institución; con cero o varias coincidencias devuelve `undefined`.
 
-Una ficha genérica no tiene campus/modalidad seleccionados. `resolveProgramPageRvoe` sólo publica el campo cuando el programa tiene un único registro válido. La interfaz muestra exclusivamente `RVOE: XXXXXXXX`. Sin registro o con ambigüedad, el campo desaparece.
+`src/data/programOfferings.ts` proyecta las 22 asociaciones programa/RVOE confirmadas por IUA y conserva internamente modalidad oficial, campus e institución cuando existen. La interfaz de cada programa muestra únicamente el campo `RVOE: XXXXXXXX`; cuando tiene varios reconocimientos, muestra cada número confirmado.
 
-Mappings múltiples no elegidos automáticamente: Derecho, Maestría en Derecho Penal, Lenguas Extranjeras, Administración de Empresas, Contaduría Pública y Pedagogía. Arquitectura comercial no se equipara con Arquitectura del Paisaje. Consulta `RVOE-PENDING-MAPPINGS.md`.
+Los 22 registros permanecen también disponibles en `/rvoe`, cuya tabla pública presenta Programa, Modalidad, RVOE y Ficha. La asociación Arquitectura del Paisaje → ficha de Arquitectura fue confirmada en la lista entregada por IUA.
 
 Secundaria y Bachillerato no tienen registro en la fuente. No muestran placeholders.

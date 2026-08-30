@@ -74,9 +74,11 @@
 
 .breadcrumbs { max-width: 80rem; margin: 0 0 1.25rem; color: #5f5a53; font-size: .88rem; }
 .breadcrumbs ol { display: flex; flex-wrap: wrap; gap: .45rem; }
-.breadcrumbs li:not(:last-child)::after { content: ">"; margin-left: .45rem; color: #b88a2e; }
+.breadcrumbs__separator { margin-left: .45rem; color: #b88a2e; }
 .breadcrumbs a { color: #7a0e1a; font-weight: 800; }
 .breadcrumbs span { font-weight: 700; }
+.breadcrumbs a:focus-visible { outline: 3px solid #b88a2e; outline-offset: 3px; border-radius: .2rem; }
+.page-breadcrumbs { width: min(100% - 2.5rem, 80rem); margin: 1.25rem auto 0; }
 
 .rvoe-lookup { display: grid; gap: 1.2rem; align-items: center; overflow: hidden; position: relative; margin-top: 1rem; border: 1px solid rgb(184 138 46 / .45); border-radius: 1.25rem; background: linear-gradient(135deg, #4e0710, #7a0e1a 72%, #971b2a); color: white; padding: clamp(1.35rem, 4vw, 2.5rem); box-shadow: 0 1.25rem 3rem rgb(78 7 16 / .18); }
 .rvoe-lookup::after { content: "RVOE"; position: absolute; right: -1rem; bottom: -2.5rem; color: rgb(255 255 255 / .045); font-size: clamp(6rem, 16vw, 11rem); font-weight: 950; line-height: 1; pointer-events: none; }
@@ -386,6 +388,25 @@
 
 .oferta-card__group {
   margin-top: 1rem;
+}
+
+.offering-rvoe-list {
+  display: grid;
+  gap: .45rem;
+  border-top: 1px solid #eadfca;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.offering-rvoe {
+  margin: 0;
+  color: #7a0e1a;
+}
+
+.offering-rvoe strong {
+  color: inherit;
+  font-size: .9rem;
+  font-weight: 950;
 }
 
 .oferta-card__footer {

@@ -1,5 +1,6 @@
 import { institution } from "../config/institution";
 import type { Campus } from "../config/institution";
+import type { BreadcrumbItem } from "../config/breadcrumbs";
 
 export function organizationSchema() {
   return {
@@ -21,8 +22,6 @@ export function organizationSchema() {
     }
   };
 }
-
-export type BreadcrumbItem = { name: string; path: string };
 
 export function breadcrumbSchema(items: BreadcrumbItem[]) {
   return {

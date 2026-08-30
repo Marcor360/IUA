@@ -9,7 +9,6 @@ export type RvoeRecord = {
   institutionId?: "instituto-universitario-anahuac";
   institutionName?: string;
   number: string;
-  programPageEligible?: boolean;
 };
 
 /** Fuente única: registros proporcionados por IUA desde `RVOE Vigentes.xlsx`. */
@@ -33,7 +32,7 @@ export const rvoeRecords: readonly RvoeRecord[] = [
   { programId: "maestria-derecho-penal", programName: "Maestría en Derecho Penal", campusId: "campus-reyes", campusName: "Plantel Los Reyes", modality: "Escolarizada", number: "20171889" },
   { programId: "pedagogia", programName: "Pedagogía", campusId: "campus-reyes", campusName: "Plantel Los Reyes", modality: "Escolarizada", number: "20171888" },
   { programId: "lenguas-extranjeras", programName: "Lenguas Extranjeras", campusId: "campus-reyes", campusName: "Plantel Los Reyes", modality: "No Escolarizada", number: "20250501" },
-  { programId: "arquitectura", programName: "Arquitectura del Paisaje", campusId: "campus-texcoco", campusName: "Plantel Texcoco", modality: "Mixta", number: "20250493", programPageEligible: false },
+  { programId: "arquitectura", programName: "Arquitectura del Paisaje", campusId: "campus-texcoco", campusName: "Plantel Texcoco", modality: "Mixta", number: "20250493" },
   { programId: "artes-culinarias", programName: "Artes Culinarias", campusId: "campus-texcoco", campusName: "Plantel Texcoco", modality: "Mixta", number: "20250492" },
   { programId: "lenguas-extranjeras", programName: "Lenguas Extranjeras", campusId: "campus-texcoco", campusName: "Plantel Texcoco", modality: "No Escolarizada", number: "20250500" }
 ] as const;
@@ -60,16 +59,6 @@ export function resolveRvoeFrom(records: readonly RvoeRecord[], query: RvoeQuery
 
 export function resolveRvoe(query: RvoeQuery): RvoeRecord | undefined {
   return resolveRvoeFrom(rvoeRecords, query);
-}
-
-export function rvoeForProgram(programId: string) {
-  return rvoeRecords.filter((record) => record.programId === programId);
-}
-
-/** A generic program page has no selected campus or modality. */
-export function resolveProgramPageRvoe(programId: string) {
-  const matches = rvoeForProgram(programId).filter(({ number, programPageEligible }) => programPageEligible !== false && isValidRvoeNumber(number));
-  return matches.length === 1 ? matches[0] : undefined;
 }
 
 export function validateRvoeRecords() {

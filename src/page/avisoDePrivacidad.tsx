@@ -10,6 +10,10 @@ import {
   IconShieldCheck as ShieldCheck
 } from "@tabler/icons-react";
 import { usePageSeo } from "../utils/seo";
+import PageBreadcrumbs from "../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../config/breadcrumbs";
+
+const breadcrumbs = sectionBreadcrumbs("privacidad");
 
 const secondaryPurposes = [
   "Para la gestion de actividades academicas y escolares del alumno relacionadas a su nivel de estudios",
@@ -146,6 +150,8 @@ export default function AvisoDePrivacidad() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="privacidad-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section className="px-5 py-12 md:px-6 md:py-16">
         <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.72fr_1.28fr]">

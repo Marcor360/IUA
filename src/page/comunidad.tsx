@@ -15,6 +15,8 @@ import {
 import { Link } from "react-router-dom";
 import { usePageSeo } from "../utils/seo";
 import { institution } from "../config/institution";
+import PageBreadcrumbs from "../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../config/breadcrumbs";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
@@ -35,6 +37,7 @@ type Platform = {
 };
 
 const whatsappUrl = institution.contact.whatsapp;
+const breadcrumbs = sectionBreadcrumbs("comunidad");
 
 const platforms: Platform[] = [
   {
@@ -234,6 +237,8 @@ export default function Comunidad() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="comunidad-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section id="plataformas" className="bg-iua-cream px-5 py-16 scroll-mt-28 md:px-6">
         <div className="mx-auto max-w-7xl">

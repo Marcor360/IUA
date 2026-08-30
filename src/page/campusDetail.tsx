@@ -7,6 +7,7 @@ import { ofertaEducativa } from "../data/ofertaEducativa";
 import { usePageSeo } from "../utils/seo";
 import { breadcrumbSchema, campusSchema } from "../utils/structuredData";
 import NotFound from "./notFound";
+import { campusBreadcrumbs } from "../config/breadcrumbs";
 
 export default function CampusDetailPage() {
   const { slug = "" } = useParams();
@@ -21,7 +22,7 @@ export default function CampusDetailPage() {
   if (!campus) return <NotFound />;
 
   const programs = ofertaEducativa.filter((program) => program.campus.some((label) => campusSlugFromLabel(label) === campus.slug));
-  const breadcrumbs = [{ name: "Inicio", path: "/" }, { name: "Campus", path: "/campus" }, { name: campus.shortName, path: `/campus/${campus.slug}` }];
+  const breadcrumbs = campusBreadcrumbs(campus);
 
   return (
     <main className="oferta-page">

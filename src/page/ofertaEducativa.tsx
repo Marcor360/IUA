@@ -5,9 +5,12 @@ import { ofertaEducativa } from "../data/ofertaEducativa";
 import { usePageSeo } from "../utils/seo";
 import { useContactModal } from "../context/ContactModalContext";
 import { rvoeRecords } from "../data/rvoe";
+import PageBreadcrumbs from "../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../config/breadcrumbs";
 import "../styles/ofertaEducativa.css";
 
 const levelFilters = ["Todos", "Secundaria", "Bachillerato", "Licenciaturas", "Maestrías", "Doctorado", "En línea"];
+const breadcrumbs = sectionBreadcrumbs("oferta");
 
 function normalizeText(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -82,6 +85,8 @@ export default function OfertaEducativa() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="oferta-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section id="programas" className="oferta-main">
         <div className="oferta-main__heading">
