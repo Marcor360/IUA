@@ -154,6 +154,8 @@ function Hero() {
       <div className="absolute inset-0 bg-iua-dark">
         <img
           src={imageAssets.heroBanner}
+          width="1920"
+          height="700"
           alt=""
           className="h-full w-full object-cover object-center"
           fetchPriority="high"

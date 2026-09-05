@@ -48,7 +48,10 @@ export function Logo({ inverse = false, footer = false }: LogoProps) {
     <Link to="/" className={`flex min-w-0 items-center gap-3 md:gap-4 ${footer ? "flex-col md:flex-row text-center md:text-left" : ""}`} aria-label="Ir al inicio">
       <img
         src="/Logo-iua.png"
+        width="492"
+        height="507"
         alt="Universidad IUA"
+        decoding="async"
         className={`shrink-0 object-contain ${
           footer ? "h-28 w-28 md:h-16 md:w-16" : (inverse ? "h-14 w-14 md:h-16 md:w-16" : "h-16 w-16 md:h-20 md:w-20 lg:h-22 lg:w-22")
         }`}

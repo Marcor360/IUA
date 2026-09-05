@@ -15,6 +15,11 @@ type CookiePreferences = {
   updatedAt: string;
 };
 
+type IuaWindow = Window & {
+  iuaCookieConsent?: CookiePreferences;
+  gtag?: (...args: unknown[]) => void;
+};
+
 const STORAGE_KEY = "iua_cookie_preferences";
 
 const defaultPreferences: CookiePreferences = {
@@ -37,13 +42,17 @@ function readPreferences() {
 }
 
 function applyPreferences(preferences: CookiePreferences) {
-  const globalWindow = window as Window & { iuaCookieConsent?: CookiePreferences };
+  const globalWindow = window as IuaWindow;
   globalWindow.iuaCookieConsent = preferences;
   window.dispatchEvent(new CustomEvent("iua-cookie-consent-change", { detail: preferences }));
-  const consent = preferences.analytics ? "granted" : "denied";
+  const analytics = preferences.analytics ? "granted" : "denied";
   const advertising = preferences.marketing ? "granted" : "denied";
-  const gtag = (...args: unknown[]) => { window.dataLayer = window.dataLayer ?? []; window.dataLayer.push(args as unknown as Record<string, unknown>); };
-  gtag("consent", "update", { analytics_storage: consent, ad_storage: advertising, ad_user_data: advertising, ad_personalization: advertising });
+  globalWindow.gtag?.("consent", "update", {
+    analytics_storage: analytics,
+    ad_storage: advertising,
+    ad_user_data: advertising,
+    ad_personalization: advertising
+  });
 }
 
 function savePreferences(preferences: Omit<CookiePreferences, "version" | "necessary" | "updatedAt">) {
