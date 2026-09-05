@@ -58,6 +58,7 @@ type Campus = {
   name: string;
   text: string;
   img: string;
+  to: string;
   imgPosition?: string;
 };
 
@@ -104,10 +105,10 @@ const programs: Program[] = [
 ];
 
 const homeCampusCards: Campus[] = [
-  { name: "Campus Chalco", text: "Un espacio educativo comprometido con la formación académica y humana de sus estudiantes.", img: "/recuadros/chalco-recuadro-recorte-900x900.webp", imgPosition: "center" },
-  { name: "Campus Los Reyes", text: "Educación cercana, acompañamiento docente y programas orientados al desarrollo estudiantil.", img: "/recuadros/los-reyes-recuadro-recorte-900x900.webp", imgPosition: "center" },
-  { name: "Campus Texcoco", text: "Un plantel enfocado en brindar una experiencia educativa integral y de calidad.", img: "/recuadros/biblioteca-recuadro-recorte-900x900.webp", imgPosition: "center" },
-  { name: "Conecta IUA - Plantel virtual", text: "Una alternativa flexible para quienes buscan continuar sus estudios desde cualquier lugar.", img: "/banners-edu/educacion en linea.webp", imgPosition: "center" }
+  { name: "Campus Chalco", text: "Un espacio educativo comprometido con la formación académica y humana de sus estudiantes.", img: "/recuadros/chalco-recuadro-recorte-900x900.webp", to: "/campus/chalco", imgPosition: "center" },
+  { name: "Campus Los Reyes", text: "Educación cercana, acompañamiento docente y programas orientados al desarrollo estudiantil.", img: "/recuadros/los-reyes-recuadro-recorte-900x900.webp", to: "/campus/reyes", imgPosition: "center" },
+  { name: "Campus Texcoco", text: "Un plantel enfocado en brindar una experiencia educativa integral y de calidad.", img: "/recuadros/biblioteca-recuadro-recorte-900x900.webp", to: "/campus/texcoco", imgPosition: "center" },
+  { name: "Conecta IUA - Plantel virtual", text: "Una alternativa flexible para quienes buscan continuar sus estudios desde cualquier lugar.", img: "/banners-edu/educacion en linea.webp", to: "/campus/en-linea", imgPosition: "center" }
 ];
 
 function LeadForm() {
@@ -342,7 +343,13 @@ function CampusTeaser() {
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {homeCampusCards.map((campus) => (
-            <article key={campus.name} className="group overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10">
+            <Link
+              key={campus.name}
+              to={campus.to}
+              aria-label={`Conocer información de ${campus.name}`}
+              className="group block rounded-2xl focus:outline-none focus-visible:ring-4 focus-visible:ring-iua-gold/40"
+            >
+              <article className="h-full overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-neutral-900/10">
               <div className="relative aspect-video overflow-hidden">
                 <img
                   src={campus.img}
@@ -357,7 +364,8 @@ function CampusTeaser() {
                 <h3 className="text-xl font-black text-neutral-950">{campus.name}</h3>
                 <p className="mt-2 text-sm leading-6 text-neutral-600">{campus.text}</p>
               </div>
-            </article>
+              </article>
+            </Link>
           ))}
         </div>
       </div>
