@@ -4,7 +4,6 @@ import {
   IconArrowRight as ArrowRight,
   IconBrandWhatsapp as BrandWhatsapp,
   IconChevronDown as ChevronDown,
-  IconMail as Mail,
   IconMenu2 as Menu,
   IconX as X
 } from "@tabler/icons-react";
@@ -26,8 +25,6 @@ const navItems: NavItem[] = [
   { label: "Nosotros", to: "/nosotros" },
   { label: "Oferta", to: "/oferta" },
   { label: "Campus", to: "/campus" },
-  { label: "RVOE", to: "/rvoe" },
-  { label: "Test vocacional", to: "/que-carrera-estudiar" },
   { label: "Comunidad", to: "/comunidad" },
   { label: "Contacto", to: "/contacto" },
   { label: "Blog", to: "https://blog.iua.edu.mx/", external: true }
@@ -40,30 +37,48 @@ const communityLinks = [
   { label: "Apoyo institucional", to: "/comunidad#apoyo" }
 ];
 
+const offerLinks = [
+  { label: "RVOE oficial", to: "/rvoe" }
+];
+
 const whatsappUrl = institution.contact.whatsapp;
-const admissionsEmail = institution.contact.email;
 
 export function Logo({ inverse = false, footer = false }: LogoProps) {
+  if (footer) {
+    return (
+      <Link to="/" className="flex min-w-0 flex-col items-center gap-3 text-center md:flex-row md:gap-4 md:text-left" aria-label="Ir al inicio">
+        <img
+          src="/Logo-iua.png"
+          width="492"
+          height="507"
+          alt="Universidad IUA"
+          decoding="async"
+          className="h-28 w-28 shrink-0 object-contain md:h-16 md:w-16"
+        />
+        <div className="min-w-0 leading-tight">
+          <p className={`text-2xl font-black tracking-tight md:text-xl ${inverse ? "text-white" : "text-iua-burgundy"}`}>Universidad IUA</p>
+          <p className={`mt-1 max-w-xs text-sm font-medium ${inverse ? "text-white/60" : "text-neutral-500"}`}>Formamos lideres que transforman</p>
+        </div>
+      </Link>
+    );
+  }
+
   return (
-    <Link to="/" className={`flex min-w-0 items-center gap-3 md:gap-4 ${footer ? "flex-col md:flex-row text-center md:text-left" : ""}`} aria-label="Ir al inicio">
+    <Link to="/" className="grid min-w-0 grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1 md:gap-x-4" aria-label="Ir al inicio">
       <img
         src="/Logo-iua.png"
         width="492"
         height="507"
         alt="Universidad IUA"
         decoding="async"
-        className={`shrink-0 object-contain ${
-          footer ? "h-28 w-28 md:h-16 md:w-16" : (inverse ? "h-14 w-14 md:h-16 md:w-16" : "h-16 w-16 md:h-20 md:w-20 lg:h-22 lg:w-22")
-        }`}
+        className="row-span-1 h-13 w-13 shrink-0 object-contain md:h-16 md:w-16"
       />
-      <div className="min-w-0 leading-tight">
-        <p className={`font-black tracking-tight ${footer ? "text-2xl md:text-xl" : "text-lg md:text-xl"} ${inverse ? "text-white" : "text-iua-burgundy"}`}>
-          Universidad IUA
-        </p>
-        <p className={`mt-1 font-medium ${footer ? "text-sm max-w-xs" : "text-xs md:text-sm max-w-[14rem] md:max-w-none"} ${inverse ? "text-white/60" : "text-neutral-500"}`}>
-          Formamos lideres que transforman
-        </p>
-      </div>
+      <p className={`min-w-0 text-lg font-black leading-tight tracking-tight md:text-xl ${inverse ? "text-white" : "text-iua-burgundy"}`}>
+        Universidad IUA
+      </p>
+      <p className={`col-span-2 min-w-0 text-xs font-medium leading-tight md:text-sm ${inverse ? "text-white/60" : "text-neutral-500"}`}>
+        Formamos lideres que transforman
+      </p>
     </Link>
   );
 }
@@ -73,8 +88,10 @@ export default function Navbar() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
+  const [isOfferOpen, setIsOfferOpen] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const closeCommunityTimeout = useRef<number | null>(null);
+  const closeOfferTimeout = useRef<number | null>(null);
 
   const openCommunityMenu = () => {
     if (closeCommunityTimeout.current) {
@@ -98,12 +115,35 @@ export default function Navbar() {
     setIsCommunityOpen(false);
   };
 
+  const openOfferMenu = () => {
+    if (closeOfferTimeout.current) {
+      window.clearTimeout(closeOfferTimeout.current);
+      closeOfferTimeout.current = null;
+    }
+    setIsOfferOpen(true);
+  };
+
+  const closeOfferMenuWithDelay = () => {
+    closeOfferTimeout.current = window.setTimeout(() => {
+      setIsOfferOpen(false);
+    }, 140);
+  };
+
+  const closeOfferMenuNow = () => {
+    if (closeOfferTimeout.current) {
+      window.clearTimeout(closeOfferTimeout.current);
+      closeOfferTimeout.current = null;
+    }
+    setIsOfferOpen(false);
+  };
+
   useEffect(() => {
     let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
       const currentScrollY = Math.max(window.scrollY, 0);
       closeCommunityMenuNow();
+      closeOfferMenuNow();
 
       if (isMenuOpen || currentScrollY < 32) {
         setIsHeaderVisible(true);
@@ -124,6 +164,7 @@ export default function Navbar() {
 
   useEffect(() => {
     closeCommunityMenuNow();
+    closeOfferMenuNow();
     setIsMenuOpen(false);
   }, [location.pathname, location.hash]);
 
@@ -131,6 +172,7 @@ export default function Navbar() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsCommunityOpen(false);
+        setIsOfferOpen(false);
       }
     };
 
@@ -146,9 +188,6 @@ export default function Navbar() {
       <div className="hidden bg-iua-burgundy text-white md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-xs font-semibold">
           <div className="flex items-center gap-5">
-            <a href={`mailto:${admissionsEmail}`} className="inline-flex items-center gap-1.5 transition hover:text-iua-gold">
-              <Mail size={14} /> Admisiones: {admissionsEmail}
-            </a>
             <a href={whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 transition hover:text-iua-gold">
               <BrandWhatsapp size={14} /> WhatsApp
             </a>
@@ -159,9 +198,46 @@ export default function Navbar() {
 
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 bg-white px-5 py-2 md:px-6 md:py-3">
         <Logo />
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-8 xl:flex">
           {navItems.map((item) =>
-            item.label === "Comunidad" ? (
+            item.label === "Oferta" ? (
+              <div
+                key={item.to}
+                className="relative"
+                onMouseEnter={openOfferMenu}
+                onMouseLeave={closeOfferMenuWithDelay}
+              >
+                <NavLink
+                  to={item.to}
+                  aria-haspopup="menu"
+                  aria-expanded={isOfferOpen}
+                  onFocus={openOfferMenu}
+                  className={({ isActive }) =>
+                    `inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-bold transition ${
+                      isActive ? "bg-iua-cream text-iua-burgundy" : "text-neutral-700 hover:bg-neutral-100 hover:text-iua-burgundy"
+                    }`
+                  }
+                >
+                  Oferta <ChevronDown size={15} className={`transition ${isOfferOpen ? "rotate-180" : ""}`} />
+                </NavLink>
+
+                <div
+                  onMouseEnter={openOfferMenu}
+                  onMouseLeave={closeOfferMenuWithDelay}
+                  className={`absolute left-1/2 top-full z-70 w-56 -translate-x-1/2 pt-3 transition duration-150 ${
+                    isOfferOpen ? "visible opacity-100" : "invisible pointer-events-none opacity-0"
+                  }`}
+                >
+                  <div className="rounded-2xl border border-black/5 bg-white p-2 shadow-2xl shadow-neutral-900/15 ring-1 ring-black/5">
+                    {offerLinks.map((link) => (
+                      <Link key={link.to} to={link.to} onClick={closeOfferMenuNow} className="block rounded-xl px-4 py-3 text-sm font-bold text-neutral-700 transition hover:bg-iua-cream hover:text-iua-burgundy focus:bg-iua-cream focus:text-iua-burgundy focus:outline-none">
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : item.label === "Comunidad" ? (
               <div
                 key={item.to}
                 className="relative"
@@ -241,12 +317,12 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => openContactModal()}
-            className="hidden rounded-xl bg-iua-burgundy px-5 py-3 text-sm font-bold text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark md:inline-flex md:items-center md:gap-2"
+            className="hidden rounded-xl bg-iua-burgundy px-5 py-3 text-sm font-bold text-white shadow-lg shadow-iua-burgundy/20 transition hover:-translate-y-0.5 hover:bg-iua-dark xl:inline-flex xl:items-center xl:gap-2"
           >
             Pedir informacion <ArrowRight size={16} />
           </button>
           <button
-            className="rounded-xl border border-neutral-200 bg-white p-3 text-iua-burgundy transition hover:border-iua-gold/60 hover:bg-iua-cream md:hidden"
+            className="rounded-xl border border-neutral-200 bg-white p-3 text-iua-burgundy transition hover:border-iua-gold/60 hover:bg-iua-cream xl:hidden"
             aria-label={isMenuOpen ? "Cerrar menu" : "Abrir menu"}
             aria-expanded={isMenuOpen}
             onClick={() => setIsMenuOpen((value) => !value)}
@@ -260,7 +336,7 @@ export default function Navbar() {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 z-[90] bg-black/50 transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-[90] bg-black/50 transition-opacity duration-300 xl:hidden ${
           isMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={() => setIsMenuOpen(false)}
@@ -269,7 +345,7 @@ export default function Navbar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-[100] flex w-[75vw] max-w-sm flex-col bg-white shadow-2xl transition-transform duration-300 md:hidden ${
+        className={`fixed inset-y-0 left-0 z-[100] flex w-[75vw] max-w-sm flex-col bg-white shadow-2xl transition-transform duration-300 xl:hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -285,7 +361,28 @@ export default function Navbar() {
         </div>
         <nav className="flex-1 overflow-y-auto p-3">
           {navItems.map((item) =>
-            item.label === "Comunidad" ? (
+            item.label === "Oferta" ? (
+              <div key={item.to} className="mb-1">
+                <NavLink
+                  to={item.to}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `block rounded-xl px-4 py-3 text-sm font-bold transition ${
+                      isActive ? "bg-iua-cream text-iua-burgundy" : "text-neutral-700 hover:bg-neutral-50"
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+                <div className="mt-1 grid gap-1 border-l border-iua-gold/30 pl-3">
+                  {offerLinks.map((link) => (
+                    <Link key={link.to} to={link.to} onClick={() => setIsMenuOpen(false)} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-neutral-600 transition hover:bg-iua-cream hover:text-iua-burgundy">
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : item.label === "Comunidad" ? (
               <div key={item.to} className="mb-1">
                 <NavLink
                   to={item.to}

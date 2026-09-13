@@ -169,7 +169,7 @@ function Hero() {
             <Award size={16} /> Becas disponibles para nuevo ingreso
           </div>
           <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-tight sm:text-5xl lg:text-5xl xl:text-6xl">
-            Universidad IUA: secundaria, bachillerato, licenciaturas y posgrados
+            Licenciaturas y posgrados
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-white/82 sm:text-lg sm:leading-8">
             Bachillerato, licenciaturas y posgrados con validez oficial, campus cercanos y un proceso de inscripción claro desde el primer contacto.
@@ -232,7 +232,6 @@ function BenefitsSection() {
             <p className="text-xs font-black uppercase tracking-[0.22em] text-iua-gold">Por qué elegir IUA</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-neutral-950 md:text-4xl">Una decisión fácil de tomar y fácil de empezar</h2>
           </div>
-          <p className="text-base leading-7 text-neutral-600">Primero confianza, luego beneficios concretos, después programa y finalmente contacto. La experiencia guia al usuario hacia admisiones sin sentirse forzada.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map(({ icon: Icon, title, text }) => (
@@ -306,7 +305,6 @@ function ScholarshipCTA() {
           <div>
             <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-iua-gold text-iua-dark"><Gift size={30} /></div>
             <h2 className="text-3xl font-black tracking-tight md:text-4xl">Pregunta por tu beca antes de inscribirte</h2>
-            <p className="mt-3 max-w-xl text-sm leading-7 text-white/75">El usuario deja sus datos porque puede recibir una oportunidad concreta, no solo más información.</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {["Beca de nuevo ingreso", "Orientación por WhatsApp", "Proceso sin compromiso"].map((item) => (
