@@ -8,6 +8,39 @@ El proyecto centraliza la oferta educativa, programas académicos, campus, infor
 
 ---
 
+## Versión actual: 1.8.4
+
+La versión publicada actual es **1.8.4**. A continuación se documentan los cambios incorporados desde la actualización integral del README realizada en la versión `1.8.0`.
+
+### 1.8.4 — Reglamentos y lector de PDF
+
+* Se añadieron los documentos institucionales al proyecto en `public/Documentos/` para servirlos desde el mismo dominio.
+* La sección **Comunidad > Reglamento escolar** ahora muestra cinco documentos únicos: secundaria, reglamento general de alumnos, servicio social, titulación y pagos.
+* Se eliminaron tarjetas repetidas: el reglamento general concentra la consulta para bachillerato, licenciatura y maestría.
+* Cada reglamento se abre en un lector de PDF integrado en una ventana modal, con cierre por botón, clic fuera o tecla `Esc`.
+* El lector conserva una opción para abrir el PDF en una pestaña independiente.
+
+### 1.8.3 — Navegación y orientación vocacional
+
+* Se rediseñó la navegación principal para responder mejor en pantallas medianas y pequeñas.
+* La opción **Oferta** incorpora acceso agrupado al RVOE oficial; **Comunidad** mantiene accesos a plataformas, reglamentos y apoyo institucional.
+* Se incorporó un acceso flotante al test vocacional, visible después de cinco segundos y adaptado para móviles.
+* Se ajustaron la composición del encabezado, la marca visual y textos de conversión en la página de inicio.
+
+### 1.8.2 — Acceso a campus desde inicio
+
+* Las tarjetas de campus de la página de inicio ahora enlazan directamente a la ficha de cada campus, incluida la modalidad en línea.
+* Se añadieron etiquetas accesibles y estados de foco para que estos accesos funcionen correctamente con teclado.
+
+### 1.8.1 — Identidad, consentimiento y rendimiento de publicación
+
+* Se añadieron favicon, iconos para dispositivos y `apple-touch-icon`; el manifiesto web utiliza los tamaños correctos de 192 y 512 píxeles.
+* Se reforzó la integración de Google Consent Mode para aplicar las preferencias del usuario de forma segura.
+* Se añadieron dimensiones explícitas a imágenes clave para reducir desplazamientos de contenido durante la carga.
+* La configuración de Apache/cPanel incorpora políticas de caché para recursos estáticos y compresión para formatos de texto compatibles.
+
+---
+
 ## Sobre el proyecto
 
 Este repositorio contiene la plataforma web institucional de **Universidad IUA**.

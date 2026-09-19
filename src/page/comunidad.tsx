@@ -1,10 +1,11 @@
-import { type ComponentType } from "react";
+import { type ComponentType, useEffect, useState } from "react";
 import {
   IconArrowRight as ArrowRight,
   IconBook as Book,
   IconBrandWhatsapp as BrandWhatsapp,
   IconCalendarEvent as Calendar,
   IconChecklist as Checklist,
+  IconX as X,
   IconCreditCard as CreditCard,
   IconExternalLink as ExternalLink,
   IconFileText as FileText,
@@ -75,49 +76,35 @@ const regulations: LinkCard[] = [
   {
     title: "Reglamento de alumnos de secundaria general",
     text: "Normas, derechos, obligaciones y lineamientos para alumnos de secundaria.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/REGLAMENTO-DE-SECUNDARIA.pdf",
+    href: "/Documentos/REGLAMENTO-DE-SECUNDARIA.pdf",
     icon: School,
     label: "Ver PDF"
   },
   {
-    title: "Reglamento de alumnos de bachillerato",
-    text: "Documento general de consulta para alumnos de bachillerato.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoGRALiua.pdf",
+    title: "Reglamento general de alumnos",
+    text: "Aplicable a los niveles de bachillerato, licenciatura y maestría.",
+    href: "/Documentos/ReglamentoGRALiua.pdf",
     icon: Book,
-    label: "Ver PDF"
-  },
-  {
-    title: "Reglamento de alumnos de licenciaturas",
-    text: "Normatividad aplicable para alumnos de licenciatura.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoGRALiua.pdf",
-    icon: School,
-    label: "Ver PDF"
-  },
-  {
-    title: "Reglamento de alumnos de maestría",
-    text: "Documento relacionado con procesos académicos y de titulación para maestría.",
-    href: "https://iua.edu.mx/wp-content/uploads/2021/05/reglamento-titulacion-licenciatura-y-maestria-iua.pdf",
-    icon: Checklist,
     label: "Ver PDF"
   },
   {
     title: "Reglamento de Servicio Social",
     text: "Lineamientos para el cumplimiento del servicio social.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoServicioSocialB.pdf",
+    href: "/Documentos/ReglamentoServicioSocialB.pdf",
     icon: HeartHandshake,
     label: "Ver PDF"
   },
   {
     title: "Reglamento de Titulación",
     text: "Requisitos, modalidades y pasos del proceso de titulación.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoTitulacion.pdf",
+    href: "/Documentos/ReglamentoTitulacion.pdf",
     icon: FileText,
     label: "Ver PDF"
   },
   {
     title: "Reglamento de Pagos",
     text: "Disposiciones relacionadas con pagos, colegiaturas y procesos administrativos.",
-    href: "https://iua.edu.mx/wp-content/uploads/2021/05/reglamento-pagos.pdf",
+    href: "/Documentos/reglamento-pagos.pdf",
     icon: CreditCard,
     label: "Ver PDF"
   }
@@ -200,7 +187,66 @@ function ExternalCard({ item }: { item: LinkCard }) {
   );
 }
 
+function RegulationCard({ item, onOpen }: { item: LinkCard; onOpen: (item: LinkCard) => void }) {
+  const Icon = item.icon;
+
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(item)}
+      className="group rounded-2xl border border-black/5 bg-white p-5 text-left shadow-sm transition hover:-translate-y-1 hover:border-iua-gold/40 hover:shadow-xl hover:shadow-neutral-900/10"
+    >
+      <div className="mb-4 flex h-13 w-13 items-center justify-center rounded-2xl bg-iua-cream text-iua-burgundy">
+        <Icon size={27} />
+      </div>
+      <h3 className="text-xl font-black leading-tight text-neutral-950">{item.title}</h3>
+      <p className="mt-2 text-sm leading-6 text-neutral-600">{item.text}</p>
+      <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-iua-burgundy">
+        {item.label ?? "Ver PDF"} <ExternalLink size={16} className="transition group-hover:translate-x-0.5" />
+      </span>
+    </button>
+  );
+}
+
+function PdfViewer({ item, onClose }: { item: LinkCard; onClose: () => void }) {
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 p-3 backdrop-blur-sm sm:p-6" role="presentation" onMouseDown={onClose}>
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pdf-viewer-title"
+        className="flex h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <header className="flex items-center justify-between gap-4 border-b border-neutral-200 px-4 py-3 sm:px-6">
+          <h2 id="pdf-viewer-title" className="text-base font-black text-neutral-950 sm:text-lg">{item.title}</h2>
+          <div className="flex shrink-0 items-center gap-2">
+            <a href={item.href} target="_blank" rel="noreferrer" className="hidden rounded-lg px-3 py-2 text-sm font-bold text-iua-burgundy hover:bg-iua-cream sm:inline-flex">
+              Abrir aparte
+            </a>
+            <button type="button" onClick={onClose} className="rounded-lg p-2 text-neutral-600 transition hover:bg-iua-cream hover:text-iua-burgundy" aria-label="Cerrar lector de PDF">
+              <X size={22} />
+            </button>
+          </div>
+        </header>
+        <iframe title={`Lector de ${item.title}`} src={item.href} className="min-h-0 flex-1 bg-neutral-100" />
+      </section>
+    </div>
+  );
+}
+
 export default function Comunidad() {
+  const [selectedRegulation, setSelectedRegulation] = useState<LinkCard | null>(null);
+
   usePageSeo({
     title: "Comunidad IUA | Plataformas, Reglamentos y Trámites",
     description: "Acceso para alumnos y docentes de Universidad IUA. Ingresa a plataformas académicas, consulta reglamentos escolares, opciones de titulación, servicio social, biblioteca virtual y trámites en línea.",
@@ -280,7 +326,7 @@ export default function Comunidad() {
           />
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {regulations.map((item) => (
-              <ExternalCard key={item.title} item={item} />
+              <RegulationCard key={item.title} item={item} onOpen={setSelectedRegulation} />
             ))}
           </div>
 
@@ -369,6 +415,8 @@ export default function Comunidad() {
           </div>
         </div>
       </section>
+
+      {selectedRegulation ? <PdfViewer item={selectedRegulation} onClose={() => setSelectedRegulation(null)} /> : null}
     </main>
   );
 }
