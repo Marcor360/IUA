@@ -1,11 +1,10 @@
-import { type ComponentType, useEffect, useState } from "react";
+import { type ComponentType } from "react";
 import {
   IconArrowRight as ArrowRight,
   IconBook as Book,
   IconBrandWhatsapp as BrandWhatsapp,
   IconCalendarEvent as Calendar,
   IconChecklist as Checklist,
-  IconX as X,
   IconCreditCard as CreditCard,
   IconExternalLink as ExternalLink,
   IconFileText as FileText,
@@ -187,13 +186,14 @@ function ExternalCard({ item }: { item: LinkCard }) {
   );
 }
 
-function RegulationCard({ item, onOpen }: { item: LinkCard; onOpen: (item: LinkCard) => void }) {
+function RegulationCard({ item }: { item: LinkCard }) {
   const Icon = item.icon;
 
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(item)}
+    <a
+      href={item.href}
+      target="_blank"
+      rel="noreferrer"
       className="group rounded-2xl border border-black/5 bg-white p-5 text-left shadow-sm transition hover:-translate-y-1 hover:border-iua-gold/40 hover:shadow-xl hover:shadow-neutral-900/10"
     >
       <div className="mb-4 flex h-13 w-13 items-center justify-center rounded-2xl bg-iua-cream text-iua-burgundy">
@@ -204,49 +204,11 @@ function RegulationCard({ item, onOpen }: { item: LinkCard; onOpen: (item: LinkC
       <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-iua-burgundy">
         {item.label ?? "Ver PDF"} <ExternalLink size={16} className="transition group-hover:translate-x-0.5" />
       </span>
-    </button>
-  );
-}
-
-function PdfViewer({ item, onClose }: { item: LinkCard; onClose: () => void }) {
-  useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [onClose]);
-
-  return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 p-3 backdrop-blur-sm sm:p-6" role="presentation" onMouseDown={onClose}>
-      <section
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="pdf-viewer-title"
-        className="flex h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <header className="flex items-center justify-between gap-4 border-b border-neutral-200 px-4 py-3 sm:px-6">
-          <h2 id="pdf-viewer-title" className="text-base font-black text-neutral-950 sm:text-lg">{item.title}</h2>
-          <div className="flex shrink-0 items-center gap-2">
-            <a href={item.href} target="_blank" rel="noreferrer" className="hidden rounded-lg px-3 py-2 text-sm font-bold text-iua-burgundy hover:bg-iua-cream sm:inline-flex">
-              Abrir aparte
-            </a>
-            <button type="button" onClick={onClose} className="rounded-lg p-2 text-neutral-600 transition hover:bg-iua-cream hover:text-iua-burgundy" aria-label="Cerrar lector de PDF">
-              <X size={22} />
-            </button>
-          </div>
-        </header>
-        <iframe title={`Lector de ${item.title}`} src={item.href} className="min-h-0 flex-1 bg-neutral-100" />
-      </section>
-    </div>
+    </a>
   );
 }
 
 export default function Comunidad() {
-  const [selectedRegulation, setSelectedRegulation] = useState<LinkCard | null>(null);
-
   usePageSeo({
     title: "Comunidad IUA | Plataformas, Reglamentos y Trámites",
     description: "Acceso para alumnos y docentes de Universidad IUA. Ingresa a plataformas académicas, consulta reglamentos escolares, opciones de titulación, servicio social, biblioteca virtual y trámites en línea.",
@@ -326,7 +288,7 @@ export default function Comunidad() {
           />
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {regulations.map((item) => (
-              <RegulationCard key={item.title} item={item} onOpen={setSelectedRegulation} />
+              <RegulationCard key={item.title} item={item} />
             ))}
           </div>
 
@@ -416,7 +378,6 @@ export default function Comunidad() {
         </div>
       </section>
 
-      {selectedRegulation ? <PdfViewer item={selectedRegulation} onClose={() => setSelectedRegulation(null)} /> : null}
     </main>
   );
 }
