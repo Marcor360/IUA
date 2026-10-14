@@ -27,7 +27,7 @@ describe("RVOE", () => {
 
   it("publica los registros confirmados para cada ficha", () => {
     expect(rvoeOfferingsForProgram("psicologia").map(({ rvoe }) => rvoe.number)).toEqual(["20170768"]);
-    expect(rvoeOfferingsForProgram("derecho").map(({ rvoe }) => rvoe.number)).toEqual(["20220259", "20100134", "20220839"]);
+    expect(rvoeOfferingsForProgram("derecho").map(({ rvoe }) => rvoe.number)).toEqual(["20220839", "20220259", "20100134"]);
     expect(rvoeOfferingsForProgram("arquitectura").map(({ rvoe }) => rvoe.number)).toEqual(["20250493"]);
   });
 
@@ -63,10 +63,15 @@ describe("RVOE", () => {
   });
 
   it("rechaza numeros invalidos y coincidencias ambiguas", () => {
-    const base: RvoeRecord = { programId: "prueba", programName: "Prueba", modality: "Mixta", number: "12345678" };
+    const base: RvoeRecord = { programId: "prueba", programName: "Prueba", modality: "Mixta", institutionName: "Institución de prueba", number: "12345678", issuedOn: "2026-01-01" };
     expect(isValidRvoeNumber("12345678")).toBe(true);
     expect(isValidRvoeNumber("1234-5678")).toBe(false);
     expect(resolveRvoeFrom([{ ...base, number: "invalido" }], { programId: "prueba", modality: "Mixta" })).toBeUndefined();
     expect(resolveRvoeFrom([base, { ...base, number: "87654321" }], { programId: "prueba", modality: "Mixta" })).toBeUndefined();
+  });
+
+  it("conserva la fecha exacta del reconocimiento más antiguo", () => {
+    expect(rvoeRecords.find(({ number }) => number === "20100134")?.issuedOn).toBe("2010-02-08");
+    expect(rvoeRecords.every(({ institutionName, issuedOn }) => institutionName && issuedOn)).toBe(true);
   });
 });

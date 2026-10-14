@@ -98,6 +98,25 @@
 .rvoe-table tbody th { color: #171717; }
 .rvoe-table a { display: inline-flex; gap: .35rem; color: #7a0e1a; font-weight: 900; }
 
+.rvoe-directory__toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; }
+.rvoe-directory__toolbar > p { color: #665f56; font-size: .9rem; font-weight: 800; }
+.rvoe-directory__search { display: flex; width: min(100%, 28rem); min-height: 3.25rem; align-items: center; gap: .7rem; border: 1px solid #dccdb3; border-radius: .85rem; background: white; color: #7a0e1a; padding: 0 1rem; }
+.rvoe-directory__search:focus-within { outline: 2px solid #b88a2e; outline-offset: 2px; }
+.rvoe-directory__search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: #171717; font: inherit; }
+.rvoe-directory__search input::placeholder { color: #77716a; }
+.rvoe-directory__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 1rem; margin-top: 1.5rem; }
+.rvoe-directory__card { display: flex; min-width: 0; flex-direction: column; border: 1px solid #e9decc; border-radius: 1.1rem; background: white; padding: 1.25rem; box-shadow: 0 .4rem 1.25rem rgb(78 7 16 / .06); }
+.rvoe-directory__card-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; color: #665f56; font-size: .78rem; font-weight: 800; }
+.rvoe-directory__modality { border-radius: 999px; background: #fbf3e4; color: #6a3911; padding: .35rem .65rem; }
+.rvoe-directory__card h3 { margin-top: 1rem; color: #25070b; font-size: 1.2rem; font-weight: 950; line-height: 1.3; }
+.rvoe-directory__institution { margin-top: .4rem; color: #5f5a53; font-size: .9rem; line-height: 1.5; }
+.rvoe-directory__number { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .35rem 1rem; margin-top: auto; border-top: 1px solid #eee5d6; padding-top: 1rem; }
+.rvoe-directory__number span { color: #665f56; font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+.rvoe-directory__number strong { color: #7a0e1a; font-size: 1.25rem; font-weight: 950; letter-spacing: .04em; }
+.rvoe-directory__link { display: inline-flex; align-items: center; gap: .35rem; align-self: flex-start; margin-top: .8rem; color: #7a0e1a; font-size: .9rem; font-weight: 900; text-decoration: underline; text-underline-offset: 3px; }
+.rvoe-directory__link:hover, .rvoe-directory__link:focus-visible { color: #4e0710; }
+.rvoe-directory__empty { margin-top: 1.5rem; border: 1px dashed #dccdb3; border-radius: 1rem; background: #fbf7ef; padding: 1.5rem; color: #5f5a53; }
+
 .campus-programs__dropdown { margin-top: 1.25rem; overflow: hidden; border: 1px solid #eadfca; border-radius: 1rem; background: #fbf7ef; }
 .campus-programs__dropdown summary { display: flex; min-height: 3.75rem; cursor: pointer; list-style: none; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.15rem; color: #7a0e1a; font-weight: 950; transition: background .18s ease, color .18s ease; }
 .campus-programs__dropdown summary::-webkit-details-marker { display: none; }
@@ -399,6 +418,8 @@
 }
 
 .offering-rvoe {
+  display: grid;
+  gap: .2rem;
   margin: 0;
   color: #7a0e1a;
 }
@@ -408,6 +429,8 @@
   font-size: .9rem;
   font-weight: 950;
 }
+
+.offering-rvoe span { color: #5f5a53; font-size: .75rem; line-height: 1.4; }
 
 .oferta-card__footer {
   display: flex;

@@ -72,12 +72,12 @@ const imageAssets = {
 const heroProof: IconTextItem[] = [
   { icon: Discount, value: "Becas", label: "para nuevo ingreso" },
   { icon: Certificate, value: "RVOE", label: "validez oficial" },
-  { icon: MapPin, value: "3 campus", label: "cerca de ti" }
+  { icon: MapPin, value: "4 campus", label: "cerca de ti" }
 ];
 
 const trustStats: IconTextItem[] = [
   { icon: GraduationCap, value: "+10", label: "programas académicos" },
-  { icon: Building2, value: "3", label: "campus escolarizados" },
+  { icon: Building2, value: "4", label: "campus, incluido el virtual" },
   { icon: Award, value: "Becas", label: "y apoyos disponibles" },
   { icon: CalendarDays, value: "2026", label: "inscripciones abiertas" }
 ];

@@ -21,4 +21,17 @@ describe("academic catalog integrity", () => {
     expect(Object.entries(relatedProgramIds).every(([id, related]) => programIds.has(id) && related.every((item) => programIds.has(item)))).toBe(true);
     expect(ofertaEducativa.every(({ banner, recuadro }) => (!banner || banner.startsWith("/")) && (!recuadro || recuadro.startsWith("/")))).toBe(true);
   });
+
+  it("shows the confirmed campuses for the corrected programs", () => {
+    const campusFor = (id: string) => ofertaEducativa.find((program) => program.id === id)?.campus ?? [];
+    for (const id of ["pedagogia", "contaduria-publica", "administracion-de-empresas"]) {
+      expect(campusFor(id)).not.toContain("Campus Texcoco");
+    }
+    for (const id of ["diseno-grafico", "lenguas-extranjeras", "ingenieria-en-sistemas-computacionales"]) {
+      expect(campusFor(id)).toContain("En línea");
+    }
+    for (const id of ["maestria-derecho-penal", "maestria-educacion", "doctorado-derecho"]) {
+      expect(campusFor(id)).toEqual(["Campus Chalco", "Campus Reyes", "Campus Texcoco", "En línea"]);
+    }
+  });
 });

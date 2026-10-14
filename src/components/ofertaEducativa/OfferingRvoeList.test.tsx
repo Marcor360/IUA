@@ -7,13 +7,13 @@ describe("OfferingRvoeList", () => {
     expect(renderToStaticMarkup(<OfferingRvoeList programId="secundaria" />)).not.toContain("RVOE");
   });
 
-  it("renderiza únicamente la etiqueta y el número exacto", () => {
+  it("muestra el número junto con la institución, modalidad y fecha que distinguen cada registro", () => {
     const html = renderToStaticMarkup(<OfferingRvoeList programId="derecho" />);
     expect(html).toContain("RVOE: 20220259");
     expect(html).toContain("RVOE: 20100134");
     expect(html).toContain("RVOE: 20220839");
-    expect(html).not.toContain("Modalidad");
-    expect(html).not.toContain("Campus Reyes");
-    expect(html).not.toContain("Ofertas con RVOE");
+    expect(html).toContain("Instituto Universitario Anáhuac Plantel los Reyes");
+    expect(html).toContain("Escolarizada");
+    expect(html).toContain("08/02/2010");
   });
 });

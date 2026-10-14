@@ -16,6 +16,8 @@ import { institution } from "../config/institution";
 
 const whatsappUrl = institution.contact.whatsapp;
 const admissionsEmail = institution.contact.email;
+const legalEmail = institution.contact.legalEmail;
+const feedbackEmail = institution.contact.feedbackEmail;
 
 const socialLinks = [
   { label: "Facebook", icon: BrandFacebook, href: "https://www.facebook.com/IUA.Official" },
@@ -88,6 +90,16 @@ export default function Footer() {
             <li>
               <a href={`mailto:${admissionsEmail}`} className="flex items-center justify-center md:justify-start gap-2 transition hover:text-iua-gold">
                 <Mail size={17} className="shrink-0" /> {admissionsEmail}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${legalEmail}`} className="flex items-center justify-center md:justify-start gap-2 transition hover:text-iua-gold">
+                <Mail size={17} className="shrink-0" /> {legalEmail}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${feedbackEmail}`} className="flex items-center justify-center md:justify-start gap-2 transition hover:text-iua-gold">
+                <Mail size={17} className="shrink-0" /> {feedbackEmail}
               </a>
             </li>
             <li>
