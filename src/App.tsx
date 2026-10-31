@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import BotonWats from "./components/botonWats";
+import BotonTestVocacional from "./components/botonTestVocacional";
 import CookieConsent from "./components/cookieConsent";
 import Footer from "./components/footer";
 import Navbar from "./components/navbar";
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
+      <BotonTestVocacional />
       <BotonWats />
       <CookieConsent />
     </ContactModalProvider>

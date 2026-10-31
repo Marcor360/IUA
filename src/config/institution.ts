@@ -16,7 +16,7 @@ export type Institution = {
   description: string;
   url: string;
   logo: string;
-  contact: { phone: string; whatsappPhone: string; whatsapp: string; email: string };
+  contact: { phone: string; whatsappPhone: string; whatsapp: string; email: string; legalEmail: string; feedbackEmail: string };
   campuses: Campus[];
   socialProfiles: string[];
 };
@@ -30,7 +30,9 @@ export const institution: Institution = {
     phone: "+522201349213",
     whatsappPhone: "522201349213",
     whatsapp: "https://api.whatsapp.com/send?phone=2201349213&text=Hola",
-    email: "admisiones@iua.edu.mx"
+    email: "admisiones@iua.edu.mx",
+    legalEmail: "juridico@iua.edu.mx",
+    feedbackEmail: "quejasysugerencias@iua.edu.mx"
   },
   campuses: [
     {

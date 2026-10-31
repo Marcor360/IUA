@@ -17,6 +17,8 @@ import { usePageSeo } from "../utils/seo";
 import JsonLd from "../components/JsonLd";
 import { institution } from "../config/institution";
 import { organizationSchema } from "../utils/structuredData";
+import PageBreadcrumbs from "../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../config/breadcrumbs";
 
 type Pillar = {
   title: string;
@@ -30,6 +32,7 @@ type Campus = {
 };
 
 const whatsappUrl = institution.contact.whatsapp;
+const breadcrumbs = sectionBreadcrumbs("nosotros");
 
 const pillars: Pillar[] = [
   { title: "Formación académica", text: "Programas educativos orientados al aprendizaje sólido y estructurado." },
@@ -133,6 +136,8 @@ export default function Nosotros() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="nosotros-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section className="px-5 py-16 md:px-6">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-center">

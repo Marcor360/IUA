@@ -8,18 +8,19 @@ import {
   IconRosetteDiscountCheck
 } from "@tabler/icons-react";
 import { ofertaEducativa } from "../../data/ofertaEducativa";
-import { resolveProgramPageRvoe } from "../../data/rvoe";
 import { relatedProgramIds } from "../../data/relatedPrograms";
 import NotFound from "../../page/notFound";
 import { usePageSeo } from "../../utils/seo";
 import { campusSlugFromLabel } from "../../config/institution";
 import { breadcrumbSchema, educationalProgramSchema } from "../../utils/structuredData";
 import Breadcrumbs from "../Breadcrumbs";
+import { programBreadcrumbs } from "../../config/breadcrumbs";
 import JsonLd from "../JsonLd";
 import CtaBlock from "./CtaBlock";
 import FaqAccordion from "./FaqAccordion";
 import InfoSection from "./InfoSection";
 import ProgramHero from "./ProgramHero";
+import OfferingRvoeList from "./OfferingRvoeList";
 import "../../styles/ofertaEducativa.css";
 
 type Program = (typeof ofertaEducativa)[number];
@@ -37,7 +38,6 @@ export default function ProgramPage({ slug }: { slug?: string }) {
   const params = useParams();
   const programSlug = slug ?? params.slug ?? "";
   const program = ofertaEducativa.find((item) => item.slug === programSlug);
-  const programRvoe = program ? resolveProgramPageRvoe(program.id) : undefined;
   const relatedPrograms = program ? (relatedProgramIds[program.id] ?? []).map((id) => ofertaEducativa.find((item) => item.id === id)).filter(Boolean) : [];
   const seo = program ? buildProgramSeo(program) : null;
 
@@ -53,11 +53,7 @@ export default function ProgramPage({ slug }: { slug?: string }) {
     return <NotFound />;
   }
 
-  const breadcrumbs = [
-    { name: "Inicio", path: "/" },
-    { name: "Oferta educativa", path: "/oferta" },
-    { name: program.title, path: `/oferta/${program.slug}` }
-  ];
+  const breadcrumbs = programBreadcrumbs(program);
 
   return (
     <main className="oferta-page">
@@ -101,11 +97,7 @@ export default function ProgramPage({ slug }: { slug?: string }) {
                 {program.campus.map((campus) => { const slug = campusSlugFromLabel(campus); return slug ? <Link key={campus} to={`/campus/${slug}`} className="oferta-chip oferta-chip--muted">{campus}</Link> : <span key={campus} className="oferta-chip oferta-chip--muted">{campus}</span>; })}
               </div>
             </div>
-            {programRvoe ? (
-              <div className="program-summary__block" aria-label="Reconocimientos de Validez Oficial de Estudios">
-                <p><strong>RVOE: {programRvoe.number}</strong></p>
-              </div>
-            ) : null}
+            <OfferingRvoeList programId={program.id} />
           </aside>
         </div>
 

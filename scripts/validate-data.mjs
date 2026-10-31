@@ -6,11 +6,12 @@ const routes = JSON.parse(readFileSync("src/config/indexableRoutes.json", "utf8"
 const vite = await createServer({ server: { middlewareMode: true }, appType: "custom", logLevel: "error" });
 
 try {
-  const [{ ofertaEducativa }, { institution }, { relatedProgramIds }, rvoe] = await Promise.all([
+  const [{ ofertaEducativa }, { institution }, { relatedProgramIds }, rvoe, offerings] = await Promise.all([
     vite.ssrLoadModule("/src/data/ofertaEducativa.ts"),
     vite.ssrLoadModule("/src/config/institution.ts"),
     vite.ssrLoadModule("/src/data/relatedPrograms.ts"),
-    vite.ssrLoadModule("/src/data/rvoe.ts")
+    vite.ssrLoadModule("/src/data/rvoe.ts"),
+    vite.ssrLoadModule("/src/data/programOfferings.ts")
   ]);
   const programIds = new Set();
   const slugs = new Set();
@@ -34,9 +35,10 @@ try {
     if (record.campusId && !campusIds.has(record.campusId)) failures.push(`RVOE referencia campus inexistente: ${record.campusId}`);
   }
   failures.push(...rvoe.validateRvoeRecords());
+  failures.push(...offerings.validateProgramOfferings());
 } finally {
   await vite.close();
 }
 
 if (failures.length) { console.error(failures.join("\n")); process.exit(1); }
-console.log("Structured data valid: unique programs, slugs and routes; related programs, campus and RVOE references resolve.");
+console.log("Structured data valid: programs, routes, campus, RVOE records and explicit program offerings resolve.");

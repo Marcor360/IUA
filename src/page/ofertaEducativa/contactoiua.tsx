@@ -14,9 +14,14 @@ import {
 } from "@tabler/icons-react";
 import { usePageSeo } from "../../utils/seo";
 import { institution } from "../../config/institution";
+import PageBreadcrumbs from "../../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../../config/breadcrumbs";
 
 const whatsappUrl = institution.contact.whatsapp;
 const admissionsEmail = institution.contact.email;
+const legalEmail = institution.contact.legalEmail;
+const feedbackEmail = institution.contact.feedbackEmail;
+const breadcrumbs = sectionBreadcrumbs("contacto");
 
 const campuses = [
   {
@@ -100,6 +105,8 @@ export default function ContactoIua() {
         </div>
       </section>
 
+      <PageBreadcrumbs id="contacto-breadcrumb-jsonld" items={breadcrumbs} />
+
       <section className="bg-iua-cream px-5 py-12 md:px-6">
         <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3">
           <a href={whatsappUrl} target="_blank" rel="noreferrer" className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10">
@@ -117,6 +124,18 @@ export default function ContactoIua() {
             <h2 className="mt-4 text-xl font-black">Horarios de atención</h2>
             <p className="mt-2 text-sm leading-6 text-white/75">Lunes a Viernes: 09:00 - 4:00pm<br />Sábado: 09:00 - 1:00pm</p>
           </div>
+        </div>
+        <div className="mx-auto mt-5 grid max-w-7xl gap-5 md:grid-cols-2">
+          <a href={`mailto:${legalEmail}`} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10">
+            <IconMail size={34} className="text-iua-gold" />
+            <h2 className="mt-4 text-xl font-black text-neutral-950">Asuntos jurídicos y privacidad</h2>
+            <p className="mt-2 break-all text-sm leading-6 text-neutral-600">{legalEmail}</p>
+          </a>
+          <a href={`mailto:${feedbackEmail}`} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10">
+            <IconMail size={34} className="text-iua-gold" />
+            <h2 className="mt-4 text-xl font-black text-neutral-950">Quejas y sugerencias</h2>
+            <p className="mt-2 break-all text-sm leading-6 text-neutral-600">{feedbackEmail}</p>
+          </a>
         </div>
       </section>
 

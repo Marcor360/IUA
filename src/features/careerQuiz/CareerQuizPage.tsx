@@ -8,9 +8,10 @@ import { usePageSeo } from "../../utils/seo";
 import { breadcrumbSchema } from "../../utils/structuredData";
 import { careers, questions } from "./data";
 import { dominantDimensions, rankCareers, scoreAnswers } from "./scoring";
+import { sectionBreadcrumbs } from "../../config/breadcrumbs";
 
 const dimensionNames = { R: "Realista", I: "Investigador", A: "Artístico", S: "Social", E: "Emprendedor", C: "Convencional" } as const;
-const breadcrumbs = [{ name: "Inicio", path: "/" }, { name: "¿Qué carrera estudiar?", path: "/que-carrera-estudiar" }];
+const breadcrumbs = sectionBreadcrumbs("quiz");
 
 export default function CareerQuizPage() {
   const [started, setStarted] = useState(false);

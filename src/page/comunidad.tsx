@@ -15,6 +15,8 @@ import {
 import { Link } from "react-router-dom";
 import { usePageSeo } from "../utils/seo";
 import { institution } from "../config/institution";
+import PageBreadcrumbs from "../components/PageBreadcrumbs";
+import { sectionBreadcrumbs } from "../config/breadcrumbs";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 
@@ -35,6 +37,7 @@ type Platform = {
 };
 
 const whatsappUrl = institution.contact.whatsapp;
+const breadcrumbs = sectionBreadcrumbs("comunidad");
 
 const platforms: Platform[] = [
   {
@@ -72,49 +75,35 @@ const regulations: LinkCard[] = [
   {
     title: "Reglamento de alumnos de secundaria general",
     text: "Normas, derechos, obligaciones y lineamientos para alumnos de secundaria.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/REGLAMENTO-DE-SECUNDARIA.pdf",
+    href: "/Documentos/REGLAMENTO-DE-SECUNDARIA.pdf",
     icon: School,
     label: "Ver PDF"
   },
   {
-    title: "Reglamento de alumnos de bachillerato",
-    text: "Documento general de consulta para alumnos de bachillerato.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoGRALiua.pdf",
+    title: "Reglamento general de alumnos",
+    text: "Aplicable a los niveles de bachillerato, licenciatura y maestría.",
+    href: "/Documentos/ReglamentoGRALiua.pdf",
     icon: Book,
-    label: "Ver PDF"
-  },
-  {
-    title: "Reglamento de alumnos de licenciaturas",
-    text: "Normatividad aplicable para alumnos de licenciatura.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoGRALiua.pdf",
-    icon: School,
-    label: "Ver PDF"
-  },
-  {
-    title: "Reglamento de alumnos de maestría",
-    text: "Documento relacionado con procesos académicos y de titulación para maestría.",
-    href: "https://iua.edu.mx/wp-content/uploads/2021/05/reglamento-titulacion-licenciatura-y-maestria-iua.pdf",
-    icon: Checklist,
     label: "Ver PDF"
   },
   {
     title: "Reglamento de Servicio Social",
     text: "Lineamientos para el cumplimiento del servicio social.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoServicioSocialB.pdf",
+    href: "/Documentos/ReglamentoServicioSocialB.pdf",
     icon: HeartHandshake,
     label: "Ver PDF"
   },
   {
     title: "Reglamento de Titulación",
     text: "Requisitos, modalidades y pasos del proceso de titulación.",
-    href: "https://iua.edu.mx/wp-content/uploads/2022/08/ReglamentoTitulacion.pdf",
+    href: "/Documentos/ReglamentoTitulacion.pdf",
     icon: FileText,
     label: "Ver PDF"
   },
   {
     title: "Reglamento de Pagos",
     text: "Disposiciones relacionadas con pagos, colegiaturas y procesos administrativos.",
-    href: "https://iua.edu.mx/wp-content/uploads/2021/05/reglamento-pagos.pdf",
+    href: "/Documentos/reglamento-pagos.pdf",
     icon: CreditCard,
     label: "Ver PDF"
   }
@@ -197,6 +186,28 @@ function ExternalCard({ item }: { item: LinkCard }) {
   );
 }
 
+function RegulationCard({ item }: { item: LinkCard }) {
+  const Icon = item.icon;
+
+  return (
+    <a
+      href={item.href}
+      target="_blank"
+      rel="noreferrer"
+      className="group rounded-2xl border border-black/5 bg-white p-5 text-left shadow-sm transition hover:-translate-y-1 hover:border-iua-gold/40 hover:shadow-xl hover:shadow-neutral-900/10"
+    >
+      <div className="mb-4 flex h-13 w-13 items-center justify-center rounded-2xl bg-iua-cream text-iua-burgundy">
+        <Icon size={27} />
+      </div>
+      <h3 className="text-xl font-black leading-tight text-neutral-950">{item.title}</h3>
+      <p className="mt-2 text-sm leading-6 text-neutral-600">{item.text}</p>
+      <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-iua-burgundy">
+        {item.label ?? "Ver PDF"} <ExternalLink size={16} className="transition group-hover:translate-x-0.5" />
+      </span>
+    </a>
+  );
+}
+
 export default function Comunidad() {
   usePageSeo({
     title: "Comunidad IUA | Plataformas, Reglamentos y Trámites",
@@ -234,6 +245,8 @@ export default function Comunidad() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="comunidad-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section id="plataformas" className="bg-iua-cream px-5 py-16 scroll-mt-28 md:px-6">
         <div className="mx-auto max-w-7xl">
@@ -275,7 +288,7 @@ export default function Comunidad() {
           />
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {regulations.map((item) => (
-              <ExternalCard key={item.title} item={item} />
+              <RegulationCard key={item.title} item={item} />
             ))}
           </div>
 
@@ -364,6 +377,7 @@ export default function Comunidad() {
           </div>
         </div>
       </section>
+
     </main>
   );
 }

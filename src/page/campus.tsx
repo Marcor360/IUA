@@ -4,6 +4,7 @@ import {
   IconArrowRight as ArrowRight,
   IconBuildingCommunity as BuildingCommunity,
   IconCalendarEvent as Calendar,
+  IconChevronDown as ChevronDown,
   IconChevronLeft as ChevronLeft,
   IconChevronRight as ChevronRight,
   IconDeviceLaptop as Laptop,
@@ -18,8 +19,13 @@ import { useContactModal } from "../context/ContactModalContext";
 import { ofertaEducativa } from "../data/ofertaEducativa";
 import JsonLd from "../components/JsonLd";
 import { organizationSchema } from "../utils/structuredData";
+import PageBreadcrumbs from "../components/PageBreadcrumbs";
+import VirtualCampusExperience, { VirtualCampusIntro, virtualCampusIntro } from "../components/VirtualCampusExperience";
+import VirtualCampusProgramList from "../components/VirtualCampusProgramList";
+import { sectionBreadcrumbs } from "../config/breadcrumbs";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
+const breadcrumbs = sectionBreadcrumbs("campus");
 
 type CampusSummary = {
   id: string;
@@ -133,16 +139,9 @@ const campusDetails: CampusDetail[] = [
   },
   {
     id: "campus-en-linea",
-    eyebrow: "Modalidad flexible",
+    eyebrow: "Educación universitaria sin fronteras",
     title: "Conecta IUA - Plantel virtual",
-    text: [
-      "Conecta IUA - Plantel virtual permite continuar tus estudios desde cualquier lugar, con una experiencia flexible pensada para estudiantes que necesitan combinar su formación académica con trabajo, familia u otras actividades.",
-      "Esta modalidad ofrece acompañamiento académico, orientación institucional y acceso a programas diseñados para avanzar con mayor libertad, manteniendo el compromiso formativo de Universidad IUA."
-    ],
-    highlight: {
-      title: "Estudia desde donde estés",
-      text: "Recibe asesoría para conocer programas disponibles, requisitos, becas y el proceso de inscripción en línea."
-    },
+    text: virtualCampusIntro,
     image: "/banners-edu/educacion en linea.webp",
     imageAlt: "Conecta IUA - Plantel virtual",
     visitUrl: leadFormUrl,
@@ -155,6 +154,10 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
   const { openContactModal } = useContactModal();
   const [showAll, setShowAll] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const relatedPrograms = campus.id === "campus-en-linea" ? [] : ofertaEducativa.filter((program) => program.campus.some((label) => {
+    const value = label.toLowerCase();
+    return campus.id === "campus-chalco" ? value.includes("chalco") : campus.id === "campus-reyes" ? value.includes("reyes") : value.includes("texcoco");
+  }));
 
   // Close lightbox on escape key and support arrow keys for navigation
   useEffect(() => {
@@ -191,7 +194,7 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
       <h2 className={`mt-3 font-black tracking-tight text-neutral-950 ${campus.id === "campus-en-linea" ? "text-3xl md:text-4xl lg:text-5xl" : "text-3xl md:text-5xl"}`}>{campus.title}</h2>
       {campus.subtitle ? <h3 className="mt-2 text-2xl font-black text-iua-burgundy">{campus.subtitle}</h3> : null}
       <div className="mt-5 space-y-4">
-        {campus.text.map((paragraph) => (
+        {campus.id === "campus-en-linea" ? <VirtualCampusIntro /> : campus.text.map((paragraph) => (
           <p key={paragraph} className="text-base leading-8 text-neutral-600">{paragraph}</p>
         ))}
       </div>
@@ -215,14 +218,17 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
       ) : null}
 
       <div className="mt-7 rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
-        <h3 className="text-xl font-black text-neutral-950">Programas relacionados con este campus</h3>
+        <h3 className="text-xl font-black text-neutral-950">{campus.id === "campus-en-linea" ? "Programas disponibles en CONECTA IUA" : "Programas relacionados con este campus"}</h3>
         <p className="mt-2 text-sm leading-7 text-neutral-600">La disponibilidad puede variar por modalidad y periodo; confirma la apertura con admisiones.</p>
-        <ul className="mt-3 grid gap-2">
-          {ofertaEducativa.filter((program) => program.campus.some((label) => {
-            const value = label.toLowerCase();
-            return campus.id === "campus-chalco" ? value.includes("chalco") : campus.id === "campus-reyes" ? value.includes("reyes") : campus.id === "campus-texcoco" ? value.includes("texcoco") : value.includes("línea") || value.includes("virtual");
-          })).map((program) => <li key={program.id}><Link className="font-black text-iua-burgundy hover:underline" to={`/oferta/${program.slug}`}>{program.title}</Link></li>)}
-        </ul>
+        {campus.id === "campus-en-linea" ? <VirtualCampusProgramList /> : <details className="campus-programs__dropdown mt-4">
+          <summary>
+            <span><School size={20} /> Ver {relatedPrograms.length} programas disponibles</span>
+            <ChevronDown className="campus-programs__chevron" size={22} aria-hidden="true" />
+          </summary>
+          <ul className="campus-programs__list">
+            {relatedPrograms.map((program) => <li key={program.id}><Link to={`/oferta/${program.slug}`}>{program.title}</Link></li>)}
+          </ul>
+        </details>}
       </div>
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -358,6 +364,8 @@ function CampusDetailSection({ campus }: { campus: CampusDetail }) {
           {campus.reverse ? copy : media}
         </div>
 
+        {campus.id === "campus-en-linea" ? <VirtualCampusExperience /> : null}
+
         {gallerySection}
 
         {campus.mapEmbed ? (
@@ -416,6 +424,8 @@ export default function Campus() {
           </div>
         </div>
       </section>
+
+      <PageBreadcrumbs id="campus-breadcrumb-jsonld" items={breadcrumbs} />
 
       <section className="px-5 py-16 md:px-6">
         <div className="mx-auto max-w-7xl">

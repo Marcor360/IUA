@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 for (const [path, heading] of [
-  ["/", /Universidad IUA/i], ["/oferta", /Oferta educativa IUA/i], ["/oferta/psicologia", /Psicología/i],
+  ["/", /^Licenciaturas y posgrados$/i], ["/oferta", /Oferta educativa IUA/i], ["/oferta/psicologia", /Psicología/i],
   ["/campus/reyes", /Campus Reyes/i], ["/rvoe", /RVOE/i], ["/que-carrera-estudiar", /Qué carrera estudiar/i], ["/contacto", /listos para orientarte/i]
 ] as const) {
   test(`${path} renders its primary heading`, async ({ page }) => {
@@ -40,4 +40,22 @@ test("mobile navigation opens and reaches the offer", async ({ page, isMobile })
   await page.getByRole("button", { name: /abrir menu/i }).click();
   await page.getByRole("link", { name: /^oferta$/i }).first().click();
   await expect(page).toHaveURL(/\/oferta$/);
+});
+
+test("campus programs use an accessible dropdown", async ({ page }) => {
+  await page.goto("/campus");
+  const dropdown = page.locator("#campus-chalco .campus-programs__dropdown");
+  await expect(dropdown).not.toHaveAttribute("open", "");
+  await dropdown.locator("summary").click();
+  await expect(dropdown).toHaveAttribute("open", "");
+  await expect(dropdown.getByRole("link", { name: /licenciatura en psicolog/i })).toBeVisible();
+});
+
+test("navbar hides on downward scroll and returns on upward scroll", async ({ page }) => {
+  await page.goto("/");
+  const header = page.locator(".site-header");
+  await page.evaluate(() => window.scrollTo(0, 900));
+  await expect(header).toHaveClass(/site-header--hidden/);
+  await page.evaluate(() => window.scrollTo(0, 500));
+  await expect(header).toHaveClass(/site-header--visible/);
 });
