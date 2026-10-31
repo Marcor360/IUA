@@ -28,13 +28,12 @@ Puedes partir de `public_html/api/contact.config.example.php`:
 ```php
 <?php
 return [
-    'resend_api_key' => 're_xxxxxxxxxxxxxxxxxxxxxxxxx',
     'to_email' => ['soy@iua.edu.mx', 'admisiones@iua.edu.mx'],
     'from_email' => 'Universidad IUA <no-reply@iua.edu.mx>',
 ];
 ```
 
-`from_email` debe ser un dominio/correo verificado en Resend.
+El servidor debe tener habilitada la función PHP `mail()` y el dominio debe tener SPF y DKIM configurados para el correo saliente del hosting.
 `to_email` puede ser un correo o una lista de correos. Si `CONTACT_TO_EMAIL` está definida en el servidor, prevalece sobre este archivo; para enviar a ambos destinatarios usa `soy@iua.edu.mx,admisiones@iua.edu.mx`.
 
 ## Rutas React

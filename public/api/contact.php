@@ -76,22 +76,32 @@ if ($turnstileSecret !== '') {
     if ($verifyStatus !== 200 || !is_array($verified) || ($verified['success'] ?? false) !== true) fail(400, 'Verificación fallida');
 }
 
-$apiKey = getenv('RESEND_API_KEY') ?: (string)($config['resend_api_key'] ?? '');
 $configuredTo = getenv('CONTACT_TO_EMAIL') ?: ($config['to_email'] ?? '');
 $to = is_array($configuredTo) ? $configuredTo : explode(',', (string)$configuredTo);
 $to = array_map(static fn($address) => is_string($address) ? trim($address) : '', $to);
 $from = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? '');
-if ($apiKey === '' || $to === [] || count($to) > 10 || $from === '' || count(array_filter($to, static fn($address) => filter_var($address, FILTER_VALIDATE_EMAIL) === false)) > 0) { error_log('IUA contact configuration missing'); fail(503, 'Servicio temporalmente no disponible'); }
+$fromAddress = preg_match('/<([^<>]+)>$/', $from, $match) ? $match[1] : trim($from);
+if ($to === [] || count($to) > 10 || preg_match('/[\r\n]/', $from) || !filter_var($fromAddress, FILTER_VALIDATE_EMAIL) || count(array_filter($to, static fn($address) => filter_var($address, FILTER_VALIDATE_EMAIL) === false)) > 0) {
+    error_log('IUA contact configuration missing');
+    fail(503, 'Servicio temporalmente no disponible');
+}
 
 $program = $programs[$programId]; $campus = $campuses[$campusId];
-$rows = [['Nombre',$name],[$method === 'email' ? 'Correo' : 'Teléfono',$contact],['Programa',$program],['Plantel',$campus]];
-$htmlRows = '';
-foreach ($rows as [$label,$item]) $htmlRows .= '<tr><th style="text-align:left;padding:8px">'.html($label).'</th><td style="padding:8px">'.html($item).'</td></tr>';
-$email = ['from'=>$from,'to'=>$to,'subject'=>'Nueva solicitud IUA: '.$program,'html'=>'<h1>Nueva solicitud de información IUA</h1><table>'.$htmlRows.'</table>','text'=>"Nueva solicitud IUA\nPrograma: $program\nPlantel: $campus"];
-if ($method === 'email') $email['reply_to'] = $contact;
+$subject = mb_encode_mimeheader('Nueva solicitud IUA: '.$program, 'UTF-8');
+$message = "Nueva solicitud de información IUA\n\nNombre: $name\n".($method === 'email' ? 'Correo' : 'Teléfono').": $contact\nPrograma: $program\nPlantel: $campus\n";
+$headers = [
+    'From' => 'Universidad IUA <'.$fromAddress.'>',
+    'MIME-Version' => '1.0',
+    'Content-Type' => 'text/plain; charset=UTF-8',
+];
+if ($method === 'email') $headers['Reply-To'] = $contact;
 
-$request = curl_init('https://api.resend.com/emails');
-curl_setopt_array($request, [CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_HTTPHEADER=>['Authorization: Bearer '.$apiKey,'Content-Type: application/json'],CURLOPT_POSTFIELDS=>json_encode($email, JSON_UNESCAPED_UNICODE),CURLOPT_TIMEOUT=>12,CURLOPT_CONNECTTIMEOUT=>5,CURLOPT_SSL_VERIFYPEER=>true,CURLOPT_SSL_VERIFYHOST=>2]);
-$response = curl_exec($request); $status = (int)curl_getinfo($request, CURLINFO_HTTP_CODE); curl_close($request);
-if ($response === false || $status < 200 || $status >= 300) { error_log('IUA contact provider failure status='.$status); fail(502, 'No se pudo enviar la solicitud'); }
+if (!function_exists('mail')) {
+    error_log('IUA contact mail() unavailable');
+    fail(503, 'Servicio temporalmente no disponible');
+}
+if (!mail(implode(', ', $to), $subject, $message, $headers, '-f'.$fromAddress)) {
+    error_log('IUA contact mail() failure');
+    fail(502, 'No se pudo enviar la solicitud');
+}
 echo json_encode(['ok'=>true]);

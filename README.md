@@ -101,7 +101,6 @@ Los principales objetivos del proyecto son:
 | Playwright           | Pruebas E2E                     |
 | ESLint               | Calidad de código               |
 | PHP                  | Endpoint de contacto en cPanel  |
-| Resend               | Entrega de formularios          |
 | Cloudflare Turnstile | Protección anti-spam            |
 | Google Consent Mode  | Gestión de consentimiento       |
 
@@ -636,7 +635,6 @@ como referencia de las variables utilizadas por los servicios relacionados con c
 Ejemplo:
 
 ```env
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxx
 CONTACT_TO_EMAIL=soy@iua.edu.mx,admisiones@iua.edu.mx
 CONTACT_FROM_EMAIL="Universidad IUA <no-reply@iua.edu.mx>"
 TURNSTILE_SECRET_KEY=
@@ -672,9 +670,7 @@ El endpoint implementa controles relacionados con:
 * Validación de campos.
 * Rate limiting.
 * Cloudflare Turnstile.
-* Envío mediante Resend.
-
-No utiliza `PHP mail()` como fallback.
+* Envío mediante PHP `mail()` y el correo saliente del hosting.
 
 ---
 
@@ -698,14 +694,13 @@ Ejemplo:
 <?php
 
 return [
-    'resend_api_key' => 're_xxxxxxxxxxxxxxxxxxxxxxxxx',
     'to_email' => ['soy@iua.edu.mx', 'admisiones@iua.edu.mx'],
     'from_email' => 'Universidad IUA <no-reply@iua.edu.mx>',
     'turnstile_secret_key' => '',
 ];
 ```
 
-`from_email` debe utilizar un dominio correctamente verificado en Resend.
+El servidor debe tener habilitado PHP `mail()` y el dominio debe tener SPF y DKIM configurados para el correo saliente del hosting. Que `mail()` devuelva éxito significa que el servidor aceptó el mensaje, no que llegó al buzón.
 
 El archivo con credenciales reales **no debe almacenarse en GitHub**.
 
