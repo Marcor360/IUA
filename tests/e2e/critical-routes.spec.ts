@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 for (const [path, heading] of [
-  ["/", /Universidad IUA/i], ["/oferta", /Oferta educativa IUA/i], ["/oferta/psicologia", /Psicología/i],
+  ["/", /^Licenciaturas y posgrados$/i], ["/oferta", /Oferta educativa IUA/i], ["/oferta/psicologia", /Psicología/i],
   ["/campus/reyes", /Campus Reyes/i], ["/rvoe", /RVOE/i], ["/que-carrera-estudiar", /Qué carrera estudiar/i], ["/contacto", /listos para orientarte/i]
 ] as const) {
   test(`${path} renders its primary heading`, async ({ page }) => {
