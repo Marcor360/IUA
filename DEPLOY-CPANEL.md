@@ -17,7 +17,9 @@ El formulario envia los datos a:
 /api/contact.php
 ```
 
-Antes de probar el formulario en produccion, crea este archivo en el servidor:
+Los destinatarios (`soy@iua.edu.mx` y `admisiones@iua.edu.mx`) y el remitente (`no-reply@iua.edu.mx`) están definidos en `public/api/contact.php`. Sube la versión actual a `public_html/api/contact.php`.
+
+El archivo siguiente es opcional y solo se usa si activas Cloudflare Turnstile:
 
 ```text
 public_html/api/contact.config.php
@@ -28,15 +30,13 @@ Puedes partir de `public_html/api/contact.config.example.php`:
 ```php
 <?php
 return [
-    'to_email' => ['soy@iua.edu.mx', 'admisiones@iua.edu.mx'],
-    'from_email' => 'Universidad IUA <no-reply@iua.edu.mx>',
+    'turnstile_secret_key' => '',
 ];
 ```
 
 El servidor debe tener habilitada la función PHP `mail()` y el dominio debe tener SPF y DKIM configurados para el correo saliente del hosting.
-`to_email` puede ser un correo o una lista de correos. Si `CONTACT_TO_EMAIL` está definida en el servidor, prevalece sobre este archivo; para enviar a ambos destinatarios usa `soy@iua.edu.mx,admisiones@iua.edu.mx`.
 
-Si el formulario falla, abre la petición a `/api/contact.php` en la pestaña Red del navegador. La cabecera `X-IUA-Contact-Version: php-mail-2` confirma que está publicado el PHP actual. El campo `code` de la respuesta distingue `CONTACT_CONFIG_INVALID` (destinatario o remitente), `MAIL_UNAVAILABLE` (función `mail()` deshabilitada) y `MAIL_SEND_FAILED` (el servidor no aceptó el envío). No muestra credenciales.
+Si el formulario falla, abre la petición a `/api/contact.php` en la pestaña Red del navegador. La cabecera `X-IUA-Contact-Version: php-mail-3` confirma que está publicado el PHP actual. El campo `code` de la respuesta distingue `MAIL_UNAVAILABLE` (función `mail()` deshabilitada) y `MAIL_SEND_FAILED` (el servidor no aceptó el envío).
 
 ## Rutas React
 

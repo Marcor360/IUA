@@ -4,7 +4,7 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Content-Type-Options: nosniff');
-header('X-IUA-Contact-Version: php-mail-2');
+header('X-IUA-Contact-Version: php-mail-3');
 
 function fail(int $status, string $message, ?string $code = null): never {
     http_response_code($status);
@@ -79,15 +79,8 @@ if ($turnstileSecret !== '') {
     if ($verifyStatus !== 200 || !is_array($verified) || ($verified['success'] ?? false) !== true) fail(400, 'Verificación fallida');
 }
 
-$configuredTo = getenv('CONTACT_TO_EMAIL') ?: ($config['to_email'] ?? '');
-$to = is_array($configuredTo) ? $configuredTo : explode(',', (string)$configuredTo);
-$to = array_map(static fn($address) => is_string($address) ? trim($address) : '', $to);
-$from = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? '');
-$fromAddress = preg_match('/<([^<>]+)>$/', $from, $match) ? $match[1] : trim($from);
-if ($to === [] || count($to) > 10 || preg_match('/[\r\n]/', $from) || !filter_var($fromAddress, FILTER_VALIDATE_EMAIL) || count(array_filter($to, static fn($address) => filter_var($address, FILTER_VALIDATE_EMAIL) === false)) > 0) {
-    error_log('IUA contact configuration missing');
-    fail(503, 'Servicio temporalmente no disponible', 'CONTACT_CONFIG_INVALID');
-}
+$to = ['soy@iua.edu.mx', 'admisiones@iua.edu.mx'];
+$fromAddress = 'no-reply@iua.edu.mx';
 
 $program = $programs[$programId]; $campus = $campuses[$campusId];
 $subject = mb_encode_mimeheader('Nueva solicitud IUA: '.$program, 'UTF-8');
