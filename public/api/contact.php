@@ -77,15 +77,17 @@ if ($turnstileSecret !== '') {
 }
 
 $apiKey = getenv('RESEND_API_KEY') ?: (string)($config['resend_api_key'] ?? '');
-$to = getenv('CONTACT_TO_EMAIL') ?: (string)($config['to_email'] ?? '');
+$configuredTo = getenv('CONTACT_TO_EMAIL') ?: ($config['to_email'] ?? '');
+$to = is_array($configuredTo) ? $configuredTo : explode(',', (string)$configuredTo);
+$to = array_map(static fn($address) => is_string($address) ? trim($address) : '', $to);
 $from = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? '');
-if ($apiKey === '' || !filter_var($to, FILTER_VALIDATE_EMAIL) || $from === '') { error_log('IUA contact configuration missing'); fail(503, 'Servicio temporalmente no disponible'); }
+if ($apiKey === '' || $to === [] || count($to) > 10 || $from === '' || count(array_filter($to, static fn($address) => filter_var($address, FILTER_VALIDATE_EMAIL) === false)) > 0) { error_log('IUA contact configuration missing'); fail(503, 'Servicio temporalmente no disponible'); }
 
 $program = $programs[$programId]; $campus = $campuses[$campusId];
 $rows = [['Nombre',$name],[$method === 'email' ? 'Correo' : 'Teléfono',$contact],['Programa',$program],['Plantel',$campus]];
 $htmlRows = '';
 foreach ($rows as [$label,$item]) $htmlRows .= '<tr><th style="text-align:left;padding:8px">'.html($label).'</th><td style="padding:8px">'.html($item).'</td></tr>';
-$email = ['from'=>$from,'to'=>[$to],'subject'=>'Nueva solicitud IUA: '.$program,'html'=>'<h1>Nueva solicitud de información IUA</h1><table>'.$htmlRows.'</table>','text'=>"Nueva solicitud IUA\nPrograma: $program\nPlantel: $campus"];
+$email = ['from'=>$from,'to'=>$to,'subject'=>'Nueva solicitud IUA: '.$program,'html'=>'<h1>Nueva solicitud de información IUA</h1><table>'.$htmlRows.'</table>','text'=>"Nueva solicitud IUA\nPrograma: $program\nPlantel: $campus"];
 if ($method === 'email') $email['reply_to'] = $contact;
 
 $request = curl_init('https://api.resend.com/emails');

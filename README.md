@@ -637,7 +637,7 @@ Ejemplo:
 
 ```env
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxx
-CONTACT_TO_EMAIL=admisiones@iua.edu.mx
+CONTACT_TO_EMAIL=soy@iua.edu.mx,admisiones@iua.edu.mx
 CONTACT_FROM_EMAIL="Universidad IUA <no-reply@iua.edu.mx>"
 TURNSTILE_SECRET_KEY=
 ```
@@ -699,7 +699,7 @@ Ejemplo:
 
 return [
     'resend_api_key' => 're_xxxxxxxxxxxxxxxxxxxxxxxxx',
-    'to_email' => 'soy@iua.edu.mx',
+    'to_email' => ['soy@iua.edu.mx', 'admisiones@iua.edu.mx'],
     'from_email' => 'Universidad IUA <no-reply@iua.edu.mx>',
     'turnstile_secret_key' => '',
 ];
