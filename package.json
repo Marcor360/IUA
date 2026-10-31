@@ -23,10 +23,10 @@
     "safe-install": "npm install --ignore-scripts"
   },
   "dependencies": {
-    "@tabler/icons-react": "^3.49.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "react-router-dom": "^7.18.4"
+    "@tabler/icons-react": "^3.50.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.5"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -35,13 +35,13 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-react-refresh": "0.5.7",
     "tailwindcss": "^4.3.3",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.71.2",
-    "vite": "^8.3.4",
+    "typescript-eslint": "8.72.1",
+    "vite": "^8.3.5",
     "vitest": "5.0.5"
   }
 }
