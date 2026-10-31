@@ -4,10 +4,13 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Content-Type-Options: nosniff');
+header('X-IUA-Contact-Version: php-mail-2');
 
-function fail(int $status, string $message): never {
+function fail(int $status, string $message, ?string $code = null): never {
     http_response_code($status);
-    echo json_encode(['error' => $message], JSON_UNESCAPED_UNICODE);
+    $response = ['error' => $message];
+    if ($code !== null) $response['code'] = $code;
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -83,7 +86,7 @@ $from = getenv('CONTACT_FROM_EMAIL') ?: (string)($config['from_email'] ?? '');
 $fromAddress = preg_match('/<([^<>]+)>$/', $from, $match) ? $match[1] : trim($from);
 if ($to === [] || count($to) > 10 || preg_match('/[\r\n]/', $from) || !filter_var($fromAddress, FILTER_VALIDATE_EMAIL) || count(array_filter($to, static fn($address) => filter_var($address, FILTER_VALIDATE_EMAIL) === false)) > 0) {
     error_log('IUA contact configuration missing');
-    fail(503, 'Servicio temporalmente no disponible');
+    fail(503, 'Servicio temporalmente no disponible', 'CONTACT_CONFIG_INVALID');
 }
 
 $program = $programs[$programId]; $campus = $campuses[$campusId];
@@ -98,10 +101,10 @@ if ($method === 'email') $headers['Reply-To'] = $contact;
 
 if (!function_exists('mail')) {
     error_log('IUA contact mail() unavailable');
-    fail(503, 'Servicio temporalmente no disponible');
+    fail(503, 'Servicio temporalmente no disponible', 'MAIL_UNAVAILABLE');
 }
 if (!mail(implode(', ', $to), $subject, $message, $headers, '-f'.$fromAddress)) {
     error_log('IUA contact mail() failure');
-    fail(502, 'No se pudo enviar la solicitud');
+    fail(502, 'No se pudo enviar la solicitud', 'MAIL_SEND_FAILED');
 }
 echo json_encode(['ok'=>true]);
