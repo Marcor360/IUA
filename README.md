@@ -153,14 +153,14 @@ El HTML inicial contiene contenido y metadatos antes de que React se hidrate. Lo
 
 ## Formulario de contacto
 
-El modal de `src/components/ContactModal.tsx` envía JSON por `POST` a `/api/contact.php`. El usuario elige recibir contacto por teléfono o correo y selecciona programa y plantel. La opción WhatsApp abre un enlace aparte.
+El modal de `src/components/ContactModal.tsx` envía JSON por `POST` a `/api/contact.php`. El usuario elige si prefiere recibir contacto por teléfono o correo; en ambos casos proporciona teléfono y correo, además de programa y plantel. La opción WhatsApp abre un enlace aparte.
 
 `public/api/contact.php` valida el método, tipo y tamaño de la petición, campos, programa y plantel. Incluye un campo trampa antispam y limita a cinco solicitudes por minuto por IP cuando el directorio temporal permite guardar el contador. Con la configuración actual envía **un mensaje** mediante PHP `mail()` a:
 
 - `soy@iua.edu.mx`
 - `admisiones@iua.edu.mx`
 
-El remitente configurado en el código es `Universidad IUA <no-reply@iua.edu.mx>`. Si el usuario dejó su correo, se añade como `Reply-To`. El mensaje incluye nombre, contacto, programa y plantel. **No usa Resend ni necesita una clave API.** Los destinatarios y el remitente se cambian en `public/api/contact.php` y requieren publicar ese archivo de nuevo.
+El remitente configurado en el código es `Universidad IUA <no-reply@iua.edu.mx>`. Si el usuario dejó su correo, se añade como `Reply-To`. El mensaje incluye nombre, teléfono, correo, método preferido, programa y plantel. **No usa Resend ni necesita una clave API.** Los destinatarios y el remitente se cambian en `public/api/contact.php` y requieren publicar ese archivo de nuevo.
 
 El contrato del endpoint es `POST` con `Content-Type: application/json`. Los valores de `programa` y `plantel` son identificadores, no las etiquetas visibles del formulario. Ejemplo de cuerpo para una prueba controlada:
 
@@ -169,13 +169,15 @@ El contrato del endpoint es `POST` con `Content-Type: application/json`. Los val
   "method": "phone",
   "nombre": "PRUEBA TECNICA IUA",
   "contacto": "5512345678",
+  "telefono": "5512345678",
+  "correo": "prueba@example.com",
   "programa": "secundaria",
   "plantel": "campus-reyes",
   "website": ""
 }
 ```
 
-`method` admite `phone` o `email`. En el segundo caso, `contacto` debe ser una dirección válida. El campo `website` es la trampa antispam y debe quedar vacío. Las respuestas son JSON; un `200` contiene `{"ok":true}`. No envíes datos personales reales en pruebas automáticas.
+`method` admite `phone` o `email`. `contacto` contiene el dato del método preferido para mantener compatibilidad con clientes anteriores. El formulario actual envía también `telefono` y `correo`, ambos validados por el servidor. El campo `website` es la trampa antispam y debe quedar vacío. Las respuestas son JSON; un `200` contiene `{"ok":true}`. No envíes datos personales reales en pruebas automáticas.
 
 ### Configuración del hosting
 

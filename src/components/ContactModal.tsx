@@ -12,7 +12,8 @@ export function ContactModal({ isOpen, onClose, context }: Props) {
   const [step, setStep] = useState<Step>("selection");
   const [method, setMethod] = useState<"phone" | "email" | null>(null);
   const [nombre, setNombre] = useState("");
-  const [contacto, setContacto] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [correo, setCorreo] = useState("");
   const [programa, setPrograma] = useState("");
   const [plantel, setPlantel] = useState("");
   const [website, setWebsite] = useState("");
@@ -33,7 +34,7 @@ export function ContactModal({ isOpen, onClose, context }: Props) {
   useEffect(() => {
     if (!isOpen) return;
     previousFocus.current = document.activeElement as HTMLElement | null;
-    setStep("selection"); setMethod(null); setNombre(""); setContacto("");
+    setStep("selection"); setMethod(null); setNombre(""); setTelefono(""); setCorreo("");
     setPrograma(context.programId ?? ""); setPlantel(context.campusId ?? ""); setWebsite(""); setError("");
     document.body.style.overflow = "hidden";
     window.setTimeout(() => dialogRef.current?.focus(), 0);
@@ -60,7 +61,8 @@ export function ContactModal({ isOpen, onClose, context }: Props) {
   async function submit(event: React.FormEvent) {
     event.preventDefault(); setIsSubmitting(true); setError("");
     try {
-      const response = await fetch("/api/contact.php", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ method, nombre, contacto, programa, plantel, website }) });
+      const contacto = method === "phone" ? telefono : correo;
+      const response = await fetch("/api/contact.php", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ method, nombre, contacto, telefono, correo, programa, plantel, website }) });
       if (!response.ok) throw new Error();
       setStep("success"); trackEvent("lead_submit", { program: programa, campus: plantel, method: method ?? "" });
     } catch { setError("No pudimos enviar tus datos. Intenta de nuevo o escríbenos por WhatsApp."); }
@@ -84,7 +86,13 @@ export function ContactModal({ isOpen, onClose, context }: Props) {
           <form onSubmit={submit} className="flex flex-col gap-4">
             <label className="sr-only" aria-hidden="true">Sitio web<input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} /></label>
             <label className="flex flex-col gap-1"><strong>Nombre completo</strong><input required maxLength={100} value={nombre} onChange={(e) => setNombre(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
-            <label className="flex flex-col gap-1"><strong>{method === "phone" ? "Número de teléfono" : "Correo electrónico"}</strong><input required maxLength={254} type={method === "phone" ? "tel" : "email"} value={contacto} onChange={(e) => setContacto(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
+            {method === "phone" ? <>
+              <label className="flex flex-col gap-1"><strong>Número de teléfono</strong><input required maxLength={20} type="tel" autoComplete="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
+              <label className="flex flex-col gap-1"><strong>Correo electrónico</strong><input required maxLength={254} type="email" autoComplete="email" value={correo} onChange={(e) => setCorreo(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
+            </> : <>
+              <label className="flex flex-col gap-1"><strong>Correo electrónico</strong><input required maxLength={254} type="email" autoComplete="email" value={correo} onChange={(e) => setCorreo(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
+              <label className="flex flex-col gap-1"><strong>Número de teléfono</strong><input required maxLength={20} type="tel" autoComplete="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)} className="rounded-xl border px-4 py-2.5" /></label>
+            </>}
             <label className="flex flex-col gap-1"><strong>Programa de interés</strong><select required value={programa} onChange={(e) => { setPrograma(e.target.value); setPlantel(""); }} className="rounded-xl border px-4 py-2.5"><option value="">Selecciona un programa</option>{ofertaEducativa.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
             <label className="flex flex-col gap-1"><strong>Plantel</strong><select required value={plantel} onChange={(e) => setPlantel(e.target.value)} className="rounded-xl border px-4 py-2.5"><option value="">Selecciona un plantel</option>{campuses.map((campus) => <option key={campus.id} value={campus.id}>{campus.shortName}</option>)}</select></label>
             <button type="submit" disabled={isSubmitting} className="rounded-xl bg-iua-burgundy px-4 py-3 font-bold text-white disabled:opacity-60">{isSubmitting ? "Enviando…" : "Enviar información"}</button>

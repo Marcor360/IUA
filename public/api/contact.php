@@ -41,8 +41,12 @@ $contact = value($body, 'contacto', 254);
 $programId = value($body, 'programa', 80);
 $campusId = value($body, 'plantel', 40);
 if (!in_array($method, ['phone', 'email'], true)) fail(400, 'Método inválido');
-if ($method === 'email' && !filter_var($contact, FILTER_VALIDATE_EMAIL)) fail(400, 'Correo inválido');
-if ($method === 'phone' && !preg_match('/^\+?[0-9 ()-]{8,20}$/', $contact)) fail(400, 'Teléfono inválido');
+$phone = array_key_exists('telefono', $body) ? value($body, 'telefono', 20) : ($method === 'phone' ? $contact : '');
+$email = array_key_exists('correo', $body) ? value($body, 'correo', 254) : ($method === 'email' ? $contact : '');
+if ($method === 'phone' && $contact !== $phone) fail(400, 'Teléfono inválido');
+if ($method === 'email' && $contact !== $email) fail(400, 'Correo inválido');
+if ($phone !== '' && !preg_match('/^\+?[0-9 ()-]{8,20}$/', $phone)) fail(400, 'Teléfono inválido');
+if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) fail(400, 'Correo inválido');
 
 $programs = [
   'secundaria'=>'Secundaria','bachillerato'=>'Bachillerato','derecho'=>'Licenciatura en Derecho','psicologia'=>'Licenciatura en Psicología',
@@ -84,13 +88,16 @@ $fromAddress = 'no-reply@iua.edu.mx';
 
 $program = $programs[$programId]; $campus = $campuses[$campusId];
 $subject = mb_encode_mimeheader('Nueva solicitud IUA: '.$program, 'UTF-8');
-$message = "Nueva solicitud de información IUA\n\nNombre: $name\n".($method === 'email' ? 'Correo' : 'Teléfono').": $contact\nPrograma: $program\nPlantel: $campus\n";
+$message = "Nueva solicitud de información IUA\n\nNombre: $name\n";
+if ($phone !== '') $message .= "Teléfono: $phone\n";
+if ($email !== '') $message .= "Correo: $email\n";
+$message .= "Método preferido: ".($method === 'phone' ? 'Teléfono' : 'Correo')."\nPrograma: $program\nPlantel: $campus\n";
 $headers = [
     'From' => 'Universidad IUA <'.$fromAddress.'>',
     'MIME-Version' => '1.0',
     'Content-Type' => 'text/plain; charset=UTF-8',
 ];
-if ($method === 'email') $headers['Reply-To'] = $contact;
+if ($email !== '') $headers['Reply-To'] = $email;
 
 if (!function_exists('mail')) {
     error_log('IUA contact mail() unavailable');
